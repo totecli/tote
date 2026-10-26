@@ -1,0 +1,36 @@
+name: commits
+
+on:
+    push:
+        branches: [master]
+    pull_request:
+
+permissions:
+    contents: read
+
+jobs:
+    messages:
+        name: Commit messages
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0
+            - name: Check the commit messages
+              env:
+                  EVENT: ${{ github.event_name }}
+                  BEFORE: ${{ github.event.before }}
+                  BASE: ${{ github.event.pull_request.base.sha }}
+                  HEAD: ${{ github.event.pull_request.head.sha }}
+              run: |
+                  # A new branch has no previous commit: git reports it as an all-zero SHA.
+                  null_sha=0000000000000000000000000000000000000000
+                  if [ "$EVENT" = pull_request ]; then
+                      range="$BASE..$HEAD"
+                  elif [ "$BEFORE" = "$null_sha" ] || ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+                      range="$GITHUB_SHA"
+                  else
+                      range="$BEFORE..$GITHUB_SHA"
+                  fi
+                  scripts/commits.sh "$range"
