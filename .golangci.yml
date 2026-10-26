@@ -1,0 +1,87 @@
+version: "2"
+linters:
+    default: none
+    enable: [errcheck, govet, staticcheck, unused, ineffassign, gosec, revive, depguard, lll]
+    exclusions:
+        rules:
+            # The terminal calls need package unsafe.
+            - path: internal/ui/(termios|flush_darwin)\.go
+              linters: [gosec]
+              text: G103
+            # tote is a launcher: the programs it starts come from the records and the settings of the
+            # user, or are fixed names, and are never given to a shell.
+            - path: (cmd/tote/app|internal/plugin/git|internal/shell/keepalive|internal/ui/(clip|exec|statusgit))\.go
+              linters: [gosec]
+              text: G204|G702
+            # The files that tote opens and writes are in its own directories, resolved by
+            # internal/config/paths.go and, for the data files, with EvalSymlinks.
+            - linters: [gosec]
+              text: G304|G703
+            # The installed binary must be executable.
+            - path: internal/update/archive\.go
+              linters: [gosec]
+              text: G302
+            # The conversions are guarded, or turn a rune or a device number.
+            - path: internal/(plugin/statid_darwin|ui/palmatch)\.go
+              linters: [gosec]
+              text: G115
+            # The tests write in their own temporary directories and use throw-away data.
+            - path: _test\.go
+              linters: [gosec, revive]
+            # A helper of the interface tests returns the outcome, the error and the output.
+            - path: internal/ui/run_test\.go
+              linters: [staticcheck]
+              text: ST1008
+    settings:
+        errcheck:
+            # A failed write to the standard output of a command line program has no recovery.
+            exclude-functions: [fmt.Fprint, fmt.Fprintf, fmt.Fprintln]
+        lll:
+            line-length: 100
+        depguard:
+            rules:
+                charm-only-in-ui:
+                    list-mode: lax
+                    files: ["!**/internal/ui/**", "!**/*_test.go"]
+                    deny:
+                        - pkg: charm.land
+                          desc: Charm is imported from internal/ui only
+                        - pkg: github.com/charmbracelet
+                          desc: Charm is imported from internal/ui only
+                net-http-only-in-fetch:
+                    list-mode: lax
+                    files:
+                        - "!**/internal/update/**"
+                        - "!**/internal/plugin/fetch.go"
+                        - "!**/*_test.go"
+                    deny:
+                        - pkg: net/http
+                          desc: net/http is imported by internal/update and internal/plugin/fetch.go only
+                plugin-exec-only-in-run-and-git:
+                    list-mode: lax
+                    files:
+                        - "**/internal/plugin/**"
+                        - "!**/internal/plugin/run.go"
+                        - "!**/internal/plugin/git.go"
+                        - "!**/*_test.go"
+                    deny:
+                        - pkg: os/exec
+                          desc: os/exec is imported by internal/plugin/run.go and git.go only
+                plugin-never-imports-the-edge:
+                    list-mode: lax
+                    files: ["**/internal/plugin/**"]
+                    deny:
+                        - pkg: github.com/totecli/tote/internal/ui
+                          desc: internal/plugin never imports internal/ui
+                        - pkg: github.com/totecli/tote/cmd
+                          desc: internal/plugin never imports cmd
+                plugin-bundled-stdlib-only:
+                    list-mode: strict
+                    files: ["**/internal/plugin/bundled/**", "!**/*_test.go"]
+                    allow:
+                        - $gostd
+formatters:
+    enable: [gofumpt, goimports]
+    settings:
+        goimports:
+            local-prefixes: [github.com/totecli/tote]

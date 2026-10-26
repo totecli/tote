@@ -1,0 +1,6 @@
+/bin/
+/dist/
+/ppa-build/
+/tote
+/cmd/tote/tote
+*.key
