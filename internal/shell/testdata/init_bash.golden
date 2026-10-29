@@ -1,0 +1,120 @@
+tote() {
+    local __tote_f="" __tote_d="" __tote_hdr="" __tote_act="" __tote_arg="" __tote_rc=0
+    builtin type -P tote >/dev/null 2>&1 || {
+        builtin printf 'tote: binary not found in PATH\n' >&2
+        return 127
+    }
+    for __tote_d in "${XDG_RUNTIME_DIR:-}" "${TMPDIR:-}" /tmp; do
+        [[ -n $__tote_d ]] || continue
+        __tote_f=$(builtin umask 077; command mktemp "$__tote_d/tote.XXXXXXXX" 2>/dev/null) && break
+        __tote_f=""
+    done
+    if [[ -z $__tote_f ]]; then
+        builtin printf 'tote: no usable temporary directory, cd and insert are disabled\n' >&2
+        command tote "$@"
+        return
+    fi
+    TOTE_HANDOFF=$__tote_f TOTE_SHELL=bash command tote "$@" || __tote_rc=$?
+    if [[ -f $__tote_f && ! -L $__tote_f && -O $__tote_f && -s $__tote_f ]]; then
+        {
+            IFS= builtin read -r __tote_hdr || :
+            IFS= builtin read -r -d '' __tote_arg || :
+        } <"$__tote_f"
+    fi
+    command rm -f -- "$__tote_f"
+    [[ $__tote_hdr == "v1 "* ]] || __tote_hdr=""
+    __tote_act=${__tote_hdr#v1 }
+    __tote_act=${__tote_act%%,*}
+    if [[ ,${__tote_hdr#v1 }, == *,reload,* ]]; then
+        builtin eval "$(command tote init bash --defs)"
+    fi
+    case $__tote_act in
+        insert)
+            if [[ -n $__tote_arg && $- == *i* && -t 0 ]]; then
+                if (( BASH_VERSINFO[0] >= 4 )); then
+                    builtin read -e -r -i "$__tote_arg" -p "> " __tote_arg || __tote_arg=""
+                    if [[ -n $__tote_arg ]]; then
+                        builtin history -s "$__tote_arg"
+                        set --
+                        builtin eval "$__tote_arg"
+                    fi
+                else
+                    builtin history -s "$__tote_arg"
+                    printf '%s\n' "$__tote_arg"
+                fi
+            fi
+            ;;
+        cd)
+            if [[ -n $__tote_arg && -d $__tote_arg ]]; then
+                [[ $__tote_arg == /* ]] || __tote_arg=./$__tote_arg
+                builtin cd -- "$__tote_arg" || __tote_rc=$?
+            fi
+            ;;
+        exit)
+            builtin exit "$__tote_rc"
+            ;;
+    esac
+    return "$__tote_rc"
+}
+__tote_unload() {
+    local IFS=' ' n
+    for n in ${__TOTE_DEFS:-}; do
+        case $n in
+            a:*) unalias -- "${n#a:}" 2>/dev/null || : ;;
+            f:*) unset -f -- "${n#f:}" 2>/dev/null || : ;;
+        esac
+    done
+    return 0
+}
+__tote_unload
+unset -f __tote_unload
+alias ll='ls -la'
+alias say='echo '\''hello world'\'''
+alias evil='echo $(touch PWNED); `id` \ "q" && x || y # z'
+alias uni='echo café 日本'
+# tote: alias 'bad name' skipped (invalid name)
+# tote: alias 'x=y' skipped (invalid name)
+# tote: alias '-n' skipped (invalid name)
+# tote: alias 'tote' skipped (invalid name)
+# tote: alias 'mn' skipped (invalid name)
+# tote: alias 'eval' skipped (reserved name)
+# tote: alias 'empty' skipped (invalid value)
+# tote: alias 'multi' skipped (invalid value)
+# tote: alias 'line?break; touch PWNED' skipped (invalid name)
+# tote: alias 'll' skipped (duplicate name)
+alias proj='tote repo open proj'
+alias my.repo='tote repo open my.repo'
+# tote: repo 'll' skipped (duplicate name)
+# tote: repo 'it?s' skipped (invalid name)
+# tote: repo 'nopath' skipped (invalid value)
+unalias -- gs 2>/dev/null || :
+gs() { source '/home/u/.local/share/tote/bin/gs.sh' "$@"; }
+unalias -- spaced 2>/dev/null || :
+spaced() { source '/home/u/my scripts/it'\''s.sh' "$@"; }
+unalias -- tilde 2>/dev/null || :
+tilde() { source "$HOME"/'bin/tool.sh' "$@"; }
+# tote: func '1bad' skipped (invalid name)
+# tote: func 'bad kind' skipped (invalid name)
+# tote: func 'source' skipped (reserved name)
+# tote: func 'ex-bad name' skipped (invalid name)
+# tote: func 'noexec' skipped (invalid value)
+# tote: func 'gs' skipped (duplicate name)
+# tote: func 'noscript' skipped (invalid value)
+unalias -- mn 2>/dev/null || :
+mn() { tote "$@"; }
+# tote: extra name 'bad name' skipped (invalid name)
+# tote: extra name 'tote' skipped (reserved name)
+# tote: extra name 'gs' skipped (duplicate name)
+# tote: extra name 'deploy' skipped (duplicate name)
+# tote: extra name '-x' skipped (invalid name)
+# tote: extra name 'mn' skipped (duplicate name)
+case ":$PATH:" in *:'/home/u/.local/share/tote/bin':*) ;; *) PATH='/home/u/.local/share/tote/bin'":$PATH" ;; esac
+__tote_complete() {
+    local line
+    COMPREPLY=()
+    while IFS= read -r line; do
+        COMPREPLY+=("${line%%$'\t'*}")
+    done < <(command tote __complete "${COMP_WORDS[@]:1:COMP_CWORD}" 2>/dev/null)
+}
+complete -o default -F __tote_complete tote mn
+__TOTE_DEFS='a:ll a:say a:evil a:uni a:proj a:my.repo f:gs f:spaced f:tilde f:mn'

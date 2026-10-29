@@ -1,0 +1,119 @@
+tote() {
+    emulate -L zsh
+    local f="" d="" hdr="" act="" arg="" all="" __tote_rc=0
+    builtin whence -p tote >/dev/null 2>&1 || {
+        builtin print -u2 'tote: binary not found in PATH'
+        return 127
+    }
+    for d in "${XDG_RUNTIME_DIR:-}" "${TMPDIR:-}" /tmp; do
+        [[ -n $d ]] || continue
+        f=$(builtin umask 077; command mktemp "$d/tote.XXXXXXXX" 2>/dev/null) && break
+        f=""
+    done
+    if [[ -z $f ]]; then
+        builtin print -u2 'tote: no usable temporary directory, cd and insert are disabled'
+        command tote "$@"
+        return
+    fi
+    TOTE_HANDOFF=$f TOTE_SHELL=zsh command tote "$@" || __tote_rc=$?
+    if [[ -f $f && ! -L $f && -O $f && -s $f ]]; then
+        all=$(<"$f")
+        hdr=${all%%$'\n'*}
+        if [[ $all == *$'\n'* ]]; then
+            arg=${all#*$'\n'}
+        fi
+    fi
+    command rm -f -- "$f"
+    [[ $hdr == "v1 "* ]] || hdr=""
+    act=${hdr#v1 }
+    act=${act%%,*}
+    if [[ ,${hdr#v1 }, == *,reload,* ]]; then
+        builtin eval "$(command tote init zsh --defs)"
+    fi
+    case $act in
+        insert)
+            if [[ -n $arg ]]; then
+                builtin print -z -- "$arg"
+            fi
+            ;;
+        cd)
+            if [[ -n $arg && -d $arg ]]; then
+                [[ $arg == /* ]] || arg=./$arg
+                builtin cd -- "$arg" || __tote_rc=$?
+            fi
+            ;;
+        exit)
+            builtin exit "$__tote_rc"
+            ;;
+    esac
+    return "$__tote_rc"
+}
+__tote_unload() {
+    emulate -L zsh
+    local IFS=$' \t\n' n
+    for n in ${=__TOTE_DEFS:-}; do
+        case $n in
+            a:*) unalias -- "${n#a:}" 2>/dev/null || : ;;
+            f:*) unset -f -- "${n#f:}" 2>/dev/null || : ;;
+        esac
+    done
+    return 0
+}
+__tote_unload
+unset -f __tote_unload
+alias ll='ls -la'
+alias say='echo '\''hello world'\'''
+alias evil='echo $(touch PWNED); `id` \ "q" && x || y # z'
+alias uni='echo café 日本'
+# tote: alias 'bad name' skipped (invalid name)
+# tote: alias 'x=y' skipped (invalid name)
+# tote: alias '-n' skipped (invalid name)
+# tote: alias 'tote' skipped (invalid name)
+# tote: alias 'mn' skipped (invalid name)
+# tote: alias 'eval' skipped (reserved name)
+# tote: alias 'empty' skipped (invalid value)
+# tote: alias 'multi' skipped (invalid value)
+# tote: alias 'line?break; touch PWNED' skipped (invalid name)
+# tote: alias 'll' skipped (duplicate name)
+alias proj='tote repo open proj'
+alias my.repo='tote repo open my.repo'
+# tote: repo 'll' skipped (duplicate name)
+# tote: repo 'it?s' skipped (invalid name)
+# tote: repo 'nopath' skipped (invalid value)
+unalias -- gs 2>/dev/null || :
+gs() { source '/home/u/.local/share/tote/bin/gs.sh' "$@"; }
+unalias -- spaced 2>/dev/null || :
+spaced() { source '/home/u/my scripts/it'\''s.sh' "$@"; }
+unalias -- tilde 2>/dev/null || :
+tilde() { source "$HOME"/'bin/tool.sh' "$@"; }
+# tote: func '1bad' skipped (invalid name)
+# tote: func 'bad kind' skipped (invalid name)
+# tote: func 'source' skipped (reserved name)
+# tote: func 'ex-bad name' skipped (invalid name)
+# tote: func 'noexec' skipped (invalid value)
+# tote: func 'gs' skipped (duplicate name)
+# tote: func 'noscript' skipped (invalid value)
+unalias -- mn 2>/dev/null || :
+mn() { tote "$@"; }
+# tote: extra name 'bad name' skipped (invalid name)
+# tote: extra name 'tote' skipped (reserved name)
+# tote: extra name 'gs' skipped (duplicate name)
+# tote: extra name 'deploy' skipped (duplicate name)
+# tote: extra name '-x' skipped (invalid name)
+# tote: extra name 'mn' skipped (duplicate name)
+case ":$PATH:" in *:'/home/u/.local/share/tote/bin':*) ;; *) PATH='/home/u/.local/share/tote/bin'":$PATH" ;; esac
+_tote() {
+    local -a items
+    local line name desc
+    while IFS= read -r line; do
+        name=${line%%$'\t'*}
+        desc=""
+        if [[ $line == *$'\t'* ]]; then
+            desc=${line#*$'\t'}
+        fi
+        items+=("${name//:/\\:}:${desc}")
+    done < <(command tote __complete "${(@)words[2,CURRENT]}" 2>/dev/null)
+    _describe -t tote tote items
+}
+if (( $+functions[compdef] )); then compdef _tote tote mn; fi
+__TOTE_DEFS='a:ll a:say a:evil a:uni a:proj a:my.repo f:gs f:spaced f:tilde f:mn'
