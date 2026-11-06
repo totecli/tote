@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+
+
+  ╭─ notes 1.0.0 - Notes ────────────────────────────────────────────────────╮
+  │ résultat  notes : aucun problème trouvé                                  │
+  │ apporte   - commande go : tool '{x}'                                     │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    esc fermer · ↑↓ défiler
+
+
+
+
+
+
+
+
+
+
+== 40x12
+
+
+  ╭─ notes 1.0.0 - Notes ────────────╮
+  │ résultat  notes : aucun problème │
+  │           trouvé                 │
+  │ apporte   - commande go : tool   │
+  │           '{x}'                  │
+  ╰──────────────────────────────────╯
+   esc · ↑↓
+
+
+
+== 24x7
+  ╭─ notes 1.0.0… ───╮
+  │ résu…  notes :   │
+  │        aucun     │
+  │        problème  │
+  ╰──────────────────╯
+   esc · ↑↓
+

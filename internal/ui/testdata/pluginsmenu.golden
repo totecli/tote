@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+                ╭─ demo ───────────────────────────────────────╮
+                │ ❯ Details                                    │
+                │   Disable                                    │
+                │   Settings                                   │
+                │   Update                                     │
+                │   Check                                      │
+                │   Remove                                     │
+                │   Remove with its data                       │
+                ╰──────────────────────────────────────────────╯
+                  ⏎ choose · esc close · ↑↓ navigate
+
+
+
+
+
+
+
+== 40x12
+
+  ╭─ demo ───────────────────────────╮
+  │ ❯ Details                        │
+  │   Disable                        │
+  │   Settings                       │
+  │   Update                         │
+  │   Check                          │
+  │   Remove                         │
+  │   Remove with its data           │
+  ╰──────────────────────────────────╯
+   ⏎ · esc · ↑↓
+
+== 24x7
+  ╭─ demo ───────────╮
+  │ ❯ Details        │
+  │   Disable        │
+  │   Settings       │
+  ╰──────────────────╯
+   ⏎ · esc · ↑↓
+

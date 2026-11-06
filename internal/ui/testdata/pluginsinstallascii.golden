@@ -1,0 +1,46 @@
+== 80x24
+  +- Installer le plugin gft 1.0.0 ? ----------------------------------------+
+  | Origine : livre avec tote                                                |
+  | Somme de controle : sha256 f56d20b069f5, couverte par la signature de    |
+  |                     cette version de tote                                |
+  | Aucun code propre : tote ne lance que les programmes listes ci-dessous.  |
+  |                                                                          |
+  | Description (ecrite par le plugin, non verifiee par tote)                |
+  |   | Releases GitHub et stashes git avec la commande gft.                 |
+  |                                                                          |
+  | Commandes qu'il lancera :                                                |
+  |   $ commande get : gft '{slug}' '{tag?}' --get '{pattern}' '{verify?}'   |
+  |   $ commande install : gft '{slug}' '{tag?}' --install                   |
+  |   $ commande open : open https://github.com/{slug}/releases              |
+  |   $ commande show : gft '{slug}' '{tag?}' '{view?}'                      |
+  |   $ action d'element assets : gft '{repo.slug}' --assets                 |
+  |   $ action d'element notes : gft '{repo.slug}' --notes                   |
+  |   $ action d'element release : gft '{repo.slug}'                         |
+  |   $ action d'element stash-clean : gft stash clean --yes                 |
+  | v 31 de plus                                                             |
+  |                                                                          |
+  |                  [ Annuler ]   [ Installer et activer ]                  |
+  +--------------------------------------------------------------------------+
+    enter valider - h/l choisir - esc annuler - up/down defiler
+
+== 40x12
+  +- Installer le plugin gft 1.0... -+
+  | gft                              |
+  | Origine : livre avec tote        |
+  | Somme de controle : sha256 ...   |
+  | Aucun code propre : tote ne      |
+  | lance que les programmes listes  |
+  | v 85 de plus                     |
+  |                                  |
+  | [Annuler] [Installer et activer] |
+  +----------------------------------+
+   enter - h/l - esc - up/down
+
+== 24x7
+  +- Installer l... -+
+  | gft              |
+  | Origine : liv... |
+  | [An...] [Ins...] |
+  +------------------+
+   enter - h/l - esc
+

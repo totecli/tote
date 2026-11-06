@@ -1,0 +1,46 @@
+== 80x24
+
+  ╭─ demo 1.0.0 - Demo ──────────────────────────────────────────────────────╮
+  │ description         Shows notes about the work.                          │
+  │ tier                declarative (no program of its own)                  │
+  │ kind                local                                                │
+  │ source              /srv/plugins/demo                                    │
+  │ state               enabled                                              │
+  │ license             MIT                                                  │
+  │ declared access     exec:tool                                            │
+  │ access you allowed  exec:tool                                            │
+  │ contributes         - command go: Go                                     │
+  │                     - setting owner: Owner                               │
+  │                     - setting verbose: Verbose                           │
+  │                     - setting limit: Limit                               │
+  │                     - setting mode: Mode                                 │
+  │                     - setting tags: Tags                                 │
+  │ settings            - owner (string) = someone, from default             │
+  │                     - verbose (bool) = false, from default               │
+  │                     - limit (int) = 10, from default                     │
+  │                     - mode (enum) = fast, from default                   │
+  │                     - tags (list) = x, from default                      │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    esc close · ↑↓ scroll
+
+== 40x12
+  ╭─ demo 1.0.0 - Demo ──────────────╮
+  │ descripti…  Shows notes about    │
+  │             the work.            │
+  │ tier        declarative (no      │
+  │             program of its own)  │
+  │ kind        local                │
+  │ source      /srv/plugins/demo    │
+  │ state       enabled              │
+  │ ↓ 23 more                        │
+  ╰──────────────────────────────────╯
+   esc · ↑↓
+
+== 24x7
+  ╭─ demo 1.0.0 … ───╮
+  │ desc…  Shows     │
+  │        notes     │
+  │        about the │
+  ╰──────────────────╯
+   esc · ↑↓
+

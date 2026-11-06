@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+
+
+
+                ╭─ gft: List stashes ──────────────────────────╮
+                │ plugin gft: running ⠹                        │
+                ╰──────────────────────────────────────────────╯
+                  esc cancel
+                  plugin gft: running ⠹
+
+
+
+
+
+
+
+
+
+== 40x12
+
+
+
+
+  ╭─ gft: List stashes ──────────────╮
+  │ plugin gft: running ⠹            │
+  ╰──────────────────────────────────╯
+   esc
+   plugin gft: running ⠹
+
+
+
+== 24x7
+
+  ╭─ gft: List s… ───╮
+  │ plugin gft:      │
+  │ running ⠹        │
+  ╰──────────────────╯
+   esc
+   plugin gft: runnin…

@@ -1,0 +1,69 @@
+== 60x12
+>_ tote > Reglages                                      14
+   ^ 3 de plus
+   Apres une connexion         exit (quitter en fin nor...
+   Keepalive SSH                                       Oui
+   Apres l'ouverture d'un ...   return (retour a la liste)
+   Theme                                            sombre
+   Page d'accueil                                    cadre
+   Disposition compacte                               auto
+ > Largeur de la page           auto (largeur du terminal)
+   v 4 de plus
+ ui.width: Auto utilise tout le terminal, un nombre plafo...
+ enter - left/right - d - esc - ctrl+k - q - ?
+== 80x24
+>_ tote > Reglages                                                          14
+
+    Langue                                                           auto (en)
+    Editeur                                                            nano -w
+    Racine des depots                                                /srv/work
+    Apres une connexion                          exit (quitter en fin normale)
+    Keepalive SSH                                                          Oui
+    Apres l'ouverture d'un depot                    return (retour a la liste)
+    Theme                                                               sombre
+    Page d'accueil                                                       cadre
+    Disposition compacte                                                  auto
+  > Largeur de la page                          < auto (largeur du terminal) >
+    Souris                                                                 Oui
+    Recherche au demarrage                                                 Oui
+    Couleurs utilisees                                                    none
+    Chercher une mise a jour                                             1.2.3
+
++- Largeur de la page ---------------------------------------------------------+
+| ui.width - valeur par defaut                                                 |
+| Auto utilise tout le terminal, un nombre plafonne la page et la centre su... |
+| valeurs : auto (largeur du terminal), 120 colonnes, 160 colonnes - appliq... |
++------------------------------------------------------------------------------+
+
+  enter modifier - esc retour - ctrl+k palette - q quitter - ? aide
+== 110x30
+>_ tote > Reglages                                                                                        14
+
+    Langue                        Langue de l'interface                                            auto (en)
+    Editeur                       Programme qui ouvre un depot                                       nano -w
+    Racine des depots             Dossier propose pour un nouveau depot                            /srv/work
+    Apres une connexion           Ce qui suit la fin d'une connexion           exit (quitter en fin normale)
+    Keepalive SSH                 Garder en vie les sessions ssh inact...                                Oui
+    Apres l'ouverture d'un depot  Ce qui suit l'ouverture dans l'editeur          return (retour a la liste)
+    Theme                         Palette de couleurs                                                 sombre
+    Page d'accueil                La page d'accueil                                                    cadre
+    Disposition compacte          Quand la disposition sur une ligne s...                               auto
+  > Largeur de la page            Tout le terminal, ou plafonnee              < auto (largeur du terminal) >
+    Souris                        Survol, clic, molette, glisser pour ...                                Oui
+    Recherche au demarrage        Chercher une nouvelle version au dem...                                Oui
+    Couleurs utilisees            TOTE_COLOR (lecture seule)                                            none
+    Chercher une mise a jour      Chercher une nouvelle version mainte...                              1.2.3
+
+
+
+
+
+
+
++- Largeur de la page ---------------------------------------------------------------------------------------+
+| ui.width - valeur par defaut                                                                               |
+| Auto utilise tout le terminal, un nombre plafonne la page et la centre sur un terminal plus large. S'ap... |
+| valeurs : auto (largeur du terminal), 120 colonnes, 160 colonnes - applique tout de suite                  |
++------------------------------------------------------------------------------------------------------------+
+
+  enter modifier - left/right regler - d retablir - esc retour - ctrl+k palette - q quitter - ? aide

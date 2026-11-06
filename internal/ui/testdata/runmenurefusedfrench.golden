@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+                ╭─ Actions : proj ─────────────────────────────╮
+                │ ❯    Afficher la dernière release     ce dé… │
+                │      Lister les assets de la release  ce dé… │
+                │      Afficher les notes de release    ce dé… │
+                │   s  Lister les stashes               gft    │
+                │      Afficher un stash…               gft    │
+                │      Supprimer un stash…              gft    │
+                │      Supprimer tous les stashes…      gft    │
+                ╰──────────────────────────────────────────────╯
+                  ⏎ choisir · esc fermer · ↑↓ naviguer
+                  gft : ce dépôt n’a pas de remote GitHub
+
+
+
+
+
+
+== 40x12
+
+  ╭─ Actions : proj ─────────────────╮
+  │ ❯    Afficher la dernière relea… │
+  │      Lister les assets de la re… │
+  │      Afficher les notes de rele… │
+  │   s  Lister les stashes          │
+  │      Afficher un stash…          │
+  │      Supprimer un stash…         │
+  │      Supprimer tous les stashes… │
+  ╰──────────────────────────────────╯
+   ⏎ · esc · ↑↓
+   gft : ce dépôt n’a pas de remote G…
+== 24x7
+  ╭─ Actions : proj ─╮
+  │ ❯    Afficher l… │
+  │      Lister les… │
+  │      Afficher l… │
+  ╰──────────────────╯
+   ⏎ · esc · ↑↓
+   gft : ce dépôt n’a…

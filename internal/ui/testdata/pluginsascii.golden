@@ -1,0 +1,46 @@
+== 80x24
+>_ tote > Plugins                                                            6
+
+  / filtrer...
+
+    NOM    VERSION  ETAT                    DESCRIPTION
+  > demo   1.0.0    * active                Shows notes about the work.
+    gft    1.0.0    * disponible            Releases GitHub et stashes git ...
+    ghost  1.0.0    * dependance manquante  Needs a program that is not here.
+    jumpy  1.0.0    * en quarantaine        Jumps between places.
+    notes  1.0.0    * desactive             Keeps short notes.
+    pager  1.0.0    * consentement requis   Reads long output page by page.
+    torn   1.0.0    * defectueux
+
+
+
+
+
++- demo -----------------------------------------------------------------------+
+| Shows notes about the work.                                                  |
+| declaratif - local - acces : 1                                               |
+|                                                                              |
++------------------------------------------------------------------------------+
+
+  enter details - esc retour - ctrl+k palette - q quitter - ? aide
+== 40x12
+>_ tote > Plugins                    6
+ / filtrer...
+ > demo   1.0.0    * active
+   gft    1.0.0    * disponible
+   ghost  1.0.0    * dependance man...
+   jumpy  1.0.0    * en quarantaine
+   notes  1.0.0    * desactive
+   pager  1.0.0    * consentement r...
+   torn   1.0.0    * defectueux
+
+
+ enter - space - esc - ctrl+k - q - ?
+== 24x7
+>_ tote > Plugins    6
+ / filtrer...
+ > demo      1.0.0
+   gft       1.0.0
+   ghost     1.0.0
+
+ enter - esc - ctrl+k

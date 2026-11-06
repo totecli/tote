@@ -1,0 +1,104 @@
+== 60x12
+
+
+  ╭─ hostile ────────────────────────────────────────────╮
+  │ target       evil.example.com                        │
+  │ description  a?[31mb?c?d                             │
+  │ command      ssh -- evil.example.com                 │
+  │                                                      │
+  │ ! invalid record: connection desc: invalid value: m… │
+  ╰──────────────────────────────────────────────────────╯
+   esc · ↑↓
+
+
+== 80x24
+
+
+
+
+
+
+
+
+  ╭─ hostile ────────────────────────────────────────────────────────────────╮
+  │ target       evil.example.com                                            │
+  │ description  a?[31mb?c?d                                                 │
+  │ command      ssh -- evil.example.com                                     │
+  │                                                                          │
+  │ ! invalid record: connection desc: invalid value: must not contain cont… │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    esc close · ↑↓ scroll
+
+
+
+
+
+
+
+
+== 100x40
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        ╭─ hostile ────────────────────────────────────────────────────────────────────────╮
+        │ target       evil.example.com                                                    │
+        │ description  a?[31mb?c?d                                                         │
+        │ command      ssh -- evil.example.com                                             │
+        │                                                                                  │
+        │ ! invalid record: connection desc: invalid value: must not contain control char… │
+        ╰──────────────────────────────────────────────────────────────────────────────────╯
+          esc close · ↑↓ scroll
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+== 120x24
+
+
+
+
+
+
+
+
+                  ╭─ hostile ────────────────────────────────────────────────────────────────────────╮
+                  │ target       evil.example.com                                                    │
+                  │ description  a?[31mb?c?d                                                         │
+                  │ command      ssh -- evil.example.com                                             │
+                  │                                                                                  │
+                  │ ! invalid record: connection desc: invalid value: must not contain control char… │
+                  ╰──────────────────────────────────────────────────────────────────────────────────╯
+                    esc close · ↑↓ scroll
+
+
+
+
+
+
+
+

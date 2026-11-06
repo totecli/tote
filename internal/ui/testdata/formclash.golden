@@ -1,0 +1,104 @@
+== 60x12
+  ╭─ New connection ─────────────────────────────────────╮
+  │ ❯ name        prod                                   │
+  │               short handle: letters, digits, _ . -   │
+  │   target      x.example.com                          │
+  │   via         ssh                                    │
+  │   user                                               │
+  │   aliases                                            │
+  │   ↓ 2 more                                           │
+  │ ! connection "prod" already exists                   │
+  ╰──────────────────────────────────────────────────────╯
+   tab · ctrl+s · esc
+
+== 80x24
+
+
+
+
+
+
+    ╭─ New connection ─────────────────────────────────────────────────────╮
+    │ ❯ name        prod                                                   │
+    │               short handle: letters, digits, _ . -                   │
+    │   target      x.example.com                                          │
+    │   via         ssh                                                    │
+    │   user                                                               │
+    │   aliases                                                            │
+    │   ip                                                                 │
+    │   description                                                        │
+    │ ! connection "prod" already exists                                   │
+    ╰──────────────────────────────────────────────────────────────────────╯
+      tab next · ctrl+s save · esc cancel
+
+
+
+
+
+
+== 100x40
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              ╭─ New connection ─────────────────────────────────────────────────────╮
+              │ ❯ name        prod                                                   │
+              │               short handle: letters, digits, _ . -                   │
+              │   target      x.example.com                                          │
+              │   via         ssh                                                    │
+              │   user                                                               │
+              │   aliases                                                            │
+              │   ip                                                                 │
+              │   description                                                        │
+              │ ! connection "prod" already exists                                   │
+              ╰──────────────────────────────────────────────────────────────────────╯
+                tab next · ctrl+s save · esc cancel
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+== 120x24
+
+
+
+
+
+
+                        ╭─ New connection ─────────────────────────────────────────────────────╮
+                        │ ❯ name        prod                                                   │
+                        │               short handle: letters, digits, _ . -                   │
+                        │   target      x.example.com                                          │
+                        │   via         ssh                                                    │
+                        │   user                                                               │
+                        │   aliases                                                            │
+                        │   ip                                                                 │
+                        │   description                                                        │
+                        │ ! connection "prod" already exists                                   │
+                        ╰──────────────────────────────────────────────────────────────────────╯
+                          tab next · ctrl+s save · esc cancel
+
+
+
+
+
+

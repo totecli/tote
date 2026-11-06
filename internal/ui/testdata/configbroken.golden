@@ -1,0 +1,104 @@
+== 60x12
+❯_ tote › Settings                                      14
+ ! config.toml has a syntax error and is read-only (line 2,…
+ ❯ Language                                      auto (en)
+   Editor                                              vim
+   Repositories root                                  none
+   After a connection              menu (back to the list)
+   SSH keepalive                                       Yes
+   After opening a repository    return (back to the list)
+   Theme                                              auto
+   ↓ 7 more
+ config.toml has a syntax error and is read-only (line 2, c…
+ esc · ctrl+k · q · ↑↓ · v · u · ?
+== 80x24
+❯_ tote › Settings                                                          14
+
+  ! config.toml has a syntax error and is read-only (line 2, column 11): string…
+  ❯ Language                                                         auto (en)
+    Editor                                                                 vim
+    Repositories root                                                     none
+    After a connection                                 menu (back to the list)
+    SSH keepalive                                                          Yes
+    After opening a repository                       return (back to the list)
+    Theme                                                                 auto
+    Welcome page                                                           box
+    Compact layout                                                        auto
+    Page width                                           auto (terminal width)
+    Mouse                                                                  Yes
+    Update check at start                                                  Yes
+    Colors in use                                                         none
+    Check for update                                                     1.2.3
+╭─ Language ───────────────────────────────────────────────────────────────────╮
+│ lang · taken from LANG                                                       │
+│ Language of the interface. Auto follows TOTE_LANG, then the locale.          │
+│ values: auto, English, Français · applied now                                │
+╰──────────────────────────────────────────────────────────────────────────────╯
+  config.toml has a syntax error and is read-only (line 2, column 11): strings …
+  esc back · ctrl+k palette · q quit · ↑↓ navigate · v details · ? help
+== 100x40
+❯_ tote › Settings                                                                              14
+
+  ! config.toml has a syntax error and is read-only (line 2, column 11): strings cannot contain new…
+  ❯ Language                    Language of the interface                                auto (en)
+    Editor                      Program that opens a repository                                vim
+    Repositories root           Folder offered for a new repository                           none
+    After a connection          What happens when a connection ends        menu (back to the list)
+    SSH keepalive               Keep idle ssh sessions alive                                   Yes
+    After opening a repository  What happens after the editor opens      return (back to the list)
+    Theme                       Color scheme                                                  auto
+    Welcome page                The welcome page                                               box
+    Compact layout              When the one-line layout is used                              auto
+    Page width                  The whole terminal, or capped                auto (terminal width)
+    Mouse                       Hover, click, wheel, drag to copy                              Yes
+    Update check at start       Look for a new release at start                                Yes
+    Colors in use               TOTE_COLOR (read-only)                                        none
+    Check for update            Look for a new release now                                   1.2.3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+╭─ Language ───────────────────────────────────────────────────────────────────────────────────────╮
+│ lang · taken from LANG                                                                           │
+│ Language of the interface. Auto follows TOTE_LANG, then the locale.                              │
+│ values: auto, English, Français · applied now                                                    │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+  config.toml has a syntax error and is read-only (line 2, column 11): strings cannot contain newli…
+  esc back · ctrl+k palette · q quit · ↑↓ navigate · v details · u update notice · ? help
+== 120x24
+❯_ tote › Settings                                                                                                  14
+
+  ! config.toml has a syntax error and is read-only (line 2, column 11): strings cannot contain newlines
+  ❯ Language                    Language of the interface                                                    auto (en)
+    Editor                      Program that opens a repository                                                    vim
+    Repositories root           Folder offered for a new repository                                               none
+    After a connection          What happens when a connection ends                            menu (back to the list)
+    SSH keepalive               Keep idle ssh sessions alive                                                       Yes
+    After opening a repository  What happens after the editor opens                          return (back to the list)
+    Theme                       Color scheme                                                                      auto
+    Welcome page                The welcome page                                                                   box
+    Compact layout              When the one-line layout is used                                                  auto
+    Page width                  The whole terminal, or capped                                    auto (terminal width)
+    Mouse                       Hover, click, wheel, drag to copy                                                  Yes
+    Update check at start       Look for a new release at start                                                    Yes
+    Colors in use               TOTE_COLOR (read-only)                                                            none
+    Check for update            Look for a new release now                                                       1.2.3
+╭─ Language ───────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ lang · taken from LANG                                                                                               │
+│ Language of the interface. Auto follows TOTE_LANG, then the locale.                                                  │
+│ values: auto, English, Français · applied now                                                                        │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+  config.toml has a syntax error and is read-only (line 2, column 11): strings cannot contain newlines
+  esc back · ctrl+k palette · q quit · ↑↓ navigate · v details · u update notice · U check for update · ? help

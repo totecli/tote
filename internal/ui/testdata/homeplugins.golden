@@ -1,0 +1,46 @@
+== 80x24
+╭─ tote 1.2.3 ─────────────────────────────────────────────────────────────────╮
+│                                                                              │
+│    ╭──╮    Welcome, tester                                                   │
+│   ╭┴──┴╮   Your terminal tools, in one bag.                                  │
+│   ╰ ❯_ ╯   6 connections · 2 repos · 2 aliases · 2 functions                 │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+    Connections                                                              6
+    Repos                                                                    2
+    Aliases                                                                  2
+    Functions                                                                2
+  ❯ Plugins                                                                ! 6
+    Settings                                                                en
+
+
+
+
+
+
+
+
+
+
+  ↑↓ navigate · ⏎ open · ctrl+k palette · q quit · , settings · ? help
+== 40x12
+ ❯_ tote 1.2.3 · 6 conn · 2 repos · 2 a…
+
+   Connections                       6
+   Repos                             2
+   Aliases                           2
+   Functions                         2
+ ❯ Plugins                         ! 6
+   Settings                         en
+
+
+
+ ↑↓ · ⏎ · ctrl+k · q · , · 1-5 · ?
+== 24x7
+ ❯_ tote 1.2.3 · 6 conn…
+   ↑ 3 more
+   Functions         2
+ ❯ Plugins         ! 6
+   Settings         en
+
+ ↑↓ · ⏎ · ctrl+k · q · ?

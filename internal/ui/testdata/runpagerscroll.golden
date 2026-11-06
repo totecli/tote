@@ -1,0 +1,46 @@
+== 80x24
+  ╭─ gft: List stashes ──────────────────────────────────────────────────────╮
+  │ ↑ 21 more                                                                │
+  │ stash@{21}: WIP on main: work work                                       │
+  │ stash@{22}: WIP on main: work work work                                  │
+  │ stash@{23}: WIP on main: work work work work                             │
+  │ stash@{24}: WIP on main: work work work work work                        │
+  │ stash@{25}: WIP on main: work                                            │
+  │ stash@{26}: WIP on main: work work                                       │
+  │ stash@{27}: WIP on main: work work work                                  │
+  │ stash@{28}: WIP on main: work work work work                             │
+  │ stash@{29}: WIP on main: work work work work work                        │
+  │ stash@{30}: WIP on main: work                                            │
+  │ stash@{31}: WIP on main: work work                                       │
+  │ stash@{32}: WIP on main: work work work                                  │
+  │ stash@{33}: WIP on main: work work work work                             │
+  │ stash@{34}: WIP on main: work work work work work                        │
+  │ stash@{35}: WIP on main: work                                            │
+  │ stash@{36}: WIP on main: work work                                       │
+  │ stash@{37}: WIP on main: work work work                                  │
+  │ stash@{38}: WIP on main: work work work work                             │
+  │ stash@{39}: WIP on main: work work work work work                        │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    esc close · ↑↓ scroll
+    plugin gft: done
+== 40x12
+  ╭─ gft: List stashes ──────────────╮
+  │ ↑ 65 more                        │
+  │ rk                               │
+  │ stash@{37}: WIP on main: work wo │
+  │ rk work                          │
+  │ stash@{38}: WIP on main: work wo │
+  │ rk work work                     │
+  │ stash@{39}: WIP on main: work wo │
+  │ rk work work work                │
+  ╰──────────────────────────────────╯
+   esc · ↑↓
+   plugin gft: done
+== 24x7
+  ╭─ gft: List s… ───╮
+  │ on main: work wo │
+  │ rk work work wor │
+  │ k                │
+  ╰──────────────────╯
+   esc · ↑↓
+   plugin gft: done

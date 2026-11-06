@@ -1,0 +1,104 @@
+== 60x12
+
+  ╭─ New function ───────────────────────────────────────╮
+  │ ❯ name                                               │
+  │               the word you type in the shell         │
+  │   kind         source   exec                         │
+  │   script                                             │
+  │   managed     [ ] No                                 │
+  │   description                                        │
+  ╰──────────────────────────────────────────────────────╯
+   tab · ctrl+s · esc
+
+
+== 80x24
+
+
+
+
+
+
+
+    ╭─ New function ───────────────────────────────────────────────────────╮
+    │ ❯ name                                                               │
+    │               the word you type in the shell                         │
+    │   kind         source   exec                                         │
+    │   script                                                             │
+    │   managed     [ ] No                                                 │
+    │   description                                                        │
+    ╰──────────────────────────────────────────────────────────────────────╯
+      tab next · ctrl+s save · esc cancel
+
+
+
+
+
+
+
+
+== 100x40
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              ╭─ New function ───────────────────────────────────────────────────────╮
+              │ ❯ name                                                               │
+              │               the word you type in the shell                         │
+              │   kind         source   exec                                         │
+              │   script                                                             │
+              │   managed     [ ] No                                                 │
+              │   description                                                        │
+              ╰──────────────────────────────────────────────────────────────────────╯
+                tab next · ctrl+s save · esc cancel
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+== 120x24
+
+
+
+
+
+
+
+                        ╭─ New function ───────────────────────────────────────────────────────╮
+                        │ ❯ name                                                               │
+                        │               the word you type in the shell                         │
+                        │   kind         source   exec                                         │
+                        │   script                                                             │
+                        │   managed     [ ] No                                                 │
+                        │   description                                                        │
+                        ╰──────────────────────────────────────────────────────────────────────╯
+                          tab next · ctrl+s save · esc cancel
+
+
+
+
+
+
+
+

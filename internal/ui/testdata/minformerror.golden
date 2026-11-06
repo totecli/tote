@@ -1,0 +1,28 @@
+== 24x7
+  ╭─ New connection ─╮
+  │ ❯ name           │
+  │          ! must  │
+  │          not be… │
+  ╰──────────────────╯
+   tab · ctrl+s · esc
+
+== 26x8
+  ╭─ New connection ───╮
+  │ ❯ name             │
+  │          ! must    │
+  │          not be …  │
+  │ ! Some fields are… │
+  ╰────────────────────╯
+   tab · ctrl+s · esc
+
+== 36x10
+  ╭─ New connection ─────────────╮
+  │ ❯ name                       │
+  │              ! must not be   │
+  │              empty           │
+  │   target                     │
+  │   ↓ 5 more                   │
+  │ ! Some fields are not valid. │
+  ╰──────────────────────────────╯
+   tab · ctrl+s · esc
+

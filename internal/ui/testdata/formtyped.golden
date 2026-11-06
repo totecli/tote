@@ -1,0 +1,104 @@
+== 60x12
+  ╭─ New connection ─────────────────────────────────────╮
+  │   name        db1                                    │
+  │   target      db1.example.com                        │
+  │   via         ssh                                    │
+  │ ❯ user        ops                                    │
+  │               empty lets ssh_config decide           │
+  │   aliases                                            │
+  │   ip                                                 │
+  │   description                                        │
+  ╰──────────────────────────────────────────────────────╯
+   tab · ctrl+s · esc
+
+== 80x24
+
+
+
+
+
+
+    ╭─ New connection ─────────────────────────────────────────────────────╮
+    │   name        db1                                                    │
+    │   target      db1.example.com                                        │
+    │   via         ssh                                                    │
+    │ ❯ user        ops                                                    │
+    │               empty lets ssh_config decide                           │
+    │   aliases                                                            │
+    │   ip                                                                 │
+    │   description                                                        │
+    ╰──────────────────────────────────────────────────────────────────────╯
+      tab next · ctrl+s save · esc cancel
+
+
+
+
+
+
+
+== 100x40
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              ╭─ New connection ─────────────────────────────────────────────────────╮
+              │   name        db1                                                    │
+              │   target      db1.example.com                                        │
+              │   via         ssh                                                    │
+              │ ❯ user        ops                                                    │
+              │               empty lets ssh_config decide                           │
+              │   aliases                                                            │
+              │   ip                                                                 │
+              │   description                                                        │
+              ╰──────────────────────────────────────────────────────────────────────╯
+                tab next · ctrl+s save · esc cancel
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+== 120x24
+
+
+
+
+
+
+                        ╭─ New connection ─────────────────────────────────────────────────────╮
+                        │   name        db1                                                    │
+                        │   target      db1.example.com                                        │
+                        │   via         ssh                                                    │
+                        │ ❯ user        ops                                                    │
+                        │               empty lets ssh_config decide                           │
+                        │   aliases                                                            │
+                        │   ip                                                                 │
+                        │   description                                                        │
+                        ╰──────────────────────────────────────────────────────────────────────╯
+                          tab next · ctrl+s save · esc cancel
+
+
+
+
+
+
+

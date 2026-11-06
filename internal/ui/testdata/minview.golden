@@ -1,0 +1,28 @@
+== 24x7
+  ╭─ prod ───────────╮
+  │ targ…  prod.exam │
+  │        ple.com   │
+  │ user   deploy    │
+  ╰──────────────────╯
+   esc · ↑↓
+
+== 26x8
+  ╭─ prod ─────────────╮
+  │ target  prod.examp │
+  │         le.com     │
+  │ user    deploy     │
+  │ ↓ 7 more           │
+  ╰────────────────────╯
+   esc · ↑↓
+
+== 36x10
+  ╭─ prod ───────────────────────╮
+  │ target     prod.example.com  │
+  │ user       deploy            │
+  │ aliases    p                 │
+  │ descript…  Production web    │
+  │ command    ssh -l deploy --  │
+  │            prod.example.com  │
+  ╰──────────────────────────────╯
+   esc · ↑↓
+

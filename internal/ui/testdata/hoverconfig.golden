@@ -1,0 +1,43 @@
+== 80x24 pointer 4,12
+❯_ tote › Settings                                                          14
+
+  ❯ Language                                                     ‹ auto (en) ›
+    Editor                                                                 vim
+    Repositories root                                                     none
+    After a connection                                 menu (back to the list)
+    SSH keepalive                                                          Yes
+    After opening a repository                       return (back to the list)
+    Theme                                                                 dark
+    Welcome page                                                           box
+    Compact layout                                                        auto
+    Page width                                           auto (terminal width)
+    Mouse                                                                  Yes
+    Update check at start                                                  Yes
+    Colors in use                                                    truecolor
+    Check for update                                                     1.2.3
+
+╭─ Language ───────────────────────────────────────────────────────────────────╮
+│ lang · taken from LANG                                                       │
+│ Language of the interface. Auto follows TOTE_LANG, then the locale.          │
+│ values: auto, English, Français · applied now                                │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ change · ←→ adjust · d reset · esc back · ctrl+k palette · q quit · ? help
+-- truecolor
+hovered 12: \e[48;2;34;31;41m  \e[38;2;236;232;240m  \e[m\e[48;2;34;31;41m\e[1;38;2;236;232;240mMouse                                      \e[m\e[48;2;34;31;41m  \e[38;2;236;232;240m                          Yes\e[m
+selected 2: \e[1;38;2;244;217;226;48;2;58;34;48m  ❯ Language                                                     ‹ auto (en) ›\e[m
+-- truecolor light
+hovered 12: \e[48;2;242;237;231m  \e[38;2;21;19;26m  \e[m\e[48;2;242;237;231m\e[1;38;2;21;19;26mMouse                                      \e[m\e[48;2;242;237;231m  \e[38;2;21;19;26m                          Yes\e[m
+selected 2: \e[1;38;2;90;15;51;48;2;246;213;227m  ❯ Language                                                     ‹ auto (en) ›\e[m
+-- 256
+hovered 12: \e[48;5;235m  \e[38;5;255m  \e[m\e[48;5;235m\e[1;38;5;255mMouse                                      \e[m\e[48;5;235m  \e[38;5;255m                          Yes\e[m
+selected 2: \e[1;38;5;255;48;5;89m  ❯ Language                                                     ‹ auto (en) ›\e[m
+-- 16
+hovered 12:     \e[m\e[4m\e[1mMouse\e[m\e[1m                                      \e[m                            \e[4mYes\e[m
+selected 2: \e[1;7m  ❯ Language                                                     ‹ auto (en) ›\e[m
+-- none
+hovered 12:     \e[m\e[4m\e[1mMouse\e[m\e[1m                                      \e[m                            \e[4mYes\e[m
+selected 2: \e[1;7m  ❯ Language                                                     ‹ auto (en) ›\e[m
+-- ascii
+hovered 12:     \e[m\e[4m\e[1mMouse\e[m\e[1m                                      \e[m                            \e[4mYes\e[m
+selected 2: \e[1;7m  > Language                                                     < auto (en) >\e[m

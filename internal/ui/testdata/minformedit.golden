@@ -1,0 +1,28 @@
+== 24x7
+  ╭─ Edit reposito… ─╮
+  │ ❯ path   …/proj  │
+  │          absolut │
+  │          e, or … │
+  ╰──────────────────╯
+   tab · ctrl+s · esc
+
+== 26x8
+  ╭─ Edit repository ──╮
+  │   ↑ 1 more         │
+  │ ❯ path   …rk/proj  │
+  │          absolute, │
+  │   ↓ 1 more         │
+  ╰────────────────────╯
+   tab · ctrl+s · esc
+
+== 36x10
+
+  ╭─ Edit repository ────────────╮
+  │   name       proj            │
+  │ ❯ path       /srv/work/proj  │
+  │              absolute, or    │
+  │              starting with … │
+  │   descripti… This tool       │
+  ╰──────────────────────────────╯
+   tab · ctrl+s · esc
+

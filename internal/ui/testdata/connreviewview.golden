@@ -1,0 +1,104 @@
+== 60x12
+
+
+  ╭─ legacy ─────────────────────────────────────────────╮
+  │ target   old.example.com                             │
+  │ command  connection needs review: "legacy"           │
+  │                                                      │
+  │ ! needs review, edit it before connecting            │
+  ╰──────────────────────────────────────────────────────╯
+   esc · ↑↓
+
+
+
+== 80x24
+
+
+
+
+
+
+
+
+  ╭─ legacy ─────────────────────────────────────────────────────────────────╮
+  │ target   old.example.com                                                 │
+  │ command  connection needs review: "legacy"                               │
+  │                                                                          │
+  │ ! needs review, edit it before connecting                                │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    esc close · ↑↓ scroll
+
+
+
+
+
+
+
+
+
+== 100x40
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        ╭─ legacy ─────────────────────────────────────────────────────────────────────────╮
+        │ target   old.example.com                                                         │
+        │ command  connection needs review: "legacy"                                       │
+        │                                                                                  │
+        │ ! needs review, edit it before connecting                                        │
+        ╰──────────────────────────────────────────────────────────────────────────────────╯
+          esc close · ↑↓ scroll
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+== 120x24
+
+
+
+
+
+
+
+
+                  ╭─ legacy ─────────────────────────────────────────────────────────────────────────╮
+                  │ target   old.example.com                                                         │
+                  │ command  connection needs review: "legacy"                                       │
+                  │                                                                                  │
+                  │ ! needs review, edit it before connecting                                        │
+                  ╰──────────────────────────────────────────────────────────────────────────────────╯
+                    esc close · ↑↓ scroll
+
+
+
+
+
+
+
+
+

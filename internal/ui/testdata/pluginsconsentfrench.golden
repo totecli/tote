@@ -1,0 +1,100 @@
+== 80x24
+
+  ╭─ Autoriser le plugin pager 1.0.0 à s’exécuter ? ─────────────────────────╮
+  │ Source : /srv/plugins/pager                                              │
+  │ Origine : fichiers locaux, non vérifiés                                  │
+  │ Somme de contrôle : sha256 dd8243dacf42, calculée ici, rien à comparer   │
+  │ Aucun code propre : tote ne lance que les programmes listés ci-dessous.  │
+  │                                                                          │
+  │ Description (écrite par le plugin, non vérifiée par tote)                │
+  │   | Reads long output page by page.                                      │
+  │                                                                          │
+  │ Commandes qu’il lancera :                                                │
+  │   $ commande go : tool '{x}'                                             │
+  │                                                                          │
+  │ Ce plugin pourra :                                                       │
+  │   - lancer le programme tool [imposé]                                    │
+  │     imposé : tote refuse lui-même tout le reste                          │
+  │                                                                          │
+  │ ! tote ne lance que les programmes listés, mais ces programmes peuvent   │
+  │   faire tout ce que vous pouvez faire avec eux.                          │
+  │                                                                          │
+  │                       [ Annuler ]   [ Autoriser ]                        │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    ⏎ valider · h/l choisir · esc annuler · ↑↓ défiler
+
+== 40x12
+  ╭─ Autoriser le plugin pager 1.0… ─╮
+  │ pager                            │
+  │ Source : /srv/plugins/pager      │
+  │ Origine : fichiers locaux, non … │
+  │ Somme de contrôle : sha256 …     │
+  │ Aucun code propre : tote ne      │
+  │ ↓ 22 de plus                     │
+  │                                  │
+  │   [ Annuler ]   [ Autoriser ]    │
+  ╰──────────────────────────────────╯
+   ⏎ · h/l · esc · ↑↓
+
+== 24x7
+  ╭─ Autoriser le … ─╮
+  │ pager            │
+  │ Source : /srv/p… │
+  │ [Annu…] [Autor…] │
+  ╰──────────────────╯
+   ⏎ · h/l · esc · ↑↓
+
+== 60x12
+  ╭─ Autoriser le plugin pager 1.0.0 à s’exécuter ? ─────╮
+  │ Source : /srv/plugins/pager                          │
+  │ Origine : fichiers locaux, non vérifiés              │
+  │ Somme de contrôle : sha256 dd8243dacf42, calculée …  │
+  │ Aucun code propre : tote ne lance que les programmes │
+  │ listés ci-dessous.                                   │
+  │ ↓ 15 de plus                                         │
+  │                                                      │
+  │             [ Annuler ]   [ Autoriser ]              │
+  ╰──────────────────────────────────────────────────────╯
+   ⏎ · h/l · esc · ↑↓
+
+== 120x40
+
+
+
+
+
+
+
+
+
+                  ╭─ Autoriser le plugin pager 1.0.0 à s’exécuter ? ─────────────────────────────────╮
+                  │ Source : /srv/plugins/pager                                                      │
+                  │ Origine : fichiers locaux, non vérifiés                                          │
+                  │ Somme de contrôle : sha256 dd8243dacf42, calculée ici, rien à comparer           │
+                  │ Aucun code propre : tote ne lance que les programmes listés ci-dessous.          │
+                  │                                                                                  │
+                  │ Description (écrite par le plugin, non vérifiée par tote)                        │
+                  │   | Reads long output page by page.                                              │
+                  │                                                                                  │
+                  │ Commandes qu’il lancera :                                                        │
+                  │   $ commande go : tool '{x}'                                                     │
+                  │                                                                                  │
+                  │ Ce plugin pourra :                                                               │
+                  │   - lancer le programme tool [imposé]                                            │
+                  │     imposé : tote refuse lui-même tout le reste                                  │
+                  │                                                                                  │
+                  │ ! tote ne lance que les programmes listés, mais ces programmes peuvent faire     │
+                  │   tout ce que vous pouvez faire avec eux.                                        │
+                  │                                                                                  │
+                  │                           [ Annuler ]   [ Autoriser ]                            │
+                  ╰──────────────────────────────────────────────────────────────────────────────────╯
+                    ⏎ valider · h/l choisir · esc annuler · ↑↓ défiler
+
+
+
+
+
+
+
+
+

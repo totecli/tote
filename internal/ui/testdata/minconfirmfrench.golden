@@ -1,0 +1,28 @@
+== 24x7
+  ╭─ Supprimer ──────╮
+  │ "prod" ?         │
+  │ prod.example.com │
+  │ [ Non ] [ Oui ]  │
+  ╰──────────────────╯
+   y · n · h/l · ⏎
+
+== 26x8
+  ╭─ Supprimer ────────╮
+  │ Supprimer la       │
+  │ connexion "prod" ? │
+  │ prod.example.com   │
+  │ [ Non ]   [ Oui ]  │
+  ╰────────────────────╯
+   y · n · h/l · ⏎
+
+== 36x10
+
+  ╭─ Supprimer ──────────────────╮
+  │ Supprimer la connexion       │
+  │ "prod" ?                     │
+  │ prod.example.com             │
+  │                              │
+  │      [ Non ]   [ Oui ]       │
+  ╰──────────────────────────────╯
+   y · n · h/l · ⏎
+

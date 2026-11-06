@@ -1,0 +1,104 @@
+== 60x12
+
+
+  ╭─ prod ───────────────────────────────────────────────╮
+  │ cible        prod.example.com                        │
+  │ utilisateur  deploy                                  │
+  │ alias        p                                       │
+  │ description  Production web                          │
+  │ commande     ssh -l deploy -- prod.example.com       │
+  ╰──────────────────────────────────────────────────────╯
+   esc · ↑↓
+
+
+== 80x24
+
+
+
+
+
+
+
+
+  ╭─ prod ───────────────────────────────────────────────────────────────────╮
+  │ cible        prod.example.com                                            │
+  │ utilisateur  deploy                                                      │
+  │ alias        p                                                           │
+  │ description  Production web                                              │
+  │ commande     ssh -l deploy -- prod.example.com                           │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    esc fermer · ↑↓ défiler
+
+
+
+
+
+
+
+
+== 100x40
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        ╭─ prod ───────────────────────────────────────────────────────────────────────────╮
+        │ cible        prod.example.com                                                    │
+        │ utilisateur  deploy                                                              │
+        │ alias        p                                                                   │
+        │ description  Production web                                                      │
+        │ commande     ssh -l deploy -- prod.example.com                                   │
+        ╰──────────────────────────────────────────────────────────────────────────────────╯
+          esc fermer · ↑↓ défiler
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+== 120x24
+
+
+
+
+
+
+
+
+                  ╭─ prod ───────────────────────────────────────────────────────────────────────────╮
+                  │ cible        prod.example.com                                                    │
+                  │ utilisateur  deploy                                                              │
+                  │ alias        p                                                                   │
+                  │ description  Production web                                                      │
+                  │ commande     ssh -l deploy -- prod.example.com                                   │
+                  ╰──────────────────────────────────────────────────────────────────────────────────╯
+                    esc fermer · ↑↓ défiler
+
+
+
+
+
+
+
+

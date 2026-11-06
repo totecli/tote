@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+  ╭─ ghost 1.0.0 - Ghost ────────────────────────────────────────────────────╮
+  │ description         Needs a program that is not here.                    │
+  │ tier                declarative (no program of its own)                  │
+  │ kind                local                                                │
+  │ source              /srv/plugins/ghost                                   │
+  │ state               missing dependency                                   │
+  │                     - missing dependency: ghost-tool                     │
+  │                     fix: install the missing program                     │
+  │ license             MIT                                                  │
+  │ declared access     exec:tool                                            │
+  │ access you allowed  exec:tool                                            │
+  │ requires            - ghost-tool: not found                              │
+  │                     suggested by the plugin, not checked by tote:        │
+  │                     Install ghost-tool with your package manager.        │
+  │ contributes         - command go: Go                                     │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    esc close · ↑↓ scroll
+
+
+
+
+== 40x12
+  ╭─ ghost 1.0.0 - Ghost ────────────╮
+  │ descripti…  Needs a program that │
+  │             is not here.         │
+  │ tier        declarative (no      │
+  │             program of its own)  │
+  │ kind        local                │
+  │ source      /srv/plugins/ghost   │
+  │ state       missing dependency   │
+  │ ↓ 15 more                        │
+  ╰──────────────────────────────────╯
+   esc · ↑↓
+
+== 24x7
+  ╭─ ghost 1.0.0… ───╮
+  │ desc…  Needs a   │
+  │        program   │
+  │        that is   │
+  ╰──────────────────╯
+   esc · ↑↓
+

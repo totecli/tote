@@ -1,0 +1,104 @@
+== 60x12
+  ╭─ Aide ───────────────────────────────────────────────╮
+  │ Prise en main                                        │
+  │ · Appuyez sur [ctrl+k] pour tout chercher, [,] pour  │
+  │   ouvrir les réglages et [?] pour cette aide.        │
+  │ · Ouvrez une liste avec [1-4], déplacez-vous avec    │
+  │   [↑↓], [⏎] utilise un enregistrement et [n] en      │
+  │   ajoute un.                                         │
+  │ · [esc] revient en arrière et [q] quitte depuis      │
+  │ ↓ 126 de plus                                        │
+  ╰──────────────────────────────────────────────────────╯
+   esc · ↑↓
+
+== 80x24
+  ╭─ Aide ───────────────────────────────────────────────────────────────────╮
+  │ Prise en main                                                            │
+  │ · Appuyez sur [ctrl+k] pour tout chercher, [,] pour ouvrir les réglages  │
+  │   et [?] pour cette aide.                                                │
+  │ · Ouvrez une liste avec [1-4], déplacez-vous avec [↑↓], [⏎] utilise un   │
+  │   enregistrement et [n] en ajoute un.                                    │
+  │ · [esc] revient en arrière et [q] quitte depuis l’accueil et les listes, │
+  │   les changements sont enregistrés tout de suite.                        │
+  │                                                                          │
+  │ Connexions                                                               │
+  │   ⏎  connecter                                                           │
+  │   u  utilisateur suivant                                                 │
+  │   U  choisir l’utilisateur                                               │
+  │   c  mettre à l’invite                                                   │
+  │                                                                          │
+  │ Listes                                                                   │
+  │   /       filtrer                                                        │
+  │   n       nouveau                                                        │
+  │   e       modifier                                                       │
+  │   d       supprimer                                                      │
+  │ ↓ 106 de plus                                                            │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    esc fermer · ↑↓ défiler
+
+== 100x40
+            ╭─ Aide ───────────────────────────────────────────────────────────────────╮
+            │ Prise en main                                                            │
+            │ · Appuyez sur [ctrl+k] pour tout chercher, [,] pour ouvrir les réglages  │
+            │   et [?] pour cette aide.                                                │
+            │ · Ouvrez une liste avec [1-4], déplacez-vous avec [↑↓], [⏎] utilise un   │
+            │   enregistrement et [n] en ajoute un.                                    │
+            │ · [esc] revient en arrière et [q] quitte depuis l’accueil et les listes, │
+            │   les changements sont enregistrés tout de suite.                        │
+            │                                                                          │
+            │ Connexions                                                               │
+            │   ⏎  connecter                                                           │
+            │   u  utilisateur suivant                                                 │
+            │   U  choisir l’utilisateur                                               │
+            │   c  mettre à l’invite                                                   │
+            │                                                                          │
+            │ Listes                                                                   │
+            │   /       filtrer                                                        │
+            │   n       nouveau                                                        │
+            │   e       modifier                                                       │
+            │   d       supprimer                                                      │
+            │   C       copier                                                         │
+            │   v       détails                                                        │
+            │   esc     retour                                                         │
+            │   ↑↓      naviguer                                                       │
+            │   h/l     changer                                                        │
+            │   ctrl+r  recharger                                                      │
+            │                                                                          │
+            │ Partout                                                                  │
+            │   ctrl+k  palette                                                        │
+            │   ?       aide                                                           │
+            │   ,       réglages                                                       │
+            │   q       quitter                                                        │
+            │   ctrl+c  retour, deux fois sur l’accueil pour quitter                   │
+            │   ctrl+d  quitter                                                        │
+            │   ctrl+z  suspendre                                                      │
+            │                                                                          │
+            │ ↓ 90 de plus                                                             │
+            ╰──────────────────────────────────────────────────────────────────────────╯
+              esc fermer · ↑↓ défiler
+
+== 120x24
+                      ╭─ Aide ───────────────────────────────────────────────────────────────────╮
+                      │ Prise en main                                                            │
+                      │ · Appuyez sur [ctrl+k] pour tout chercher, [,] pour ouvrir les réglages  │
+                      │   et [?] pour cette aide.                                                │
+                      │ · Ouvrez une liste avec [1-4], déplacez-vous avec [↑↓], [⏎] utilise un   │
+                      │   enregistrement et [n] en ajoute un.                                    │
+                      │ · [esc] revient en arrière et [q] quitte depuis l’accueil et les listes, │
+                      │   les changements sont enregistrés tout de suite.                        │
+                      │                                                                          │
+                      │ Connexions                                                               │
+                      │   ⏎  connecter                                                           │
+                      │   u  utilisateur suivant                                                 │
+                      │   U  choisir l’utilisateur                                               │
+                      │   c  mettre à l’invite                                                   │
+                      │                                                                          │
+                      │ Listes                                                                   │
+                      │   /       filtrer                                                        │
+                      │   n       nouveau                                                        │
+                      │   e       modifier                                                       │
+                      │   d       supprimer                                                      │
+                      │ ↓ 106 de plus                                                            │
+                      ╰──────────────────────────────────────────────────────────────────────────╯
+                        esc fermer · ↑↓ défiler
+

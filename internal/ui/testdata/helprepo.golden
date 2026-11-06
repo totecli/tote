@@ -1,0 +1,104 @@
+== 60x12
+  ╭─ Help ───────────────────────────────────────────────╮
+  │ Quick start                                          │
+  │ · Press [ctrl+k] to search everything, [,] to open   │
+  │   the settings and [?] for this help.                │
+  │ · Open a list with [1-4], move with [↑↓], press [⏎]  │
+  │   to use a record and [n] to add one.                │
+  │ · [esc] goes back and [q] quits from the welcome     │
+  │   page and the lists, changes are saved at once.     │
+  │ ↓ 121 more                                           │
+  ╰──────────────────────────────────────────────────────╯
+   esc · ↑↓
+
+== 80x24
+  ╭─ Help ───────────────────────────────────────────────────────────────────╮
+  │ Quick start                                                              │
+  │ · Press [ctrl+k] to search everything, [,] to open the settings and [?]  │
+  │   for this help.                                                         │
+  │ · Open a list with [1-4], move with [↑↓], press [⏎] to use a record and  │
+  │   [n] to add one.                                                        │
+  │ · [esc] goes back and [q] quits from the welcome page and the lists,     │
+  │   changes are saved at once.                                             │
+  │                                                                          │
+  │ Repos                                                                    │
+  │   ⏎  go                                                                  │
+  │   o  editor                                                              │
+  │                                                                          │
+  │ Lists                                                                    │
+  │   /       filter                                                         │
+  │   n       new                                                            │
+  │   e       edit                                                           │
+  │   d       delete                                                         │
+  │   C       copy                                                           │
+  │   v       details                                                        │
+  │ ↓ 103 more                                                               │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    esc close · ↑↓ scroll
+
+== 100x40
+            ╭─ Help ───────────────────────────────────────────────────────────────────╮
+            │ Quick start                                                              │
+            │ · Press [ctrl+k] to search everything, [,] to open the settings and [?]  │
+            │   for this help.                                                         │
+            │ · Open a list with [1-4], move with [↑↓], press [⏎] to use a record and  │
+            │   [n] to add one.                                                        │
+            │ · [esc] goes back and [q] quits from the welcome page and the lists,     │
+            │   changes are saved at once.                                             │
+            │                                                                          │
+            │ Repos                                                                    │
+            │   ⏎  go                                                                  │
+            │   o  editor                                                              │
+            │                                                                          │
+            │ Lists                                                                    │
+            │   /       filter                                                         │
+            │   n       new                                                            │
+            │   e       edit                                                           │
+            │   d       delete                                                         │
+            │   C       copy                                                           │
+            │   v       details                                                        │
+            │   esc     back                                                           │
+            │   ↑↓      navigate                                                       │
+            │   h/l     switch                                                         │
+            │   ctrl+r  reload                                                         │
+            │                                                                          │
+            │ Everywhere                                                               │
+            │   ctrl+k  palette                                                        │
+            │   ?       help                                                           │
+            │   ,       settings                                                       │
+            │   q       quit                                                           │
+            │   ctrl+c  back, twice on the welcome page to quit                        │
+            │   ctrl+d  quit                                                           │
+            │   ctrl+z  suspend                                                        │
+            │                                                                          │
+            │ Welcome page                                                             │
+            │   ↑↓   navigate                                                          │
+            │ ↓ 87 more                                                                │
+            ╰──────────────────────────────────────────────────────────────────────────╯
+              esc close · ↑↓ scroll
+
+== 120x24
+                      ╭─ Help ───────────────────────────────────────────────────────────────────╮
+                      │ Quick start                                                              │
+                      │ · Press [ctrl+k] to search everything, [,] to open the settings and [?]  │
+                      │   for this help.                                                         │
+                      │ · Open a list with [1-4], move with [↑↓], press [⏎] to use a record and  │
+                      │   [n] to add one.                                                        │
+                      │ · [esc] goes back and [q] quits from the welcome page and the lists,     │
+                      │   changes are saved at once.                                             │
+                      │                                                                          │
+                      │ Repos                                                                    │
+                      │   ⏎  go                                                                  │
+                      │   o  editor                                                              │
+                      │                                                                          │
+                      │ Lists                                                                    │
+                      │   /       filter                                                         │
+                      │   n       new                                                            │
+                      │   e       edit                                                           │
+                      │   d       delete                                                         │
+                      │   C       copy                                                           │
+                      │   v       details                                                        │
+                      │ ↓ 103 more                                                               │
+                      ╰──────────────────────────────────────────────────────────────────────────╯
+                        esc close · ↑↓ scroll
+

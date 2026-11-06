@@ -1,0 +1,104 @@
+== 60x12
+❯_ tote › Connections                                    1
+ / filter…
+ ❯ jump    jump.example.com         ops
+
+
+
+
+
+
+
+ jump cannot take another user
+ ⏎ · e · d · esc · ctrl+k · q · ?
+== 80x24
+❯_ tote › Connections                                                        1
+
+  / filter…
+
+    NAME      TARGET                            USER     DESCRIPTION
+  ❯ jump      jump.example.com                  ops
+
+
+
+
+
+
+
+
+
+
+
+╭─ jump ───────────────────────────────────────────────────────────────────────╮
+│ → tsh ssh ops@jump.example.com                                               │
+│ via tsh ssh                                                                  │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+  jump cannot take another user
+  ⏎ connect · e edit · d delete · esc back · ctrl+k palette · q quit · ? help
+== 100x40
+❯_ tote › Connections                                                                            1
+
+  / filter…
+
+    NAME      TARGET                            USER      DESCRIPTION
+  ❯ jump      jump.example.com                  ops
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+╭─ jump ───────────────────────────────────────────────────────────────────────────────────────────╮
+│ → tsh ssh ops@jump.example.com                                                                   │
+│ via tsh ssh                                                                                      │
+│                                                                                                  │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+  jump cannot take another user
+  ⏎ connect · e edit · d delete · n new · / filter · esc back · ctrl+k palette · q quit · ? help
+== 120x24
+❯_ tote › Connections                                                                                                1
+
+  / filter…
+
+    NAME      TARGET                            USER      DESCRIPTION
+  ❯ jump      jump.example.com                  ops
+
+
+
+
+
+
+
+
+
+
+
+╭─ jump ───────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ → tsh ssh ops@jump.example.com                                                                                       │
+│ via tsh ssh                                                                                                          │
+│                                                                                                                      │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+  jump cannot take another user
+  ⏎ connect · e edit · d delete · n new · / filter · u next user · esc back · ctrl+k palette · q quit · ? help

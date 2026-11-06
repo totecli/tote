@@ -1,0 +1,46 @@
+== 80x24
+
+  ╭─ demo 1.0.0 - Demo ──────────────────────────────────────────────────────╮
+  │ description      Shows notes about the work.                             │
+  │ niveau           déclaratif (aucun programme propre)                     │
+  │ type             local                                                   │
+  │ source           /srv/plugins/demo                                       │
+  │ état             activé                                                  │
+  │ licence          MIT                                                     │
+  │ accès déclarés   exec:tool                                               │
+  │ accès autorisés  exec:tool                                               │
+  │ apporte          - commande go : Go                                      │
+  │                  - réglage owner : Owner                                 │
+  │                  - réglage verbose : Verbose                             │
+  │                  - réglage limit : Limit                                 │
+  │                  - réglage mode : Mode                                   │
+  │                  - réglage tags : Tags                                   │
+  │ réglages         - owner (string) = someone, source : par défaut         │
+  │                  - verbose (bool) = false, source : par défaut           │
+  │                  - limit (int) = 10, source : par défaut                 │
+  │                  - mode (enum) = fast, source : par défaut               │
+  │                  - tags (list) = x, source : par défaut                  │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    esc fermer · ↑↓ défiler
+
+== 40x12
+  ╭─ demo 1.0.0 - Demo ──────────────╮
+  │ descripti…  Shows notes about    │
+  │             the work.            │
+  │ niveau      déclaratif (aucun    │
+  │             programme propre)    │
+  │ type        local                │
+  │ source      /srv/plugins/demo    │
+  │ état        activé               │
+  │ ↓ 27 de plus                     │
+  ╰──────────────────────────────────╯
+   esc · ↑↓
+
+== 24x7
+  ╭─ demo 1.0.0 … ───╮
+  │ desc…  Shows     │
+  │        notes     │
+  │        about the │
+  ╰──────────────────╯
+   esc · ↑↓
+

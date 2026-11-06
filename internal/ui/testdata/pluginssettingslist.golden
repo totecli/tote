@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+
+    ╭─ Settings of demo ───────────────────────────────────────────────────╮
+    │   Owner   someone                                                    │
+    │   Verbose [ ] No                                                     │
+    │   Limit   10                                                         │
+    │   Mode     fast   safe                                               │
+    │ ❯ Tags    items: 1 (x)                                               │
+    ╰──────────────────────────────────────────────────────────────────────╯
+      tab next · ⏎ edit · ctrl+s save · esc cancel
+
+
+
+
+
+
+
+
+== 40x12
+
+
+  ╭─ Settings of demo ───────────────╮
+  │   Owner   someone                │
+  │   Verbose [ ] No                 │
+  │   Limit   10                     │
+  │   Mode     fast   safe           │
+  │ ❯ Tags    items: 1 (x)           │
+  ╰──────────────────────────────────╯
+   tab · ⏎ · ctrl+s · esc
+
+
+== 24x7
+  ╭─ Settings of d… ─╮
+  │   Limit   10     │
+  │   Mode     fast  │
+  │ ❯ Tags    items… │
+  ╰──────────────────╯
+   tab · ⏎ · ctrl+s
+

@@ -1,0 +1,46 @@
+== 80x24
+
+  +- demo 1.0.0 - Demo ------------------------------------------------------+
+  | description      Shows notes about the work.                             |
+  | niveau           declaratif (aucun programme propre)                     |
+  | type             local                                                   |
+  | source           /srv/plugins/demo                                       |
+  | etat             active                                                  |
+  | licence          MIT                                                     |
+  | acces declares   exec:tool                                               |
+  | acces autorises  exec:tool                                               |
+  | apporte          - commande go : Go                                      |
+  |                  - reglage owner : Owner                                 |
+  |                  - reglage verbose : Verbose                             |
+  |                  - reglage limit : Limit                                 |
+  |                  - reglage mode : Mode                                   |
+  |                  - reglage tags : Tags                                   |
+  | reglages         - owner (string) = someone, source : par defaut         |
+  |                  - verbose (bool) = false, source : par defaut           |
+  |                  - limit (int) = 10, source : par defaut                 |
+  |                  - mode (enum) = fast, source : par defaut               |
+  |                  - tags (list) = x, source : par defaut                  |
+  +--------------------------------------------------------------------------+
+    esc fermer - up/down defiler
+
+== 40x12
+  +- demo 1.0.0 - Demo --------------+
+  | descrip...  Shows notes about    |
+  |             the work.            |
+  | niveau      declaratif (aucun    |
+  |             programme propre)    |
+  | type        local                |
+  | source      /srv/plugins/demo    |
+  | etat        active               |
+  | v 27 de plus                     |
+  +----------------------------------+
+   esc - up/down
+
+== 24x7
+  +- demo 1.0.... ---+
+  | de...  Shows     |
+  |        notes     |
+  |        about the |
+  +------------------+
+   esc - up/down
+

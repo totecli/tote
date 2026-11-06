@@ -1,0 +1,27 @@
+❯_ tote › Connexions                                                         6
+
+  / filtrer…
+
+    NOM      CIBLE                UTILISATEUR  DESCRIPTION                    
+  ❯ prod     prod.example.com     deploy       Production web                   
+    [[staging  staging.example.com  deploy]]                                      
+    [[bastion  bastion.example.com  ops]]                                         
+  ! legacy   old.example.com                                                  
+    emoji    fun.example.com                   rocket 🚀 heart ❤ dev 👨💻 日… 
+  ! hostile  evil.example.com                  a?[31mb?c?d                    
+
+
+
+
+
+
+╭─ prod ───────────────────────────────────────────────────────────────────────╮
+│ → ssh -l deploy -- prod.example.com                                          │
+│ alias p                                                                      │
+│ Production web                                                               │
+╰──────────────────────────────────────────────────────────────────────────────╯
+  70 caractères copiés (fake) · Maj+glisser sélectionne avec le terminal à la p…
+  ⏎ connecter · e modifier · esc retour · ctrl+k palette · q quitter · ? aide
+-- copied --
+staging  staging.example.com  deploy
+bastion  bastion.example.com  ops

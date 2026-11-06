@@ -1,0 +1,46 @@
+== 80x24
+  +- gft : List stashes -----------------------------------------------------+
+  | plain red green                                                          |
+  | evil ?]0;title? ?[2J ?[10;10H ? text? end                                |
+  | a       tab and a very long line that has to be wrapped inside the box o |
+  | f the pager                                                              |
+  |                                                                          |
+  |                                                                          |
+  |                                                                          |
+  |                                                                          |
+  |                                                                          |
+  |                                                                          |
+  |                                                                          |
+  |                                                                          |
+  |                                                                          |
+  |                                                                          |
+  |                                                                          |
+  |                                                                          |
+  |                                                                          |
+  |                                                                          |
+  |                                                                          |
+  |                                                                          |
+  +--------------------------------------------------------------------------+
+    esc fermer - up/down defiler
+    plugin gft : termine
+== 40x12
+  +- gft : List stashes -------------+
+  | plain red green                  |
+  | evil ?]0;title? ?[2J ?[10;10H ?  |
+  | text? end                        |
+  | a       tab and a very long line |
+  |  that has to be wrapped inside t |
+  | he box of the pager              |
+  |                                  |
+  |                                  |
+  +----------------------------------+
+   esc - up/down
+   plugin gft : termine
+== 24x7
+  +- gft : Lis... ---+
+  | wrapped inside t |
+  | he box of the pa |
+  | ger              |
+  +------------------+
+   esc - up/down
+   plugin gft : ter...

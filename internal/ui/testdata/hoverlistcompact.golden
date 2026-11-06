@@ -1,0 +1,31 @@
+== 60x12 pointer 12,4
+❯_ tote › Connections                                    6
+ / filter…
+ ❯ prod     prod.example.com     deploy  Production web
+   staging  staging.example.com  deploy
+   bastion  bastion.example.com  ops
+ ! legacy   old.example.com
+   emoji    fun.example.com              rocket 🚀 heart …
+ ! hostile  evil.example.com             a?[31mb?c?d
+
+
+ → ssh -l deploy -- prod.example.com
+ ⏎ · e · d · esc · ctrl+k · q · ?
+-- truecolor
+hovered 4: \e[48;2;34;31;41m \e[38;2;236;232;240m  \e[m\e[48;2;34;31;41m\e[38;2;236;232;240mbastion\e[m\e[48;2;34;31;41m  \e[38;2;236;232;240mbastion.example.com\e[m\e[48;2;34;31;41m  \e[38;2;236;232;240mops   \e[m\e[48;2;34;31;41m  \e[38;2;139;134;151m                 \e[m
+selected 2: \e[1;38;2;244;217;226;48;2;58;34;48m ❯ prod     prod.example.com     deploy  Production web   \e[m
+-- truecolor light
+hovered 4: \e[48;2;242;237;231m \e[38;2;21;19;26m  \e[m\e[48;2;242;237;231m\e[38;2;21;19;26mbastion\e[m\e[48;2;242;237;231m  \e[38;2;21;19;26mbastion.example.com\e[m\e[48;2;242;237;231m  \e[38;2;21;19;26mops   \e[m\e[48;2;242;237;231m  \e[38;2;95;90;107m                 \e[m
+selected 2: \e[1;38;2;90;15;51;48;2;246;213;227m ❯ prod     prod.example.com     deploy  Production web   \e[m
+-- 256
+hovered 4: \e[48;5;235m \e[38;5;255m  \e[m\e[48;5;235m\e[38;5;255mbastion\e[m\e[48;5;235m  \e[38;5;255mbastion.example.com\e[m\e[48;5;235m  \e[38;5;255mops   \e[m\e[48;5;235m  \e[38;5;245m                 \e[m
+selected 2: \e[1;38;5;255;48;5;89m ❯ prod     prod.example.com     deploy  Production web   \e[m
+-- 16
+hovered 4:    \e[4mbastion\e[m  \e[4mbastion.example.com\e[m  \e[4mops\e[m
+selected 2: \e[1;7m ❯ prod     prod.example.com     deploy  Production web   \e[m
+-- none
+hovered 4:    \e[4mbastion\e[m  \e[4mbastion.example.com\e[m  \e[4mops\e[m
+selected 2: \e[1;7m ❯ prod     prod.example.com     deploy  Production web   \e[m
+-- ascii
+hovered 4:    \e[4mbastion\e[m   \e[4mbastion.example.com\e[m    \e[4mops\e[m
+selected 2: \e[1;7m > prod      prod.example.com       deploy  Production web\e[m

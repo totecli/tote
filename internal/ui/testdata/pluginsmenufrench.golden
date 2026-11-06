@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+                ╭─ demo ───────────────────────────────────────╮
+                │ ❯ Détails                                    │
+                │   Désactiver                                 │
+                │   Réglages                                   │
+                │   Mettre à jour                              │
+                │   Vérifier                                   │
+                │   Supprimer                                  │
+                │   Supprimer avec ses données                 │
+                ╰──────────────────────────────────────────────╯
+                  ⏎ choisir · esc fermer · ↑↓ naviguer
+
+
+
+
+
+
+
+== 40x12
+
+  ╭─ demo ───────────────────────────╮
+  │ ❯ Détails                        │
+  │   Désactiver                     │
+  │   Réglages                       │
+  │   Mettre à jour                  │
+  │   Vérifier                       │
+  │   Supprimer                      │
+  │   Supprimer avec ses données     │
+  ╰──────────────────────────────────╯
+   ⏎ · esc · ↑↓
+
+== 24x7
+  ╭─ demo ───────────╮
+  │ ❯ Détails        │
+  │   Désactiver     │
+  │   Réglages       │
+  ╰──────────────────╯
+   ⏎ · esc · ↑↓
+

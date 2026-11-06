@@ -1,0 +1,112 @@
+== 1x1
+…
+== 5x2
+Term…
+
+== 11x4
+Terminal t…
+
+
+
+== 12x3
+Terminal to…
+   12 × 3
+
+== 19x6
+
+
+Terminal too small
+ 19 × 6  → 24 × 7
+
+
+== 20x5
+
+ Terminal too small
+20 × 5  needs 24 × 7
+
+
+== 20x6
+      ❯_ tote
+
+ Terminal too small
+20 × 6  needs 24 × 7
+
+Make the window big…
+== 23x7
+        ❯_ tote
+
+  Terminal too small
+ 23 × 7  needs 24 × 7
+
+Make the window bigger,
+  or press q to quit.
+== 23x30
+
+
+
+
+
+
+
+
+
+
+
+        ❯_ tote
+
+  Terminal too small
+ 23 × 30  needs 24 × 7
+
+Make the window bigger,
+  or press q to quit.
+
+
+
+
+
+
+
+
+
+
+
+
+== 24x6
+        ❯_ tote
+
+   Terminal too small
+  24 × 6  needs 24 × 7
+Make the window bigger,
+  or press q to quit.
+== 24x7
+ ❯_ tote 1.2.3 · 6 conn…
+ ❯ Connections       6
+   Repos             2
+   Aliases           2
+   ↓ 2 more
+
+ ↑↓ · ⏎ · ctrl+k · q · ?
+== 26x5
+
+    Terminal too small
+   26 × 5  needs 24 × 7
+
+
+== 26x6
+         ❯_ tote
+
+    Terminal too small
+   26 × 6  needs 24 × 7
+ Make the window bigger,
+   or press q to quit.
+== 120x6
+                                                        ❯_ tote
+
+                                                   Terminal too small
+                                                 120 × 6  needs 24 × 7
+
+                                      Make the window bigger, or press q to quit.
+== 60x3
+                     Terminal too small
+                    60 × 3  needs 24 × 7
+

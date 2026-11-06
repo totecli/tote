@@ -1,0 +1,69 @@
+== 60x12
+  ╭─ Palette ────────────────────────────────────────────╮
+  │ ❯ docs▏                                              │
+  ├──────────────────────────────────────────────────────┤
+  │   ↑ 4 more                                           │
+  │   Connections › emoji                fun.example.com │
+  │ ! Connections › hostile             evil.example.com │
+  │   Repos › proj                        /srv/work/proj │
+  │ ❯ Repos › docs                        ~/missing/docs │
+  │   ↓ 18 more                                          │
+  ╰──────────────────────────────────────────────────────╯
+   ↑↓ · ⏎ · esc · tab · ctrl+e
+   ~/missing/docs
+== 80x24
+
+
+
+  ╭─ Palette ────────────────────────────────────────────────────────────────╮
+  │ ❯ New repository▏                                                        │
+  ├──────────────────────────────────────────────────────────────────────────┤
+  │   ↑ 4 more                                                               │
+  │   Connections › emoji                                    fun.example.com │
+  │ ! Connections › hostile                                 evil.example.com │
+  │   Repos › proj                                            /srv/work/proj │
+  │   Repos › docs                                            ~/missing/docs │
+  │   Aliases › ll                                                    ls -la │
+  │   Aliases › gs                                                git status │
+  │   Functions › hello                                               source │
+  │   Functions › tool                                                A tool │
+  │   New connection                                                         │
+  │ ❯ New repository                                                         │
+  │   ↓ 12 more                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    ↑↓ choose · ⏎ open · esc restore · tab complete
+
+
+
+
+== 110x30
+
+
+
+
+
+
+                 ╭─ Palette ────────────────────────────────────────────────────────────────╮
+                 │ ❯ New repository▏                                                        │
+                 ├──────────────────────────────────────────────────────────────────────────┤
+                 │   ↑ 4 more                                                               │
+                 │   Connections › emoji                                    fun.example.com │
+                 │ ! Connections › hostile                                 evil.example.com │
+                 │   Repos › proj                                            /srv/work/proj │
+                 │   Repos › docs                                            ~/missing/docs │
+                 │   Aliases › ll                                                    ls -la │
+                 │   Aliases › gs                                                git status │
+                 │   Functions › hello                                               source │
+                 │   Functions › tool                                                A tool │
+                 │   New connection                                                         │
+                 │ ❯ New repository                                                         │
+                 │   ↓ 12 more                                                              │
+                 ╰──────────────────────────────────────────────────────────────────────────╯
+                   ↑↓ choose · ⏎ open · esc restore · tab complete
+
+
+
+
+
+
+

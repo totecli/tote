@@ -1,0 +1,32 @@
+
+
+
+  +- [[Palette]] ----------------------------------------------------------------+
+  | [[> search all - c, r, a, d or > to narrow]]                                 |
+  +--------------------------------------------------------------------------+
+  | [[> Connections > prod                                    prod.example.com]] |
+  |   [[Connections > staging                              staging.example.com]] |
+  |   [[Connections > bastion                              bastion.example.com]] |
+  | [[! Connections > lega]]cy                                   old.example.com |
+  |   Connections > emoji                                    fun.example.com |
+  | ! Connections > hostile                                 evil.example.com |
+  |   Repos > proj                                            /srv/work/proj |
+  |   Repos > docs                                            ~/missing/docs |
+  |   Aliases > ll                                                    ls -la |
+  |   Aliases > gs                                                git status |
+  |   Functions > hello                                               source |
+  |   v 15 more                                                              |
+  +--------------------------------------------------------------------------+
+    up/down choose - enter open - esc close - tab complete - ctrl+e edit
+    Copied 289 characters (fake) - Shift+drag selects with the terminal ins...
+
+
+
+-- copied --
+Palette
+> search all - c, r, a, d or > to narrow
+
+> Connections > prod                                    prod.example.com
+  Connections > staging                              staging.example.com
+  Connections > bastion                              bastion.example.com
+! Connections > lega

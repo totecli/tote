@@ -1,0 +1,28 @@
+== 24x7
+❯_ tote › Connec…  3/6
+ / st▏
+ ❯ staging
+   bastion
+ ! hostile
+ → ssh -l deploy -- sta…
+ ⏎ · esc · ↑↓
+== 26x8
+❯_ tote › Connecti…  3/6
+ / st▏
+ ❯ staging  staging.exa…
+   bastion  bastion.exa…
+ ! hostile  evil.exampl…
+
+ → ssh -l deploy -- stagi…
+ ⏎ · esc · ↑↓
+== 36x10
+❯_ tote › Connections          3/6
+ / st▏
+ ❯ staging   staging.example.com
+   bastion   bastion.example.com
+ ! hostile   evil.example.com
+
+
+
+ → ssh -l deploy -- staging.example…
+ ⏎ · esc · ↑↓

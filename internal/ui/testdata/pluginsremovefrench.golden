@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+              ╭─ Supprimer un plugin ────────────────────────────╮
+              │ Supprimer le plugin demo ? Cela supprime :       │
+              │ ses fichiers installés, son enregistrement       │
+              │ d’installation et enabled = false dans sa table  │
+              │ de config.toml                                   │
+              │                                                  │
+              │                [ Non ]   [ Oui ]                 │
+              ╰──────────────────────────────────────────────────╯
+                y oui · n non · h/l choisir · ⏎ valider
+
+
+
+
+
+
+
+
+== 40x12
+
+  ╭─ Supprimer un plugin ────────────╮
+  │ Supprimer le plugin demo ? Cela  │
+  │ supprime :                       │
+  │ ses fichiers installés, son      │
+  │ enregistrement d’installation et │
+  │ enabled = false dans sa table d… │
+  │                                  │
+  │        [ Non ]   [ Oui ]         │
+  ╰──────────────────────────────────╯
+   y · n · h/l · ⏎
+
+== 24x7
+  ╭─ Supprimer un … ─╮
+  │ Supprimer le     │
+  │ plugin demo ? …  │
+  │ [ Non ] [ Oui ]  │
+  ╰──────────────────╯
+   y · n · h/l · ⏎
+

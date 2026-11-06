@@ -1,0 +1,37 @@
+== 80x24 pointer 41,12
+
+
+
+
+
+
+
+
+            ╭─ Delete ─────────────────────────────────────────────╮
+            │ Delete the connection "prod"?                        │
+            │ prod.example.com                                     │
+            │                                                      │
+            │                   [ No ]   [ Yes ]                   │
+            ╰──────────────────────────────────────────────────────╯
+              y yes · n no · h/l choose · ⏎ apply
+
+
+
+
+
+
+
+
+
+-- truecolor
+hovered 12:             \e[38;2;219;39;119m│\e[m                   \e[1;38;2;244;217;226;48;2;58;34;48m[ No ]\e[m   \e[m\e[48;2;34;31;41m\e[38;2;236;232;240m[ Yes ]\e[m                   \e[38;2;219;39;119m│\e[m
+-- truecolor light
+hovered 12:             \e[38;2;176;23;93m│\e[m                   \e[1;38;2;90;15;51;48;2;246;213;227m[ No ]\e[m   \e[m\e[48;2;242;237;231m\e[38;2;21;19;26m[ Yes ]\e[m                   \e[38;2;176;23;93m│\e[m
+-- 256
+hovered 12:             \e[38;5;162m│\e[m                   \e[1;38;5;255;48;5;89m[ No ]\e[m   \e[m\e[48;5;235m\e[38;5;255m[ Yes ]\e[m                   \e[38;5;162m│\e[m
+-- 16
+hovered 12:             \e[95m│\e[m                   \e[1;7m[ No ]\e[m   \e[m\e[4m[ Yes ]\e[m                   \e[95m│\e[m
+-- none
+hovered 12:             │                   \e[1;7m[ No ]\e[m   \e[4m[ Yes ]\e[m                   │
+-- ascii
+hovered 12:             |                   \e[1;7m[ No ]\e[m   \e[4m[ Yes ]\e[m                   |

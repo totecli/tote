@@ -1,0 +1,59 @@
+== 200x40 pointer 20,6
+❯_ tote › Connections                                                                                                                                                                                6
+
+  / filter…
+
+    NAME            TARGET                                  USER          DESCRIPTION
+  ❯ prod            prod.example.com                        deploy        Production web
+    staging         staging.example.com                     deploy
+    bastion         bastion.example.com                     ops
+  ! legacy          old.example.com
+    emoji           fun.example.com                                       rocket 🚀 heart ❤ dev 👨💻 日本語
+  ! hostile         evil.example.com                                      a?[31mb?c?d
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+╭─ prod ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ → ssh -l deploy -- prod.example.com                                                                                                                                                                  │
+│ aliases p                                                                                                                                                                                            │
+│ Production web                                                                                                                                                                                       │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ connect · e edit · d delete · n new · / filter · u next user · U choose user · c put at prompt · C copy · v details · esc back · ctrl+k palette · q quit · ↑↓ navigate · h/l switch · ? help
+-- truecolor
+hovered 6: \e[48;2;34;31;41m  \e[38;2;236;232;240m  \e[m\e[48;2;34;31;41m\e[38;2;236;232;240mstaging       \e[m\e[48;2;34;31;41m  \e[38;2;236;232;240mstaging.example.com                   \e[m\e[48;2;34;31;41m  \e[38;2;236;232;240mdeploy      \e[m\e[48;2;34;31;41m  \e[38;2;139;134;151m                                                                                                                            \e[m
+selected 5: \e[1;38;2;244;217;226;48;2;58;34;48m  ❯ prod            prod.example.com                        deploy        Production web                                                                                                              \e[m
+-- truecolor light
+hovered 6: \e[48;2;242;237;231m  \e[38;2;21;19;26m  \e[m\e[48;2;242;237;231m\e[38;2;21;19;26mstaging       \e[m\e[48;2;242;237;231m  \e[38;2;21;19;26mstaging.example.com                   \e[m\e[48;2;242;237;231m  \e[38;2;21;19;26mdeploy      \e[m\e[48;2;242;237;231m  \e[38;2;95;90;107m                                                                                                                            \e[m
+selected 5: \e[1;38;2;90;15;51;48;2;246;213;227m  ❯ prod            prod.example.com                        deploy        Production web                                                                                                              \e[m
+-- 256
+hovered 6: \e[48;5;235m  \e[38;5;255m  \e[m\e[48;5;235m\e[38;5;255mstaging       \e[m\e[48;5;235m  \e[38;5;255mstaging.example.com                   \e[m\e[48;5;235m  \e[38;5;255mdeploy      \e[m\e[48;5;235m  \e[38;5;245m                                                                                                                            \e[m
+selected 5: \e[1;38;5;255;48;5;89m  ❯ prod            prod.example.com                        deploy        Production web                                                                                                              \e[m
+-- 16
+hovered 6:     \e[4mstaging\e[m         \e[4mstaging.example.com\e[m                     \e[4mdeploy\e[m
+selected 5: \e[1;7m  ❯ prod            prod.example.com                        deploy        Production web                                                                                                              \e[m
+-- none
+hovered 6:     \e[4mstaging\e[m         \e[4mstaging.example.com\e[m                     \e[4mdeploy\e[m
+selected 5: \e[1;7m  ❯ prod            prod.example.com                        deploy        Production web                                                                                                              \e[m
+-- ascii
+hovered 6:     \e[4mstaging\e[m         \e[4mstaging.example.com\e[m                     \e[4mdeploy\e[m
+selected 5: \e[1;7m  > prod            prod.example.com                        deploy        Production web                                                                                                              \e[m

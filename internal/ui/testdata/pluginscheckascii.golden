@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+
+
+  +- notes 1.0.0 - Notes ----------------------------------------------------+
+  | resultat  notes : aucun probleme trouve                                  |
+  | apporte   - commande go : tool '{x}'                                     |
+  +--------------------------------------------------------------------------+
+    esc fermer - up/down defiler
+
+
+
+
+
+
+
+
+
+
+== 40x12
+
+
+  +- notes 1.0.0 - Notes ------------+
+  | resultat  notes : aucun probleme |
+  |           trouve                 |
+  | apporte   - commande go : tool   |
+  |           '{x}'                  |
+  +----------------------------------+
+   esc - up/down
+
+
+
+== 24x7
+  +- notes 1.0... ---+
+  | re...  notes :   |
+  |        aucun     |
+  |        probleme  |
+  +------------------+
+   esc - up/down
+

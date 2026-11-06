@@ -1,0 +1,104 @@
+== 60x12
+
+
+  ╭─ Edit alias ─────────────────────────────────────────╮
+  │ ❯ name        ll                                     │
+  │               the word you type in the shell         │
+  │   command     ls -la                                 │
+  │   description Long list                              │
+  ╰──────────────────────────────────────────────────────╯
+   tab · ctrl+s · esc
+
+
+
+== 80x24
+
+
+
+
+
+
+
+
+    ╭─ Edit alias ─────────────────────────────────────────────────────────╮
+    │ ❯ name        ll                                                     │
+    │               the word you type in the shell                         │
+    │   command     ls -la                                                 │
+    │   description Long list                                              │
+    ╰──────────────────────────────────────────────────────────────────────╯
+      tab next · ctrl+s save · esc cancel
+
+
+
+
+
+
+
+
+
+== 100x40
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              ╭─ Edit alias ─────────────────────────────────────────────────────────╮
+              │ ❯ name        ll                                                     │
+              │               the word you type in the shell                         │
+              │   command     ls -la                                                 │
+              │   description Long list                                              │
+              ╰──────────────────────────────────────────────────────────────────────╯
+                tab next · ctrl+s save · esc cancel
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+== 120x24
+
+
+
+
+
+
+
+
+                        ╭─ Edit alias ─────────────────────────────────────────────────────────╮
+                        │ ❯ name        ll                                                     │
+                        │               the word you type in the shell                         │
+                        │   command     ls -la                                                 │
+                        │   description Long list                                              │
+                        ╰──────────────────────────────────────────────────────────────────────╯
+                          tab next · ctrl+s save · esc cancel
+
+
+
+
+
+
+
+
+

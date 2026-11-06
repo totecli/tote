@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+  +- Palette ----------------------------------------------------------------+
+  | > release_                                                               |
+  +--------------------------------------------------------------------------+
+  | > Afficher une release GitHub                                        gft |
+  |   Ouvrir la page des releases                                        gft |
+  |   Telecharger un asset de release                                    gft |
+  |   Installer le binaire d'une release                                 gft |
+  |                                                                          |
+  |                                                                          |
+  |                                                                          |
+  |                                                                          |
+  |                                                                          |
+  |                                                                          |
+  |                                                                          |
+  |                                                                          |
+  +--------------------------------------------------------------------------+
+    up/down choisir - enter ouvrir - esc fermer - tab completer
+
+
+
+
+== 40x12
+  +- Palette ------------------------+
+  | > release_                       |
+  +----------------------------------+
+  | > Afficher une release GitHub    |
+  |   Ouvrir la page des releases    |
+  |   Telecharger un asset de rel... |
+  |   Installer le binaire d'une ... |
+  |                                  |
+  |                                  |
+  +----------------------------------+
+   up/down - enter - esc - tab
+
+== 24x7
+  +- Palette --------+
+  | > release_       |
+  | > Afficher un... |
+  |   Ouvrir la p... |
+  +------------------+
+   up/down - enter
+

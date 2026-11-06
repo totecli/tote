@@ -1,0 +1,31 @@
+== 200x30
+
+
+
+
+
+
+                                                              ╭─ Palette ────────────────────────────────────────────────────────────────╮
+                                                              │ ❯ search all - c, r, a, d or > to narrow                                 │
+                                                              ├──────────────────────────────────────────────────────────────────────────┤
+                                                              │ ❯ Connections › prod                                    prod.example.com │
+                                                              │   Connections › staging                              staging.example.com │
+                                                              │   Connections › bastion                              bastion.example.com │
+                                                              │ ! Connections › legacy                                   old.example.com │
+                                                              │   Connections › emoji                                    fun.example.com │
+                                                              │ ! Connections › hostile                                 evil.example.com │
+                                                              │   Repos › proj                                            /srv/work/proj │
+                                                              │   Repos › docs                                            ~/missing/docs │
+                                                              │   Aliases › ll                                                    ls -la │
+                                                              │   Aliases › gs                                                git status │
+                                                              │   Functions › hello                                               source │
+                                                              │   ↓ 15 more                                                              │
+                                                              ╰──────────────────────────────────────────────────────────────────────────╯
+                                                                ↑↓ choose · ⏎ open · esc close · tab complete · ctrl+e edit
+                                                                → ssh -l deploy -- prod.example.com
+
+
+
+
+
+

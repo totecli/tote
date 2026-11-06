@@ -1,0 +1,104 @@
+== 60x12
+  ╭─ Nouvelle connexion ─────────────────────────────────╮
+  │ ❯ nom                                                │
+  │               ! ne doit pas être vide                │
+  │   cible                                              │
+  │               ! ne doit pas être vide                │
+  │   via         ssh                                    │
+  │   utilisateur                                        │
+  │   ↓ 3 de plus                                        │
+  │ ! Certains champs ne sont pas valides.               │
+  ╰──────────────────────────────────────────────────────╯
+   tab · ctrl+s · esc
+
+== 80x24
+
+
+
+
+
+    ╭─ Nouvelle connexion ─────────────────────────────────────────────────╮
+    │ ❯ nom                                                                │
+    │               ! ne doit pas être vide                                │
+    │   cible                                                              │
+    │               ! ne doit pas être vide                                │
+    │   via         ssh                                                    │
+    │   utilisateur                                                        │
+    │   alias                                                              │
+    │   ip                                                                 │
+    │   description                                                        │
+    │ ! Certains champs ne sont pas valides.                               │
+    ╰──────────────────────────────────────────────────────────────────────╯
+      tab suivant · ctrl+s enregistrer · esc annuler
+
+
+
+
+
+
+== 100x40
+
+
+
+
+
+
+
+
+
+
+
+
+
+              ╭─ Nouvelle connexion ─────────────────────────────────────────────────╮
+              │ ❯ nom                                                                │
+              │               ! ne doit pas être vide                                │
+              │   cible                                                              │
+              │               ! ne doit pas être vide                                │
+              │   via         ssh                                                    │
+              │   utilisateur                                                        │
+              │   alias                                                              │
+              │   ip                                                                 │
+              │   description                                                        │
+              │ ! Certains champs ne sont pas valides.                               │
+              ╰──────────────────────────────────────────────────────────────────────╯
+                tab suivant · ctrl+s enregistrer · esc annuler
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+== 120x24
+
+
+
+
+
+                        ╭─ Nouvelle connexion ─────────────────────────────────────────────────╮
+                        │ ❯ nom                                                                │
+                        │               ! ne doit pas être vide                                │
+                        │   cible                                                              │
+                        │               ! ne doit pas être vide                                │
+                        │   via         ssh                                                    │
+                        │   utilisateur                                                        │
+                        │   alias                                                              │
+                        │   ip                                                                 │
+                        │   description                                                        │
+                        │ ! Certains champs ne sont pas valides.                               │
+                        ╰──────────────────────────────────────────────────────────────────────╯
+                          tab suivant · ctrl+s enregistrer · esc annuler
+
+
+
+
+
+

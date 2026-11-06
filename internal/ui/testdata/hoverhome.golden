@@ -1,0 +1,43 @@
+== 80x24 pointer 4,8
+╭─ tote 1.2.3 ─────────────────────────────────────────────────────────────────╮
+│                                                                              │
+│    ╭──╮    Welcome, tester                                                   │
+│   ╭┴──┴╮   Your terminal tools, in one bag.                                  │
+│   ╰ ❯_ ╯   6 connections · 2 repos · 2 aliases · 2 functions                 │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+  ❯ Connections                                                              6
+    Repos                                                                    2
+    Aliases                                                                  2
+    Functions                                                                2
+    Settings                                                                en
+
+
+
+
+
+
+
+
+
+
+
+  ↑↓ navigate · ⏎ open · ctrl+k palette · q quit · , settings · ? help
+-- truecolor
+hovered 8: \e[48;2;34;31;41m  \e[38;2;236;232;240m  \e[m\e[48;2;34;31;41m\e[38;2;236;232;240mRepos                                                                  \e[m\e[48;2;34;31;41m  \e[38;2;236;232;240m2\e[m
+selected 7: \e[1;38;2;244;217;226;48;2;58;34;48m  ❯ Connections                                                              6\e[m
+-- truecolor light
+hovered 8: \e[48;2;242;237;231m  \e[38;2;21;19;26m  \e[m\e[48;2;242;237;231m\e[38;2;21;19;26mRepos                                                                  \e[m\e[48;2;242;237;231m  \e[38;2;21;19;26m2\e[m
+selected 7: \e[1;38;2;90;15;51;48;2;246;213;227m  ❯ Connections                                                              6\e[m
+-- 256
+hovered 8: \e[48;5;235m  \e[38;5;255m  \e[m\e[48;5;235m\e[38;5;255mRepos                                                                  \e[m\e[48;5;235m  \e[38;5;255m2\e[m
+selected 7: \e[1;38;5;255;48;5;89m  ❯ Connections                                                              6\e[m
+-- 16
+hovered 8:     \e[4mRepos\e[m                                                                    \e[4m2\e[m
+selected 7: \e[1;7m  ❯ Connections                                                              6\e[m
+-- none
+hovered 8:     \e[4mRepos\e[m                                                                    \e[4m2\e[m
+selected 7: \e[1;7m  ❯ Connections                                                              6\e[m
+-- ascii
+hovered 8:     \e[4mRepos\e[m                                                                    \e[4m2\e[m
+selected 7: \e[1;7m  > Connections                                                              4\e[m

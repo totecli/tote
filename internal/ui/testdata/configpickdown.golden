@@ -1,0 +1,104 @@
+== 60x12
+
+
+
+      ╭─ After a connection ─────────────────────────╮
+      │   menu (back to the list)                    │
+      │ ❯ exit (quit on a normal end)        current │
+      ╰──────────────────────────────────────────────╯
+       ⏎ · esc · ↑↓
+
+
+
+
+== 80x24
+
+
+
+
+
+
+
+
+
+                ╭─ After a connection ─────────────────────────╮
+                │   menu (back to the list)                    │
+                │ ❯ exit (quit on a normal end)        current │
+                ╰──────────────────────────────────────────────╯
+                  ⏎ choose · esc close · ↑↓ navigate
+
+
+
+
+
+
+
+
+
+
+== 100x40
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                          ╭─ After a connection ─────────────────────────╮
+                          │   menu (back to the list)                    │
+                          │ ❯ exit (quit on a normal end)        current │
+                          ╰──────────────────────────────────────────────╯
+                            ⏎ choose · esc close · ↑↓ navigate
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+== 120x24
+
+
+
+
+
+
+
+
+
+                                    ╭─ After a connection ─────────────────────────╮
+                                    │   menu (back to the list)                    │
+                                    │ ❯ exit (quit on a normal end)        current │
+                                    ╰──────────────────────────────────────────────╯
+                                      ⏎ choose · esc close · ↑↓ navigate
+
+
+
+
+
+
+
+
+
+

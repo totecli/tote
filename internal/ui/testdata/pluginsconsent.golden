@@ -1,0 +1,100 @@
+== 80x24
+
+  ╭─ Allow plugin pager 1.0.0 to run? ───────────────────────────────────────╮
+  │ Source: /srv/plugins/pager                                               │
+  │ Origin: local files, not verified                                        │
+  │ Checksum: sha256 dd8243dacf42, computed here, nothing to compare it with │
+  │ No code of its own: tote runs only the programs listed below.            │
+  │                                                                          │
+  │ Description (written by the plugin, not checked by tote)                 │
+  │   | Reads long output page by page.                                      │
+  │                                                                          │
+  │ Commands it will run:                                                    │
+  │   $ command go: tool '{x}'                                               │
+  │                                                                          │
+  │ This plugin will be able to:                                             │
+  │   - run the program tool [enforced]                                      │
+  │     enforced: tote itself refuses anything else                          │
+  │                                                                          │
+  │ ! tote runs only the listed programs, but those programs can do whatever │
+  │   you can do with them.                                                  │
+  │                                                                          │
+  │                          [ Cancel ]   [ Allow ]                          │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    ⏎ apply · h/l choose · esc cancel · ↑↓ scroll
+
+== 40x12
+  ╭─ Allow plugin pager 1.0.0 to r… ─╮
+  │ pager                            │
+  │ Source: /srv/plugins/pager       │
+  │ Origin: local files, not …       │
+  │ Checksum: sha256 dd8243dacf42, … │
+  │ No code of its own: tote runs    │
+  │ ↓ 20 more                        │
+  │                                  │
+  │      [ Cancel ]   [ Allow ]      │
+  ╰──────────────────────────────────╯
+   ⏎ · h/l · esc · ↑↓
+
+== 24x7
+  ╭─ Allow plugin … ─╮
+  │ pager            │
+  │ Source: /srv/pl… │
+  │ [Cancel] [Allow] │
+  ╰──────────────────╯
+   ⏎ · h/l · esc · ↑↓
+
+== 60x12
+  ╭─ Allow plugin pager 1.0.0 to run? ───────────────────╮
+  │ Source: /srv/plugins/pager                           │
+  │ Origin: local files, not verified                    │
+  │ Checksum: sha256 dd8243dacf42, computed here, …      │
+  │ No code of its own: tote runs only the programs      │
+  │ listed below.                                        │
+  │ ↓ 14 more                                            │
+  │                                                      │
+  │                [ Cancel ]   [ Allow ]                │
+  ╰──────────────────────────────────────────────────────╯
+   ⏎ · h/l · esc · ↑↓
+
+== 120x40
+
+
+
+
+
+
+
+
+
+                  ╭─ Allow plugin pager 1.0.0 to run? ───────────────────────────────────────────────╮
+                  │ Source: /srv/plugins/pager                                                       │
+                  │ Origin: local files, not verified                                                │
+                  │ Checksum: sha256 dd8243dacf42, computed here, nothing to compare it with         │
+                  │ No code of its own: tote runs only the programs listed below.                    │
+                  │                                                                                  │
+                  │ Description (written by the plugin, not checked by tote)                         │
+                  │   | Reads long output page by page.                                              │
+                  │                                                                                  │
+                  │ Commands it will run:                                                            │
+                  │   $ command go: tool '{x}'                                                       │
+                  │                                                                                  │
+                  │ This plugin will be able to:                                                     │
+                  │   - run the program tool [enforced]                                              │
+                  │     enforced: tote itself refuses anything else                                  │
+                  │                                                                                  │
+                  │ ! tote runs only the listed programs, but those programs can do whatever you can │
+                  │   do with them.                                                                  │
+                  │                                                                                  │
+                  │                              [ Cancel ]   [ Allow ]                              │
+                  ╰──────────────────────────────────────────────────────────────────────────────────╯
+                    ⏎ apply · h/l choose · esc cancel · ↑↓ scroll
+
+
+
+
+
+
+
+
+

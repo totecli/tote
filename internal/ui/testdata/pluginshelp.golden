@@ -1,0 +1,46 @@
+== 80x24
+  ╭─ Help ───────────────────────────────────────────────────────────────────╮
+  │ Quick start                                                              │
+  │ · Press [ctrl+k] to search everything, [,] to open the settings and [?]  │
+  │   for this help.                                                         │
+  │ · Open a list with [1-5], move with [↑↓], press [⏎] to use a record and  │
+  │   [n] to add one.                                                        │
+  │ · [esc] goes back and [q] quits from the welcome page and the lists,     │
+  │   changes are saved at once.                                             │
+  │                                                                          │
+  │ Plugins                                                                  │
+  │   ⏎       details                                                        │
+  │   space   enable/disable                                                 │
+  │   a       allow                                                          │
+  │   s       settings                                                       │
+  │   i       install                                                        │
+  │   d       remove                                                         │
+  │   c       check                                                          │
+  │   tab     actions                                                        │
+  │   /       filter                                                         │
+  │   esc     back                                                           │
+  │ ↓ 133 more                                                               │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    esc close · ↑↓ scroll
+
+== 40x12
+  ╭─ Help ───────────────────────────╮
+  │ Quick start                      │
+  │ · Press [ctrl+k] to search       │
+  │   everything, [,] to open the    │
+  │   settings and [?] for this      │
+  │   help.                          │
+  │ · Open a list with [1-5], move   │
+  │   with [↑↓], press [⏎] to use a  │
+  │ ↓ 170 more                       │
+  ╰──────────────────────────────────╯
+   esc · ↑↓
+
+== 24x7
+  ╭─ Help ───────────╮
+  │ Quick start      │
+  │ · Press [ctrl+k] │
+  │   to search      │
+  ╰──────────────────╯
+   esc · ↑↓
+

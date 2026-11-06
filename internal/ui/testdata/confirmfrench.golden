@@ -1,0 +1,104 @@
+== 60x12
+
+
+  ╭─ Supprimer ──────────────────────────────────────────╮
+  │ Supprimer la connexion "prod" ?                      │
+  │ prod.example.com                                     │
+  │                                                      │
+  │                  [ Non ]   [ Oui ]                   │
+  ╰──────────────────────────────────────────────────────╯
+   y · n · h/l · ⏎
+
+
+
+== 80x24
+
+
+
+
+
+
+
+
+            ╭─ Supprimer ──────────────────────────────────────────╮
+            │ Supprimer la connexion "prod" ?                      │
+            │ prod.example.com                                     │
+            │                                                      │
+            │                  [ Non ]   [ Oui ]                   │
+            ╰──────────────────────────────────────────────────────╯
+              y oui · n non · h/l choisir · ⏎ valider
+
+
+
+
+
+
+
+
+
+== 100x40
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                      ╭─ Supprimer ──────────────────────────────────────────╮
+                      │ Supprimer la connexion "prod" ?                      │
+                      │ prod.example.com                                     │
+                      │                                                      │
+                      │                  [ Non ]   [ Oui ]                   │
+                      ╰──────────────────────────────────────────────────────╯
+                        y oui · n non · h/l choisir · ⏎ valider
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+== 120x24
+
+
+
+
+
+
+
+
+                                ╭─ Supprimer ──────────────────────────────────────────╮
+                                │ Supprimer la connexion "prod" ?                      │
+                                │ prod.example.com                                     │
+                                │                                                      │
+                                │                  [ Non ]   [ Oui ]                   │
+                                ╰──────────────────────────────────────────────────────╯
+                                  y oui · n non · h/l choisir · ⏎ valider
+
+
+
+
+
+
+
+
+

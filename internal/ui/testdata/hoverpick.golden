@@ -1,0 +1,43 @@
+== 80x24 pointer 20,11
+
+
+
+
+
+
+
+
+
+                ╭─ Language ───────────────────────────────────╮
+                │ ❯ auto                               current │
+                │   English                                    │
+                │   Français                                   │
+                ╰──────────────────────────────────────────────╯
+                  ⏎ choose · esc close · ↑↓ navigate
+
+
+
+
+
+
+
+
+
+-- truecolor
+hovered 11:                 \e[38;2;219;39;119m│\e[m\e[48;2;34;31;41m \e[38;2;236;232;240m  \e[m\e[48;2;34;31;41m\e[38;2;236;232;240mEnglish                          \e[m\e[48;2;34;31;41m  \e[38;2;139;134;151m       \e[m\e[48;2;34;31;41m \e[m\e[38;2;219;39;119m│\e[m
+selected 10:                 \e[38;2;219;39;119m│\e[m\e[1;38;2;244;217;226;48;2;58;34;48m ❯ auto                               current \e[m\e[38;2;219;39;119m│\e[m
+-- truecolor light
+hovered 11:                 \e[38;2;176;23;93m│\e[m\e[48;2;242;237;231m \e[38;2;21;19;26m  \e[m\e[48;2;242;237;231m\e[38;2;21;19;26mEnglish                          \e[m\e[48;2;242;237;231m  \e[38;2;95;90;107m       \e[m\e[48;2;242;237;231m \e[m\e[38;2;176;23;93m│\e[m
+selected 10:                 \e[38;2;176;23;93m│\e[m\e[1;38;2;90;15;51;48;2;246;213;227m ❯ auto                               current \e[m\e[38;2;176;23;93m│\e[m
+-- 256
+hovered 11:                 \e[38;5;162m│\e[m\e[48;5;235m \e[38;5;255m  \e[m\e[48;5;235m\e[38;5;255mEnglish                          \e[m\e[48;5;235m  \e[38;5;245m       \e[m\e[48;5;235m \e[m\e[38;5;162m│\e[m
+selected 10:                 \e[38;5;162m│\e[m\e[1;38;5;255;48;5;89m ❯ auto                               current \e[m\e[38;5;162m│\e[m
+-- 16
+hovered 11:                 \e[95m│\e[m   \e[m\e[4mEnglish\e[m                                    \e[95m│\e[m
+selected 10:                 \e[95m│\e[m\e[1;7m ❯ auto                               current \e[m\e[95m│\e[m
+-- none
+hovered 11:                 │   \e[4mEnglish\e[m                                    │
+selected 10:                 │\e[1;7m ❯ auto                               current \e[m│
+-- ascii
+hovered 11:                 |   \e[4mEnglish\e[m                                    |
+selected 10:                 |\e[1;7m > auto                               current \e[m|

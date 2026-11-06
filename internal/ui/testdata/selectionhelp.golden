@@ -1,0 +1,34 @@
+  ╭─ Help ───────────────────────────────────────────────────────────────────╮
+  │ [[Quick start]]                                                              │
+  │ [[· Press [ctrl+k] to search everything, [,] to open the settings and [?]]]  │
+  │   [[for this help.]]                                                         │
+  │ [[· Open a list with [1-4], move with [↑↓], press [⏎] to use a record and]]  │
+  │   [[[n] to add one.]]                                                        │
+  │ [[· [esc] goes back and [q] quits from the welcome page and the lists,]]     │
+  │   [[changes are saved at once.]]                                             │
+  │                                                                          │
+  │ [[Welc]]ome page                                                             │
+  │   ↑↓   navigate                                                          │
+  │   ⏎    open                                                              │
+  │   1-4  jump                                                              │
+  │   u    update notice                                                     │
+  │   U    check for update                                                  │
+  │                                                                          │
+  │ Everywhere                                                               │
+  │   ctrl+k  palette                                                        │
+  │   ?       help                                                           │
+  │   ,       settings                                                       │
+  │ ↓ 103 more                                                               │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    esc close · ↑↓ scroll
+    Copied 294 characters (fake) · Shift+drag selects with the terminal inste…
+-- copied --
+Quick start
+· Press [ctrl+k] to search everything, [,] to open the settings and [?]
+  for this help.
+· Open a list with [1-4], move with [↑↓], press [⏎] to use a record and
+  [n] to add one.
+· [esc] goes back and [q] quits from the welcome page and the lists,
+  changes are saved at once.
+
+Welc

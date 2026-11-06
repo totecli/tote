@@ -1,0 +1,69 @@
+== 60x12
+❯_ tote › Réglages                                      14
+   ↑ 6 de plus
+   Thème                                            sombre
+   Page d’accueil                                    cadre
+   Disposition compacte                               auto
+   Largeur de la page           auto (largeur du terminal)
+   Souris                                              Oui
+   Recherche au démarrage                              Oui
+   Couleurs utilisées                                 none
+ ❯ Chercher une mise à jour                          1.2.3
+ Interroge le serveur de versions maintenant. Pour installe…
+ ⏎ · esc · ctrl+k · q · ↑↓ · v · ?
+== 80x24
+❯_ tote › Réglages                                                          14
+
+    Langue                                                           auto (en)
+    Éditeur                                                            nano -w
+    Racine des dépôts                                                /srv/work
+    Après une connexion                          exit (quitter en fin normale)
+    Keepalive SSH                                                          Oui
+    Après l’ouverture d’un dépôt                    return (retour à la liste)
+    Thème                                                               sombre
+    Page d’accueil                                                       cadre
+    Disposition compacte                                                  auto
+    Largeur de la page                              auto (largeur du terminal)
+    Souris                                                                 Oui
+    Recherche au démarrage                                                 Oui
+    Couleurs utilisées                                                    none
+  ❯ Chercher une mise à jour                                             1.2.3
+
+╭─ Chercher une mise à jour ───────────────────────────────────────────────────╮
+│ Chercher une mise à jour                                                     │
+│ Interroge le serveur de versions maintenant. Pour installer, lancez tote up… │
+│ Aussi sur U depuis la page d’accueil.                                        │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ chercher une mise à jour · esc retour · ctrl+k palette · q quitter · ? aide
+== 110x30
+❯_ tote › Réglages                                                                                        14
+
+    Langue                        Langue de l’interface                                            auto (en)
+    Éditeur                       Programme qui ouvre un dépôt                                       nano -w
+    Racine des dépôts             Dossier proposé pour un nouveau dépôt                            /srv/work
+    Après une connexion           Ce qui suit la fin d’une connexion           exit (quitter en fin normale)
+    Keepalive SSH                 Garder en vie les sessions ssh inactiv…                                Oui
+    Après l’ouverture d’un dépôt  Ce qui suit l’ouverture dans l’éditeur          return (retour à la liste)
+    Thème                         Palette de couleurs                                                 sombre
+    Page d’accueil                La page d’accueil                                                    cadre
+    Disposition compacte          Quand la disposition sur une ligne s’a…                               auto
+    Largeur de la page            Tout le terminal, ou plafonnée                  auto (largeur du terminal)
+    Souris                        Survol, clic, molette, glisser pour co…                                Oui
+    Recherche au démarrage        Chercher une nouvelle version au démar…                                Oui
+    Couleurs utilisées            TOTE_COLOR (lecture seule)                                            none
+  ❯ Chercher une mise à jour      Chercher une nouvelle version maintena…                              1.2.3
+
+
+
+
+
+
+
+╭─ Chercher une mise à jour ─────────────────────────────────────────────────────────────────────────────────╮
+│ Chercher une mise à jour                                                                                   │
+│ Interroge le serveur de versions maintenant. Pour installer, lancez tote update.                           │
+│ Aussi sur U depuis la page d’accueil.                                                                      │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ chercher une mise à jour · esc retour · ctrl+k palette · q quitter · ↑↓ naviguer · v détails · ? aide

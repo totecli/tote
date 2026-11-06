@@ -1,0 +1,46 @@
+== 80x24
+  ╭─ gft 1.0.0 - gft ────────────────────────────────────────────────────────╮
+  │ description      GitHub releases and git stashes through the gft         │
+  │                  command.                                                │
+  │ tier             declarative (no program of its own)                     │
+  │ kind             shipped with tote                                       │
+  │ state            available                                               │
+  │ declared access  derived:tty                                             │
+  │                  env:GITHUB_TOKEN                                        │
+  │                  exec:gft                                                │
+  │                  fs:read:cwd                                             │
+  │                  fs:write:any                                            │
+  │                  fs:write:cwd                                            │
+  │                  host:open-url                                           │
+  │                  host:read:repos                                         │
+  │                  net:*.githubusercontent.com                             │
+  │                  net:api.github.com                                      │
+  │                  net:github.com                                          │
+  │ contributes      - command show: Show a GitHub release                   │
+  │                  - command open: Open the releases page                  │
+  │                  - command get: Download a release asset                 │
+  │ ↓ 10 more                                                                │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    esc close · ↑↓ scroll
+
+== 40x12
+  ╭─ gft 1.0.0 - gft ────────────────╮
+  │ descripti…  GitHub releases and  │
+  │             git stashes through  │
+  │             the gft command.     │
+  │ tier        declarative (no      │
+  │             program of its own)  │
+  │ kind        shipped with tote    │
+  │ state       available            │
+  │ ↓ 46 more                        │
+  ╰──────────────────────────────────╯
+   esc · ↑↓
+
+== 24x7
+  ╭─ gft 1.0.0 -… ───╮
+  │ desc…  GitHub    │
+  │        releases  │
+  │        and git   │
+  ╰──────────────────╯
+   esc · ↑↓
+

@@ -1,0 +1,28 @@
+== 24x7
+❯_ tote › Connecti…  6
+ / filter…
+ ❯ prod
+   staging
+   bastion
+ → ssh -l deploy -- pro…
+ ⏎ · esc · ctrl+k · q
+== 26x8
+❯_ tote › Connections  6
+ / filter…
+ ❯ prod     prod.exampl…
+   staging  staging.exa…
+   bastion  bastion.exa…
+   ↓ 3 more
+ → ssh -l deploy -- prod.…
+ ⏎ · esc · ctrl+k · q · ?
+== 36x10
+❯_ tote › Connections            6
+ / filter…
+ ❯ prod      prod.example.com
+   staging   staging.example.com
+   bastion   bastion.example.com
+ ! legacy    old.example.com
+   emoji     fun.example.com
+ ! hostile   evil.example.com
+ → ssh -l deploy -- prod.example.com
+ ⏎ · e · d · esc · ctrl+k · q · ?

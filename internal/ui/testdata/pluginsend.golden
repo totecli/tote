@@ -1,0 +1,46 @@
+== 80x24
+❯_ tote › Plugins                                                            6
+
+  / filter…
+
+    NAME   VERSION  STATE                 DESCRIPTION
+    demo   1.0.0    ● enabled             Shows notes about the work.
+    gft    1.0.0    ● available           GitHub releases and git stashes thr…
+    ghost  1.0.0    ● missing dependency  Needs a program that is not here.
+    jumpy  1.0.0    ● quarantined         Jumps between places.
+    notes  1.0.0    ● disabled            Keeps short notes.
+    pager  1.0.0    ● consent needed      Reads long output page by page.
+  ❯ torn   1.0.0    ● broken
+
+
+
+
+
+╭─ torn ───────────────────────────────────────────────────────────────────────╮
+│                                                                              │
+│ declarative · local · access: 0                                              │
+│ the installed files of the plugin are missing                                │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ details · d remove · c check · esc back · ctrl+k palette · q quit · ? help
+== 40x12
+❯_ tote › Plugins                    6
+ / filter…
+   demo   1.0.0    ● enabled
+   gft    1.0.0    ● available
+   ghost  1.0.0    ● missing dependen…
+   jumpy  1.0.0    ● quarantined
+   notes  1.0.0    ● disabled
+   pager  1.0.0    ● consent needed
+ ❯ torn   1.0.0    ● broken
+
+ the installed files of the plugin are …
+ ⏎ · d · c · esc · ctrl+k · q · ?
+== 24x7
+❯_ tote › Plugins    6
+ / filter…
+   notes     1.0.0
+   pager     1.0.0
+ ❯ torn      1.0.0
+ the installed files of…
+ ⏎ · esc · ctrl+k · q

@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+                ╭─ Actions: proj ──────────────────────────────╮
+                │ ❯    Show the latest release  this reposito… │
+                │      List the release assets  this reposito… │
+                │      Show the release notes   this reposito… │
+                │   s  List stashes             gft            │
+                │      Show a stash…            gft            │
+                │      Drop a stash…            gft            │
+                │      Delete all stashes…      gft            │
+                ╰──────────────────────────────────────────────╯
+                  ⏎ choose · esc close · ↑↓ navigate
+                  this repository has no GitHub remote
+
+
+
+
+
+
+== 40x12
+
+  ╭─ Actions: proj ──────────────────╮
+  │ ❯    Show the latest release     │
+  │      List the release assets     │
+  │      Show the release notes      │
+  │   s  List stashes                │
+  │      Show a stash…               │
+  │      Drop a stash…               │
+  │      Delete all stashes…         │
+  ╰──────────────────────────────────╯
+   ⏎ · esc · ↑↓
+   this repository has no GitHub remo…
+== 24x7
+  ╭─ Actions: proj ──╮
+  │ ❯    Show the l… │
+  │      List the r… │
+  │      Show the r… │
+  ╰──────────────────╯
+   ⏎ · esc · ↑↓
+   this repository ha…

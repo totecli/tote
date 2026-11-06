@@ -1,0 +1,38 @@
+== 60x12
+
+
+    ╭─ Reset to default? ──────────────────────────────╮
+    │ Repositories root goes back to its default       │
+    │ value. The value you set is lost.                │
+    │                                                  │
+    │                 [ No ]   [ Yes ]                 │
+    ╰──────────────────────────────────────────────────╯
+     y · n · h/l · ⏎
+
+
+
+== 80x24
+
+
+
+
+
+
+
+
+              ╭─ Reset to default? ──────────────────────────────╮
+              │ Repositories root goes back to its default       │
+              │ value. The value you set is lost.                │
+              │                                                  │
+              │                 [ No ]   [ Yes ]                 │
+              ╰──────────────────────────────────────────────────╯
+                y yes · n no · h/l choose · ⏎ apply
+
+
+
+
+
+
+
+
+

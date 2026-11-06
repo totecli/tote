@@ -1,0 +1,28 @@
+== 24x7
+❯_ tote › Settings  14
+   ↑ 2 more
+   Reposit…  /srv/work
+ ❯ After a…  exit (qu…
+   ↓ 10 more
+ saved: After a connect…
+ ⏎ · esc · ctrl+k · q
+== 26x8
+❯_ tote › Settings    14
+   Language    auto (en)
+   Editor        nano -w
+   Reposito…   /srv/work
+ ❯ After a …  exit (qui…
+   ↓ 10 more
+ saved: After a connectio…
+ ⏎ · esc · ctrl+k · q · ?
+== 36x10
+❯_ tote › Settings              14
+   Language              auto (en)
+   Editor                  nano -w
+   Repositories …        /srv/work
+ ❯ After a conne…  exit (quit on …
+   SSH keepalive               Yes
+   After opening…  return (back t…
+   ↓ 8 more
+ saved: After a conne… (applied now)
+ ⏎ · ←→ · d · esc · ctrl+k · q · ?

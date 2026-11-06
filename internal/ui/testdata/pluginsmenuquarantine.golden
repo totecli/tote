@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+                ╭─ jumpy ──────────────────────────────────────╮
+                │ ❯ Details                                    │
+                │   Clear the quarantine                       │
+                │   Update                                     │
+                │   Check                                      │
+                │   Remove                                     │
+                │   Remove with its data                       │
+                ╰──────────────────────────────────────────────╯
+                  ⏎ choose · esc close · ↑↓ navigate
+
+
+
+
+
+
+
+
+== 40x12
+
+  ╭─ jumpy ──────────────────────────╮
+  │ ❯ Details                        │
+  │   Clear the quarantine           │
+  │   Update                         │
+  │   Check                          │
+  │   Remove                         │
+  │   Remove with its data           │
+  ╰──────────────────────────────────╯
+   ⏎ · esc · ↑↓
+
+
+== 24x7
+  ╭─ jumpy ──────────╮
+  │ ❯ Details        │
+  │   Clear the qua… │
+  │   Update         │
+  ╰──────────────────╯
+   ⏎ · esc · ↑↓
+

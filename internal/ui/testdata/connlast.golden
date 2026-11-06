@@ -1,0 +1,104 @@
+== 60x12
+❯_ tote › Connections                                    6
+ / filter…
+   prod     prod.example.com     deploy  Production web
+   staging  staging.example.com  deploy
+   bastion  bastion.example.com  ops
+ ! legacy   old.example.com
+   emoji    fun.example.com              rocket 🚀 heart …
+ ❯ hostile  evil.example.com             a?[31mb?c?d
+
+
+ → ssh -- evil.example.com
+ ⏎ · e · d · esc · ctrl+k · q · ?
+== 80x24
+❯_ tote › Connections                                                        6
+
+  / filter…
+
+    NAME      TARGET                USER    DESCRIPTION
+    prod      prod.example.com      deploy  Production web
+    staging   staging.example.com   deploy
+    bastion   bastion.example.com   ops
+  ! legacy    old.example.com
+    emoji     fun.example.com               rocket 🚀 heart ❤ dev 👨💻 日本語
+  ❯ hostile   evil.example.com              a?[31mb?c?d
+
+
+
+
+
+
+╭─ hostile ────────────────────────────────────────────────────────────────────╮
+│ → ssh -- evil.example.com                                                    │
+│                                                                              │
+│ ! invalid record: connection desc: invalid value: must not contain control … │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ connect · e edit · d delete · esc back · ctrl+k palette · q quit · ? help
+== 100x40
+❯_ tote › Connections                                                                            6
+
+  / filter…
+
+    NAME        TARGET                      USER      DESCRIPTION
+    prod        prod.example.com            deploy    Production web
+    staging     staging.example.com         deploy
+    bastion     bastion.example.com         ops
+  ! legacy      old.example.com
+    emoji       fun.example.com                       rocket 🚀 heart ❤ dev 👨💻 日本語
+  ❯ hostile     evil.example.com                      a?[31mb?c?d
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+╭─ hostile ────────────────────────────────────────────────────────────────────────────────────────╮
+│ → ssh -- evil.example.com                                                                        │
+│                                                                                                  │
+│ ! invalid record: connection desc: invalid value: must not contain control characters            │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ connect · e edit · d delete · n new · / filter · esc back · ctrl+k palette · q quit · ? help
+== 120x24
+❯_ tote › Connections                                                                                                6
+
+  / filter…
+
+    NAME          TARGET                            USER        DESCRIPTION
+    prod          prod.example.com                  deploy      Production web
+    staging       staging.example.com               deploy
+    bastion       bastion.example.com               ops
+  ! legacy        old.example.com
+    emoji         fun.example.com                               rocket 🚀 heart ❤ dev 👨💻 日本語
+  ❯ hostile       evil.example.com                              a?[31mb?c?d
+
+
+
+
+
+
+╭─ hostile ────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ → ssh -- evil.example.com                                                                                            │
+│                                                                                                                      │
+│ ! invalid record: connection desc: invalid value: must not contain control characters                                │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ connect · e edit · d delete · n new · / filter · u next user · esc back · ctrl+k palette · q quit · ? help

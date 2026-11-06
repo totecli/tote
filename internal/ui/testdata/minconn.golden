@@ -1,0 +1,28 @@
+== 24x7
+❯_ tote › Connecti…  6
+ / filter…
+   prod
+   staging
+ ❯ bastion
+ → mosh ops@bastion.exa…
+ ⏎ · esc · ctrl+k · q
+== 26x8
+❯_ tote › Connections  6
+ / filter…
+   prod     prod.exampl…
+   staging  staging.exa…
+ ❯ bastion  bastion.exa…
+   ↓ 3 more
+ → mosh ops@bastion.examp…
+ ⏎ · esc · ctrl+k · q · ?
+== 36x10
+❯_ tote › Connections            6
+ / filter…
+   prod      prod.example.com
+   staging   staging.example.com
+ ❯ bastion   bastion.example.com
+ ! legacy    old.example.com
+   emoji     fun.example.com
+ ! hostile   evil.example.com
+ → mosh ops@bastion.example.com
+ ⏎ · e · d · esc · ctrl+k · q · ?

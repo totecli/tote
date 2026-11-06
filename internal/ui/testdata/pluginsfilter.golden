@@ -1,0 +1,46 @@
+== 80x24
+❯_ tote › Plugins                                                          3/6
+
+  / no▏
+
+    NAME   VERSION  STATE                 DESCRIPTION
+  ❯ notes  1.0.0    ● disabled            Keeps short notes.
+    demo   1.0.0    ● enabled             Shows notes about the work.
+    ghost  1.0.0    ● missing dependency  Needs a program that is not here.
+
+
+
+
+
+
+
+
+
+╭─ notes ──────────────────────────────────────────────────────────────────────╮
+│ Keeps short notes.                                                           │
+│ declarative · local · access: 1                                              │
+│ turned off in config.toml (enabled = false)                                  │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ apply · esc clear · ↑↓ navigate
+== 40x12
+❯_ tote › Plugins                  3/6
+ / no▏
+ ❯ notes  1.0.0    ● disabled
+   demo   1.0.0    ● enabled
+   ghost  1.0.0    ● missing dependen…
+
+
+
+
+
+ turned off in config.toml (enabled = f…
+ ⏎ · esc · ↑↓
+== 24x7
+❯_ tote › Plugins  3/6
+ / no▏
+ ❯ notes     1.0.0
+   demo      1.0.0
+   ghost     1.0.0
+ turned off in config.t…
+ ⏎ · esc · ↑↓

@@ -1,0 +1,104 @@
+== 60x12
+❯_ tote › Repos                                          2
+ / filter…
+ ❯ proj      /srv/work/proj            This tool
+   docs      ~/missing/docs
+
+
+
+
+
+
+ /srv/work/proj
+ ⏎ · e · d · esc · ctrl+k · q · ?
+== 80x24
+❯_ tote › Repos                                                              2
+
+  / filter…
+
+    NAME      PATH                          DESCRIPTION
+  ❯ proj      /srv/work/proj                This tool
+    docs      ~/missing/docs
+
+
+
+
+
+
+
+
+
+
+╭─ proj ───────────────────────────────────────────────────────────────────────╮
+│ /srv/work/proj                                                               │
+│ This tool                                                                    │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ go · e edit · d delete · n new · esc back · ctrl+k palette · q quit · ? help
+== 100x40
+❯_ tote › Repos                                                                                  2
+
+  / filter…
+
+    NAME      PATH                          DESCRIPTION
+  ❯ proj      /srv/work/proj                This tool
+    docs      ~/missing/docs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+╭─ proj ───────────────────────────────────────────────────────────────────────────────────────────╮
+│ /srv/work/proj                                                                                   │
+│ This tool                                                                                        │
+│                                                                                                  │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ go · e edit · d delete · n new · / filter · esc back · ctrl+k palette · q quit · ? help
+== 120x24
+❯_ tote › Repos                                                                                                      2
+
+  / filter…
+
+    NAME      PATH                          DESCRIPTION
+  ❯ proj      /srv/work/proj                This tool
+    docs      ~/missing/docs
+
+
+
+
+
+
+
+
+
+
+╭─ proj ───────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ /srv/work/proj                                                                                                       │
+│ This tool                                                                                                            │
+│                                                                                                                      │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ go · e edit · d delete · n new · / filter · o editor · C copy · esc back · ctrl+k palette · q quit · ? help

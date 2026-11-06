@@ -1,0 +1,34 @@
+  ╭─ Aide ───────────────────────────────────────────────────────────────────╮
+  │ [[Prise en main]]                                                            │
+  │ [[· Appuyez sur [ctrl+k] pour tout chercher, [,] pour ouvrir les réglages]]  │
+  │   [[et [?] pour cette aide.]]                                                │
+  │ [[· Ouvrez une liste avec [1-4], déplacez-vous avec [↑↓], [⏎] utilise un]]   │
+  │   [[enregistrement et [n] en ajoute un.]]                                    │
+  │ [[· [esc] revient en arrière et [q] quitte depuis l’accueil et les listes,]] │
+  │   [[les changements sont enregistrés tout de suite.]]                        │
+  │                                                                          │
+  │ [[Page]] d’accueil                                                           │
+  │   ↑↓   naviguer                                                          │
+  │   ⏎    ouvrir                                                            │
+  │   1-4  accès                                                             │
+  │   u    mise à jour connue                                                │
+  │   U    chercher une mise à jour                                          │
+  │                                                                          │
+  │ Partout                                                                  │
+  │   ctrl+k  palette                                                        │
+  │   ?       aide                                                           │
+  │   ,       réglages                                                       │
+  │ ↓ 106 de plus                                                            │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    esc fermer · ↑↓ défiler
+    349 caractères copiés (fake) · Maj+glisser sélectionne avec le terminal à…
+-- copied --
+Prise en main
+· Appuyez sur [ctrl+k] pour tout chercher, [,] pour ouvrir les réglages
+  et [?] pour cette aide.
+· Ouvrez une liste avec [1-4], déplacez-vous avec [↑↓], [⏎] utilise un
+  enregistrement et [n] en ajoute un.
+· [esc] revient en arrière et [q] quitte depuis l’accueil et les listes,
+  les changements sont enregistrés tout de suite.
+
+Page

@@ -1,0 +1,69 @@
+== 60x12
+  ╭─ Palette ────────────────────────────────────────────╮
+  │ ❯ docs▏                                              │
+  ├──────────────────────────────────────────────────────┤
+  │   ↑ 4 de plus                                        │
+  │   Connexions › emoji                 fun.example.com │
+  │ ! Connexions › hostile              evil.example.com │
+  │   Dépôts › proj                       /srv/work/proj │
+  │ ❯ Dépôts › docs                       ~/missing/docs │
+  │   ↓ 18 de plus                                       │
+  ╰──────────────────────────────────────────────────────╯
+   ↑↓ · ⏎ · esc · tab · ctrl+e
+   ~/missing/docs
+== 80x24
+
+
+
+  ╭─ Palette ────────────────────────────────────────────────────────────────╮
+  │ ❯ Nouveau dépôt▏                                                         │
+  ├──────────────────────────────────────────────────────────────────────────┤
+  │   ↑ 4 de plus                                                            │
+  │   Connexions › emoji                                     fun.example.com │
+  │ ! Connexions › hostile                                  evil.example.com │
+  │   Dépôts › proj                                           /srv/work/proj │
+  │   Dépôts › docs                                           ~/missing/docs │
+  │   Alias › ll                                                      ls -la │
+  │   Alias › gs                                                  git status │
+  │   Fonctions › hello                                               source │
+  │   Fonctions › tool                                                A tool │
+  │   Nouvelle connexion                                                     │
+  │ ❯ Nouveau dépôt                                                          │
+  │   ↓ 12 de plus                                                           │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    ↑↓ choisir · ⏎ ouvrir · esc restaurer · tab compléter
+
+
+
+
+== 110x30
+
+
+
+
+
+
+                 ╭─ Palette ────────────────────────────────────────────────────────────────╮
+                 │ ❯ Nouveau dépôt▏                                                         │
+                 ├──────────────────────────────────────────────────────────────────────────┤
+                 │   ↑ 4 de plus                                                            │
+                 │   Connexions › emoji                                     fun.example.com │
+                 │ ! Connexions › hostile                                  evil.example.com │
+                 │   Dépôts › proj                                           /srv/work/proj │
+                 │   Dépôts › docs                                           ~/missing/docs │
+                 │   Alias › ll                                                      ls -la │
+                 │   Alias › gs                                                  git status │
+                 │   Fonctions › hello                                               source │
+                 │   Fonctions › tool                                                A tool │
+                 │   Nouvelle connexion                                                     │
+                 │ ❯ Nouveau dépôt                                                          │
+                 │   ↓ 12 de plus                                                           │
+                 ╰──────────────────────────────────────────────────────────────────────────╯
+                   ↑↓ choisir · ⏎ ouvrir · esc restaurer · tab compléter
+
+
+
+
+
+
+

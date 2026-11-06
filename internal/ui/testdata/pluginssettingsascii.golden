@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+    +- Reglages de demo ---------------------------------------------------+
+    | > Owner   someone                                                    |
+    |           Who owns the notes.                                        |
+    |   Verbose [ ] Non                                                    |
+    |   Limit   10                                                         |
+    |   Mode     fast   safe                                               |
+    |   Tags    elements : 1 (x)                                           |
+    +----------------------------------------------------------------------+
+      tab suivant - ctrl+s enregistrer - esc annuler
+
+
+
+
+
+
+
+
+== 40x12
+
+  +- Reglages de demo ---------------+
+  | > Owner   someone                |
+  |           Who owns the notes.    |
+  |   Verbose [ ] Non                |
+  |   Limit   10                     |
+  |   Mode     fast   safe           |
+  |   Tags    elements : 1 (x)       |
+  +----------------------------------+
+   tab - ctrl+s - esc
+
+
+== 24x7
+  +- Reglages de... -+
+  | > Owner   ...ne  |
+  |           Who    |
+  |           own... |
+  +------------------+
+   tab - ctrl+s - esc
+

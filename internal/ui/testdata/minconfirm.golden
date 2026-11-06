@@ -1,0 +1,28 @@
+== 24x7
+  ╭─ Delete ─────────╮
+  │ "prod"?          │
+  │ prod.example.com │
+  │ [ No ]   [ Yes ] │
+  ╰──────────────────╯
+   y · n · h/l · ⏎
+
+== 26x8
+  ╭─ Delete ───────────╮
+  │ Delete the         │
+  │ connection "prod"? │
+  │ prod.example.com   │
+  │  [ No ]   [ Yes ]  │
+  ╰────────────────────╯
+   y · n · h/l · ⏎
+
+== 36x10
+
+  ╭─ Delete ─────────────────────╮
+  │ Delete the connection        │
+  │ "prod"?                      │
+  │ prod.example.com             │
+  │                              │
+  │       [ No ]   [ Yes ]       │
+  ╰──────────────────────────────╯
+   y · n · h/l · ⏎
+

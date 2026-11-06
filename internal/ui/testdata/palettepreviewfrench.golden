@@ -1,0 +1,69 @@
+== 60x12
+  ╭─ Palette ────────────────────────────────────────────╮
+  │ ❯ legacy▏                                            │
+  ├──────────────────────────────────────────────────────┤
+  │   Connexions › prod                 prod.example.com │
+  │   Connexions › staging           staging.example.com │
+  │   Connexions › bastion           bastion.example.com │
+  │ ❯ Connexions › legacy                old.example.com │
+  │   Connexions › emoji                 fun.example.com │
+  │   ↓ 21 de plus                                       │
+  ╰──────────────────────────────────────────────────────╯
+   ↑↓ · ⏎ · esc · tab · ctrl+e
+   ! connection needs review: "legacy"
+== 80x24
+
+
+
+  ╭─ Palette ────────────────────────────────────────────────────────────────╮
+  │ ❯ legacy▏                                                                │
+  ├──────────────────────────────────────────────────────────────────────────┤
+  │   Connexions › prod                                     prod.example.com │
+  │   Connexions › staging                               staging.example.com │
+  │   Connexions › bastion                               bastion.example.com │
+  │ ❯ Connexions › legacy                                    old.example.com │
+  │   Connexions › emoji                                     fun.example.com │
+  │ ! Connexions › hostile                                  evil.example.com │
+  │   Dépôts › proj                                           /srv/work/proj │
+  │   Dépôts › docs                                           ~/missing/docs │
+  │   Alias › ll                                                      ls -la │
+  │   Alias › gs                                                  git status │
+  │   Fonctions › hello                                               source │
+  │   ↓ 15 de plus                                                           │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    ↑↓ choisir · ⏎ ouvrir · esc restaurer · tab compléter · ctrl+e modifier
+    ! connection needs review: "legacy"
+
+
+
+== 110x30
+
+
+
+
+
+
+                 ╭─ Palette ────────────────────────────────────────────────────────────────╮
+                 │ ❯ legacy▏                                                                │
+                 ├──────────────────────────────────────────────────────────────────────────┤
+                 │   Connexions › prod                                     prod.example.com │
+                 │   Connexions › staging                               staging.example.com │
+                 │   Connexions › bastion                               bastion.example.com │
+                 │ ❯ Connexions › legacy                                    old.example.com │
+                 │   Connexions › emoji                                     fun.example.com │
+                 │ ! Connexions › hostile                                  evil.example.com │
+                 │   Dépôts › proj                                           /srv/work/proj │
+                 │   Dépôts › docs                                           ~/missing/docs │
+                 │   Alias › ll                                                      ls -la │
+                 │   Alias › gs                                                  git status │
+                 │   Fonctions › hello                                               source │
+                 │   ↓ 15 de plus                                                           │
+                 ╰──────────────────────────────────────────────────────────────────────────╯
+                   ↑↓ choisir · ⏎ ouvrir · esc restaurer · tab compléter · ctrl+e modifier
+                   ! connection needs review: "legacy"
+
+
+
+
+
+

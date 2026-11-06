@@ -1,0 +1,32 @@
+
+
+
+  ╭─ [[Palette]] ────────────────────────────────────────────────────────────────╮
+  │ [[❯ tout chercher - c, r, a, d ou > pour restreindre]]                       │
+  ├──────────────────────────────────────────────────────────────────────────┤
+  │ [[❯ Connexions › prod                                     prod.example.com]] │
+  │   [[Connexions › staging                               staging.example.com]] │
+  │   [[Connexions › bastion                               bastion.example.com]] │
+  │ [[! Connexions › lega]]cy                                    old.example.com │
+  │   Connexions › emoji                                     fun.example.com │
+  │ ! Connexions › hostile                                  evil.example.com │
+  │   Dépôts › proj                                           /srv/work/proj │
+  │   Dépôts › docs                                           ~/missing/docs │
+  │   Alias › ll                                                      ls -la │
+  │   Alias › gs                                                  git status │
+  │   Fonctions › hello                                               source │
+  │   ↓ 15 de plus                                                           │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    ↑↓ choisir · ⏎ ouvrir · esc fermer · tab compléter · ctrl+e modifier
+    298 caractères copiés (fake) · Maj+glisser sélectionne avec le terminal à…
+
+
+
+-- copied --
+Palette
+❯ tout chercher - c, r, a, d ou > pour restreindre
+
+❯ Connexions › prod                                     prod.example.com
+  Connexions › staging                               staging.example.com
+  Connexions › bastion                               bastion.example.com
+! Connexions › lega

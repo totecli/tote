@@ -1,0 +1,43 @@
+== 80x24 pointer 45,23
+❯_ tote › Connections                                                        6
+
+  / filter…
+
+    NAME      TARGET                USER    DESCRIPTION
+  ❯ prod      prod.example.com      deploy  Production web
+    staging   staging.example.com   deploy
+    bastion   bastion.example.com   ops
+  ! legacy    old.example.com
+    emoji     fun.example.com               rocket 🚀 heart ❤ dev 👨💻 日本語
+  ! hostile   evil.example.com              a?[31mb?c?d
+
+
+
+
+
+
+╭─ prod ───────────────────────────────────────────────────────────────────────╮
+│ → ssh -l deploy -- prod.example.com                                          │
+│ aliases p                                                                    │
+│ Production web                                                               │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ connect · e edit · d delete · esc back · ctrl+k palette · q quit · ? help
+-- truecolor
+hovered 23:   \e[38;2;139;134;151m⏎\e[m\e[38;2;139;134;151m connect\e[m\e[38;2;139;134;151m · \e[m\e[38;2;139;134;151me\e[m\e[38;2;139;134;151m edit\e[m\e[38;2;139;134;151m · \e[m\e[38;2;139;134;151md\e[m\e[38;2;139;134;151m delete\e[m\e[38;2;139;134;151m · \e[m\e[38;2;139;134;151mesc\e[m\e[38;2;139;134;151m back\e[m\e[38;2;139;134;151m · \e[m\e[48;2;34;31;41m\e[38;2;139;134;151mctrl+k\e[m\e[48;2;34;31;41m\e[38;2;139;134;151m palette\e[m\e[38;2;139;134;151m · \e[m\e[38;2;139;134;151mq\e[m\e[38;2;139;134;151m quit\e[m\e[38;2;139;134;151m · \e[m\e[38;2;139;134;151m?\e[m\e[38;2;139;134;151m help\e[m
+selected 5: \e[1;38;2;244;217;226;48;2;58;34;48m  ❯ prod      prod.example.com      deploy  Production web                    \e[m
+-- truecolor light
+hovered 23:   \e[38;2;95;90;107m⏎\e[m\e[38;2;95;90;107m connect\e[m\e[38;2;95;90;107m · \e[m\e[38;2;95;90;107me\e[m\e[38;2;95;90;107m edit\e[m\e[38;2;95;90;107m · \e[m\e[38;2;95;90;107md\e[m\e[38;2;95;90;107m delete\e[m\e[38;2;95;90;107m · \e[m\e[38;2;95;90;107mesc\e[m\e[38;2;95;90;107m back\e[m\e[38;2;95;90;107m · \e[m\e[48;2;242;237;231m\e[38;2;95;90;107mctrl+k\e[m\e[48;2;242;237;231m\e[38;2;95;90;107m palette\e[m\e[38;2;95;90;107m · \e[m\e[38;2;95;90;107mq\e[m\e[38;2;95;90;107m quit\e[m\e[38;2;95;90;107m · \e[m\e[38;2;95;90;107m?\e[m\e[38;2;95;90;107m help\e[m
+selected 5: \e[1;38;2;90;15;51;48;2;246;213;227m  ❯ prod      prod.example.com      deploy  Production web                    \e[m
+-- 256
+hovered 23:   \e[38;5;245m⏎\e[m\e[38;5;245m connect\e[m\e[38;5;245m · \e[m\e[38;5;245me\e[m\e[38;5;245m edit\e[m\e[38;5;245m · \e[m\e[38;5;245md\e[m\e[38;5;245m delete\e[m\e[38;5;245m · \e[m\e[38;5;245mesc\e[m\e[38;5;245m back\e[m\e[38;5;245m · \e[m\e[48;5;235m\e[38;5;245mctrl+k\e[m\e[48;5;235m\e[38;5;245m palette\e[m\e[38;5;245m · \e[m\e[38;5;245mq\e[m\e[38;5;245m quit\e[m\e[38;5;245m · \e[m\e[38;5;245m?\e[m\e[38;5;245m help\e[m
+selected 5: \e[1;38;5;255;48;5;89m  ❯ prod      prod.example.com      deploy  Production web                    \e[m
+-- 16
+hovered 23:   ⏎ connect · e edit · d delete · esc back · \e[4mctrl+k palette\e[m · q quit · ? help
+selected 5: \e[1;7m  ❯ prod      prod.example.com      deploy  Production web                    \e[m
+-- none
+hovered 23:   \e[1m⏎\e[m connect · \e[1me\e[m edit · \e[1md\e[m delete · \e[1mesc\e[m back · \e[m\e[4m\e[1mctrl+k\e[m\e[4m palette\e[m · \e[1mq\e[m quit · \e[1m?\e[m help
+selected 5: \e[1;7m  ❯ prod      prod.example.com      deploy  Production web                    \e[m
+-- ascii
+hovered 23:   \e[1menter\e[m connect - \e[1me\e[m edit - \e[1mesc\e[m back - \e[m\e[4m\e[1mctrl+k\e[m\e[4m palette\e[m - \e[1mq\e[m quit - \e[1m?\e[m help
+selected 5: \e[1;7m  > prod         prod.example.com               deploy    Production web      \e[m

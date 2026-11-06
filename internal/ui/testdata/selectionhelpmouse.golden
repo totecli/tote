@@ -1,0 +1,39 @@
+  ╭─ Help ───────────────────────────────────────────────────────────────────╮
+  │ ↑ 103 more                                                               │
+  │                                                                          │
+  │ [[Mouse]]                                                                    │
+  │ [[· Pointing at a row, an entry or a key of the footer only highlights it.]] │
+  │   [[Click a row to select it, double click to open it, use the wheel to]]    │
+  │   [[scroll and click a key of the footer to press it.]]                      │
+  │ [[· Drag to select text, it is copied when you release the button.]]         │
+  │   [[Shift+drag selects with the terminal instead (Option+drag in iTerm2),]]  │
+  │   [[then Ctrl+Shift+C copies.]]                                              │
+  │ [[· With ui.mouse off, the terminal selects text itself and Ctrl+Shift+C]]   │
+  │   [[works as usual.]]                                                        │
+  │                                                                          │
+  │ [[Safety: [ctrl+c] goes back and never quits at once, [ctrl+d] quits, and]]  │
+  │ [[nothing is lost on quit because every write is immediate. What is not]]    │
+  │ [[saved yet, such as a form, is asked about first.]]                         │
+  │ [[Unin]]stalling is not offered here, run tote uninstall in your shell.      │
+  │ Your data lives in plain TOML files, tote config path shows where.       │
+  │ Enter, c and C add ssh keepalive options unless your ssh configuration   │
+  │ sets its own, and ask ssh only when you press them. tote co does the     │
+  │ same, see connect.keepalive.                                             │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    esc close · ↑↓ scroll
+    Copied 651 characters (fake) · Shift+drag selects with the terminal inste…
+-- copied --
+Mouse
+· Pointing at a row, an entry or a key of the footer only highlights it.
+  Click a row to select it, double click to open it, use the wheel to
+  scroll and click a key of the footer to press it.
+· Drag to select text, it is copied when you release the button.
+  Shift+drag selects with the terminal instead (Option+drag in iTerm2),
+  then Ctrl+Shift+C copies.
+· With ui.mouse off, the terminal selects text itself and Ctrl+Shift+C
+  works as usual.
+
+Safety: [ctrl+c] goes back and never quits at once, [ctrl+d] quits, and
+nothing is lost on quit because every write is immediate. What is not
+saved yet, such as a form, is asked about first.
+Unin

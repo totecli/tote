@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+
+    ╭─ gft : Supprimer un stash ───────────────────────────────────────────╮
+    │ Supprimer le stash 3 de proj ?                                       │
+    │ → gft stash drop 3 --yes                                             │
+    │ Dossier : /usr                                                       │
+    │                                                                      │
+    │                       [ Annuler ]   [ Lancer ]                       │
+    ╰──────────────────────────────────────────────────────────────────────╯
+      h/l choisir · ⏎ valider · esc annuler
+
+
+
+
+
+
+
+
+== 40x12
+
+
+  ╭─ gft : Supprimer un stash ───────╮
+  │ Supprimer le stash 3 de proj ?   │
+  │ → gft stash drop 3 --yes         │
+  │ Dossier : /usr                   │
+  │                                  │
+  │     [ Annuler ]   [ Lancer ]     │
+  ╰──────────────────────────────────╯
+   h/l · ⏎ · esc
+
+
+== 24x7
+  ╭─ gft : Supprim… ─╮
+  │ → gft stash      │
+  │ drop 3 --yes     │
+  │ [Annu…] [Lancer] │
+  ╰──────────────────╯
+   h/l · ⏎ · esc
+

@@ -1,0 +1,104 @@
+== 60x12
+❯_ tote › Settings                                      14
+   ↑ 6 more
+   Theme                                              dark
+   Welcome page                                        box
+   Compact layout                                     auto
+   Page width                        auto (terminal width)
+   Mouse                                               Yes
+   Update check at start                               Yes
+ ❯ Colors in use                                      none
+   Check for update                                  1.2.3
+ This one follows the terminal and cannot be changed here.
+ esc · ctrl+k · q · ↑↓ · v · u · ?
+== 80x24
+❯_ tote › Settings                                                          14
+
+    Language                                                         auto (en)
+    Editor                                                             nano -w
+    Repositories root                                                /srv/work
+    After a connection                             exit (quit on a normal end)
+    SSH keepalive                                                          Yes
+    After opening a repository                       return (back to the list)
+    Theme                                                                 dark
+    Welcome page                                                           box
+    Compact layout                                                        auto
+    Page width                                           auto (terminal width)
+    Mouse                                                                  Yes
+    Update check at start                                                  Yes
+  ❯ Colors in use                                                         none
+    Check for update                                                     1.2.3
+
+╭─ Colors in use ──────────────────────────────────────────────────────────────╮
+│ Colors in use · set by TOTE_COLOR, read-only here                            │
+│ Colors follow TOTE_COLOR, then NO_COLOR, then the terminal.                  │
+│ Read-only.                                                                   │
+╰──────────────────────────────────────────────────────────────────────────────╯
+  This one follows the terminal and cannot be changed here.
+  esc back · ctrl+k palette · q quit · ↑↓ navigate · v details · ? help
+== 100x40
+❯_ tote › Settings                                                                              14
+
+    Language                    Language of the interface                                auto (en)
+    Editor                      Program that opens a repository                            nano -w
+    Repositories root           Folder offered for a new reposit…                        /srv/work
+    After a connection          What happens when a connection e…      exit (quit on a normal end)
+    SSH keepalive               Keep idle ssh sessions alive                                   Yes
+    After opening a repository  What happens after the editor op…        return (back to the list)
+    Theme                       Color scheme                                                  dark
+    Welcome page                The welcome page                                               box
+    Compact layout              When the one-line layout is used                              auto
+    Page width                  The whole terminal, or capped                auto (terminal width)
+    Mouse                       Hover, click, wheel, drag to copy                              Yes
+    Update check at start       Look for a new release at start                                Yes
+  ❯ Colors in use               TOTE_COLOR (read-only)                                        none
+    Check for update            Look for a new release now                                   1.2.3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+╭─ Colors in use ──────────────────────────────────────────────────────────────────────────────────╮
+│ Colors in use · set by TOTE_COLOR, read-only here                                                │
+│ Colors follow TOTE_COLOR, then NO_COLOR, then the terminal.                                      │
+│ Read-only.                                                                                       │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+  This one follows the terminal and cannot be changed here.
+  esc back · ctrl+k palette · q quit · ↑↓ navigate · v details · u update notice · ? help
+== 120x24
+❯_ tote › Settings                                                                                                  14
+
+    Language                    Language of the interface                                                    auto (en)
+    Editor                      Program that opens a repository                                                nano -w
+    Repositories root           Folder offered for a new repository                                          /srv/work
+    After a connection          What happens when a connection ends                        exit (quit on a normal end)
+    SSH keepalive               Keep idle ssh sessions alive                                                       Yes
+    After opening a repository  What happens after the editor opens                          return (back to the list)
+    Theme                       Color scheme                                                                      dark
+    Welcome page                The welcome page                                                                   box
+    Compact layout              When the one-line layout is used                                                  auto
+    Page width                  The whole terminal, or capped                                    auto (terminal width)
+    Mouse                       Hover, click, wheel, drag to copy                                                  Yes
+    Update check at start       Look for a new release at start                                                    Yes
+  ❯ Colors in use               TOTE_COLOR (read-only)                                                            none
+    Check for update            Look for a new release now                                                       1.2.3
+
+╭─ Colors in use ──────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Colors in use · set by TOTE_COLOR, read-only here                                                                    │
+│ Colors follow TOTE_COLOR, then NO_COLOR, then the terminal.                                                          │
+│ Read-only.                                                                                                           │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+  This one follows the terminal and cannot be changed here.
+  esc back · ctrl+k palette · q quit · ↑↓ navigate · v details · u update notice · U check for update · ? help

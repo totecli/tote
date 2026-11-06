@@ -1,0 +1,28 @@
+== 24x7
+  ╭─ Palette ────────╮
+  │ ❯ pro▏           │
+  │ ❯ Connections ›… │
+  │   Repos › proj   │
+  ╰──────────────────╯
+   ↑↓ · ⏎ · esc · tab
+   → ssh -l deploy --…
+== 26x8
+  ╭─ Palette ──────────╮
+  │ ❯ pro▏             │
+  ├────────────────────┤
+  │ ❯ Connections › p… │
+  │   Repos › proj     │
+  ╰────────────────────╯
+   ↑↓ · ⏎ · esc · tab
+   → ssh -l deploy -- p…
+== 36x10
+  ╭─ Palette ────────────────────╮
+  │ ❯ pro▏                       │
+  ├──────────────────────────────┤
+  │ ❯ Connections › prod         │
+  │   Repos › proj  …v/work/proj │
+  │                              │
+  │                              │
+  ╰──────────────────────────────╯
+   ↑↓ · ⏎ · esc · tab · ctrl+e
+   → ssh -l deploy -- prod.exampl…

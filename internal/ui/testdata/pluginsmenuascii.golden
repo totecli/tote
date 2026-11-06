@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+                +- demo ---------------------------------------+
+                | > Details                                    |
+                |   Desactiver                                 |
+                |   Reglages                                   |
+                |   Mettre a jour                              |
+                |   Verifier                                   |
+                |   Supprimer                                  |
+                |   Supprimer avec ses donnees                 |
+                +----------------------------------------------+
+                  enter choisir - esc fermer - up/down naviguer
+
+
+
+
+
+
+
+== 40x12
+
+  +- demo ---------------------------+
+  | > Details                        |
+  |   Desactiver                     |
+  |   Reglages                       |
+  |   Mettre a jour                  |
+  |   Verifier                       |
+  |   Supprimer                      |
+  |   Supprimer avec ses donnees     |
+  +----------------------------------+
+   enter - esc - up/down
+
+== 24x7
+  +- demo -----------+
+  | > Details        |
+  |   Desactiver     |
+  |   Reglages       |
+  +------------------+
+   enter - esc
+

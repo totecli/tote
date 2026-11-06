@@ -1,0 +1,69 @@
+== 60x12
+  +- Palette --------------------------------------------+
+  | > docs_                                              |
+  +------------------------------------------------------+
+  |   ^ 4 de plus                                        |
+  |   Connexions > emoji                 fun.example.com |
+  | ! Connexions > hostile              evil.example.com |
+  |   Depots > proj                       /srv/work/proj |
+  | > Depots > docs                       ~/missing/docs |
+  |   v 18 de plus                                       |
+  +------------------------------------------------------+
+   up/down - enter - esc - tab - ctrl+e
+   ~/missing/docs
+== 80x24
+
+
+
+  +- Palette ----------------------------------------------------------------+
+  | > Nouveau depot_                                                         |
+  +--------------------------------------------------------------------------+
+  |   ^ 4 de plus                                                            |
+  |   Connexions > emoji                                     fun.example.com |
+  | ! Connexions > hostile                                  evil.example.com |
+  |   Depots > proj                                           /srv/work/proj |
+  |   Depots > docs                                           ~/missing/docs |
+  |   Alias > ll                                                      ls -la |
+  |   Alias > gs                                                  git status |
+  |   Fonctions > hello                                               source |
+  |   Fonctions > tool                                                A tool |
+  |   Nouvelle connexion                                                     |
+  | > Nouveau depot                                                          |
+  |   v 12 de plus                                                           |
+  +--------------------------------------------------------------------------+
+    up/down choisir - enter ouvrir - esc restaurer - tab completer
+
+
+
+
+== 110x30
+
+
+
+
+
+
+                 +- Palette ----------------------------------------------------------------+
+                 | > Nouveau depot_                                                         |
+                 +--------------------------------------------------------------------------+
+                 |   ^ 4 de plus                                                            |
+                 |   Connexions > emoji                                     fun.example.com |
+                 | ! Connexions > hostile                                  evil.example.com |
+                 |   Depots > proj                                           /srv/work/proj |
+                 |   Depots > docs                                           ~/missing/docs |
+                 |   Alias > ll                                                      ls -la |
+                 |   Alias > gs                                                  git status |
+                 |   Fonctions > hello                                               source |
+                 |   Fonctions > tool                                                A tool |
+                 |   Nouvelle connexion                                                     |
+                 | > Nouveau depot                                                          |
+                 |   v 12 de plus                                                           |
+                 +--------------------------------------------------------------------------+
+                   up/down choisir - enter ouvrir - esc restaurer - tab completer
+
+
+
+
+
+
+

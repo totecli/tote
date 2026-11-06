@@ -1,0 +1,104 @@
+== 60x12
+  ╭─ New connection ─────────────────────────────────────╮
+  │ ❯ name                                               │
+  │               ! must not be empty                    │
+  │   target                                             │
+  │               ! must not be empty                    │
+  │   via         ssh                                    │
+  │   user                                               │
+  │   ↓ 3 more                                           │
+  │ ! Some fields are not valid.                         │
+  ╰──────────────────────────────────────────────────────╯
+   tab · ctrl+s · esc
+
+== 80x24
+
+
+
+
+
+    ╭─ New connection ─────────────────────────────────────────────────────╮
+    │ ❯ name                                                               │
+    │               ! must not be empty                                    │
+    │   target                                                             │
+    │               ! must not be empty                                    │
+    │   via         ssh                                                    │
+    │   user                                                               │
+    │   aliases                                                            │
+    │   ip                                                                 │
+    │   description                                                        │
+    │ ! Some fields are not valid.                                         │
+    ╰──────────────────────────────────────────────────────────────────────╯
+      tab next · ctrl+s save · esc cancel
+
+
+
+
+
+
+== 100x40
+
+
+
+
+
+
+
+
+
+
+
+
+
+              ╭─ New connection ─────────────────────────────────────────────────────╮
+              │ ❯ name                                                               │
+              │               ! must not be empty                                    │
+              │   target                                                             │
+              │               ! must not be empty                                    │
+              │   via         ssh                                                    │
+              │   user                                                               │
+              │   aliases                                                            │
+              │   ip                                                                 │
+              │   description                                                        │
+              │ ! Some fields are not valid.                                         │
+              ╰──────────────────────────────────────────────────────────────────────╯
+                tab next · ctrl+s save · esc cancel
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+== 120x24
+
+
+
+
+
+                        ╭─ New connection ─────────────────────────────────────────────────────╮
+                        │ ❯ name                                                               │
+                        │               ! must not be empty                                    │
+                        │   target                                                             │
+                        │               ! must not be empty                                    │
+                        │   via         ssh                                                    │
+                        │   user                                                               │
+                        │   aliases                                                            │
+                        │   ip                                                                 │
+                        │   description                                                        │
+                        │ ! Some fields are not valid.                                         │
+                        ╰──────────────────────────────────────────────────────────────────────╯
+                          tab next · ctrl+s save · esc cancel
+
+
+
+
+
+

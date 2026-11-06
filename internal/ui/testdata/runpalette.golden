@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+  ╭─ Palette ────────────────────────────────────────────────────────────────╮
+  │ ❯ release▏                                                               │
+  ├──────────────────────────────────────────────────────────────────────────┤
+  │ ❯ Show a GitHub release                                              gft │
+  │   Open the releases page                                             gft │
+  │   Download a release asset                                           gft │
+  │   Install a release binary                                           gft │
+  │                                                                          │
+  │                                                                          │
+  │                                                                          │
+  │                                                                          │
+  │                                                                          │
+  │                                                                          │
+  │                                                                          │
+  │                                                                          │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    ↑↓ choose · ⏎ open · esc close · tab complete
+
+
+
+
+== 40x12
+  ╭─ Palette ────────────────────────╮
+  │ ❯ release▏                       │
+  ├──────────────────────────────────┤
+  │ ❯ Show a GitHub release          │
+  │   Open the releases page         │
+  │   Download a release asset       │
+  │   Install a release binary       │
+  │                                  │
+  │                                  │
+  ╰──────────────────────────────────╯
+   ↑↓ · ⏎ · esc · tab
+
+== 24x7
+  ╭─ Palette ────────╮
+  │ ❯ release▏       │
+  │ ❯ Show a GitHub… │
+  │   Open the rele… │
+  ╰──────────────────╯
+   ↑↓ · ⏎ · esc · tab
+

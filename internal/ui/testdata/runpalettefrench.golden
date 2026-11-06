@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+  ╭─ Palette ────────────────────────────────────────────────────────────────╮
+  │ ❯ release▏                                                               │
+  ├──────────────────────────────────────────────────────────────────────────┤
+  │ ❯ Afficher une release GitHub                                        gft │
+  │   Ouvrir la page des releases                                        gft │
+  │   Télécharger un asset de release                                    gft │
+  │   Installer le binaire d’une release                                 gft │
+  │                                                                          │
+  │                                                                          │
+  │                                                                          │
+  │                                                                          │
+  │                                                                          │
+  │                                                                          │
+  │                                                                          │
+  │                                                                          │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    ↑↓ choisir · ⏎ ouvrir · esc fermer · tab compléter
+
+
+
+
+== 40x12
+  ╭─ Palette ────────────────────────╮
+  │ ❯ release▏                       │
+  ├──────────────────────────────────┤
+  │ ❯ Afficher une release GitHub    │
+  │   Ouvrir la page des releases    │
+  │   Télécharger un asset de relea… │
+  │   Installer le binaire d’une re… │
+  │                                  │
+  │                                  │
+  ╰──────────────────────────────────╯
+   ↑↓ · ⏎ · esc · tab
+
+== 24x7
+  ╭─ Palette ────────╮
+  │ ❯ release▏       │
+  │ ❯ Afficher une … │
+  │   Ouvrir la pag… │
+  ╰──────────────────╯
+   ↑↓ · ⏎ · esc · tab
+

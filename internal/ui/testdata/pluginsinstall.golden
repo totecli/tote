@@ -1,0 +1,46 @@
+== 80x24
+  ╭─ Install plugin gft 1.0.0? ──────────────────────────────────────────────╮
+  │ Origin: shipped with tote                                                │
+  │ Checksum: sha256 f56d20b069f5, covered by the signature of this tote     │
+  │           release                                                        │
+  │ No code of its own: tote runs only the programs listed below.            │
+  │                                                                          │
+  │ Description (written by the plugin, not checked by tote)                 │
+  │   | GitHub releases and git stashes through the gft command.             │
+  │                                                                          │
+  │ Commands it will run:                                                    │
+  │   $ command get: gft '{slug}' '{tag?}' --get '{pattern}' '{verify?}'     │
+  │   $ command install: gft '{slug}' '{tag?}' --install                     │
+  │   $ command open: open https://github.com/{slug}/releases                │
+  │   $ command show: gft '{slug}' '{tag?}' '{view?}'                        │
+  │   $ item action assets: gft '{repo.slug}' --assets                       │
+  │   $ item action notes: gft '{repo.slug}' --notes                         │
+  │   $ item action release: gft '{repo.slug}'                               │
+  │   $ item action stash-clean: gft stash clean --yes                       │
+  │ ↓ 28 more                                                                │
+  │                                                                          │
+  │                   [ Cancel ]   [ Install and enable ]                    │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    ⏎ apply · h/l choose · esc cancel · ↑↓ scroll
+
+== 40x12
+  ╭─ Install plugin gft 1.0.0? ──────╮
+  │ Origin: shipped with tote        │
+  │ Checksum: sha256 f56d20b069f5, … │
+  │ No code of its own: tote runs    │
+  │ only the programs listed below.  │
+  │                                  │
+  │ ↓ 80 more                        │
+  │                                  │
+  │  [Cancel] [Install and enable]   │
+  ╰──────────────────────────────────╯
+   ⏎ · h/l · esc · ↑↓
+
+== 24x7
+  ╭─ Install plugi… ─╮
+  │ gft              │
+  │ Origin: shipped… │
+  │ [Canc…] [Insta…] │
+  ╰──────────────────╯
+   ⏎ · h/l · esc · ↑↓
+

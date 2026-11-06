@@ -1,0 +1,43 @@
+== 80x24 pointer 20,7
+
+
+
+  ╭─ Palette ────────────────────────────────────────────────────────────────╮
+  │ ❯ search all - c, r, a, d or > to narrow                                 │
+  ├──────────────────────────────────────────────────────────────────────────┤
+  │ ❯ Connections › prod                                    prod.example.com │
+  │   Connections › staging                              staging.example.com │
+  │   Connections › bastion                              bastion.example.com │
+  │ ! Connections › legacy                                   old.example.com │
+  │   Connections › emoji                                    fun.example.com │
+  │ ! Connections › hostile                                 evil.example.com │
+  │   Repos › proj                                            /srv/work/proj │
+  │   Repos › docs                                            ~/missing/docs │
+  │   Aliases › ll                                                    ls -la │
+  │   Aliases › gs                                                git status │
+  │   Functions › hello                                               source │
+  │   ↓ 15 more                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    ↑↓ choose · ⏎ open · esc close · tab complete · ctrl+e edit
+    → ssh -l deploy -- prod.example.com
+
+
+
+-- truecolor
+hovered 7:   \e[38;2;219;39;119m│\e[m\e[48;2;34;31;41m \e[38;2;236;232;240m  \e[m\e[48;2;34;31;41m\e[38;2;236;232;240mConnections › staging                            \e[m\e[48;2;34;31;41m  \e[38;2;139;134;151mstaging.example.com\e[m\e[48;2;34;31;41m \e[m\e[38;2;219;39;119m│\e[m
+selected 6:   \e[38;2;219;39;119m│\e[m\e[1;38;2;244;217;226;48;2;58;34;48m ❯ Connections › prod                                    prod.example.com \e[m\e[38;2;219;39;119m│\e[m
+-- truecolor light
+hovered 7:   \e[38;2;176;23;93m│\e[m\e[48;2;242;237;231m \e[38;2;21;19;26m  \e[m\e[48;2;242;237;231m\e[38;2;21;19;26mConnections › staging                            \e[m\e[48;2;242;237;231m  \e[38;2;95;90;107mstaging.example.com\e[m\e[48;2;242;237;231m \e[m\e[38;2;176;23;93m│\e[m
+selected 6:   \e[38;2;176;23;93m│\e[m\e[1;38;2;90;15;51;48;2;246;213;227m ❯ Connections › prod                                    prod.example.com \e[m\e[38;2;176;23;93m│\e[m
+-- 256
+hovered 7:   \e[38;5;162m│\e[m\e[48;5;235m \e[38;5;255m  \e[m\e[48;5;235m\e[38;5;255mConnections › staging                            \e[m\e[48;5;235m  \e[38;5;245mstaging.example.com\e[m\e[48;5;235m \e[m\e[38;5;162m│\e[m
+selected 6:   \e[38;5;162m│\e[m\e[1;38;5;255;48;5;89m ❯ Connections › prod                                    prod.example.com \e[m\e[38;5;162m│\e[m
+-- 16
+hovered 7:   \e[95m│\e[m   \e[m\e[4mConnections › staging\e[m                              \e[m\e[4mstaging.example.com\e[m \e[95m│\e[m
+selected 6:   \e[95m│\e[m\e[1;7m ❯ Connections › prod                                    prod.example.com \e[m\e[95m│\e[m
+-- none
+hovered 7:   │   \e[4mConnections › staging\e[m                              \e[4mstaging.example.com\e[m │
+selected 6:   │\e[1;7m ❯ Connections › prod                                    prod.example.com \e[m│
+-- ascii
+hovered 7:   |   \e[4mConnections > staging\e[m                              \e[4mstaging.example.com\e[m |
+selected 6:   |\e[1;7m > Connections > prod                                    prod.example.com \e[m|

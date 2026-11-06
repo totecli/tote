@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+
+
+  ╭─ notes 1.0.0 - Notes ────────────────────────────────────────────────────╮
+  │ result       notes: no problem found                                     │
+  │ contributes  - command go: tool '{x}'                                    │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    esc close · ↑↓ scroll
+
+
+
+
+
+
+
+
+
+
+== 40x12
+
+
+  ╭─ notes 1.0.0 - Notes ────────────╮
+  │ result      notes: no problem    │
+  │             found                │
+  │ contribut…  - command go: tool   │
+  │             '{x}'                │
+  ╰──────────────────────────────────╯
+   esc · ↑↓
+
+
+
+== 24x7
+  ╭─ notes 1.0.0… ───╮
+  │ resu…  notes: no │
+  │        problem   │
+  │        found     │
+  ╰──────────────────╯
+   esc · ↑↓
+

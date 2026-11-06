@@ -1,0 +1,46 @@
+== 80x24
++- tote 1.2.3 -----------------------------------------------------------------+
+|                                                                              |
+|    .--.    Bienvenue, tester                                                 |
+|   .+--+.   Tes outils de terminal, dans un seul sac.                         |
+|   ' >_ '   6 connexions - 2 depots - 2 alias - 2 fonctions                   |
+|                                                                              |
++------------------------------------------------------------------------------+
+    Connexions                                                               6
+    Depots                                                                   2
+    Alias                                                                    2
+    Fonctions                                                                2
+  > Plugins                                                                ! 6
+    Reglages                                                                fr
+
+
+
+
+
+
+
+
+
+
+  up/down naviguer - enter ouvrir - ctrl+k palette - q quitter - ? aide
+== 40x12
+ >_ tote 1.2.3 - 6 cx - 2 dep - 2 ali...
+
+   Connexions                        6
+   Depots                            2
+   Alias                             2
+   Fonctions                         2
+ > Plugins                         ! 6
+   Reglages                         fr
+
+
+
+ up/down - enter - ctrl+k - q - , - ?
+== 24x7
+ >_ tote 1.2.3 - 6 cx...
+   ^ 3 de plus
+   Fonctions         2
+ > Plugins         ! 6
+   Reglages         fr
+
+ up/down - enter

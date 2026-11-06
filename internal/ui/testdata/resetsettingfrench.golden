@@ -1,0 +1,38 @@
+== 60x12
+
+
+    ╭─ Rétablir la valeur par défaut ? ────────────────╮
+    │ Racine des dépôts reprend sa valeur par défaut.  │
+    │ La valeur que vous avez choisie est perdue.      │
+    │                                                  │
+    │                [ Non ]   [ Oui ]                 │
+    ╰──────────────────────────────────────────────────╯
+     y · n · h/l · ⏎
+
+
+
+== 80x24
+
+
+
+
+
+
+
+
+              ╭─ Rétablir la valeur par défaut ? ────────────────╮
+              │ Racine des dépôts reprend sa valeur par défaut.  │
+              │ La valeur que vous avez choisie est perdue.      │
+              │                                                  │
+              │                [ Non ]   [ Oui ]                 │
+              ╰──────────────────────────────────────────────────╯
+                y oui · n non · h/l choisir · ⏎ valider
+
+
+
+
+
+
+
+
+

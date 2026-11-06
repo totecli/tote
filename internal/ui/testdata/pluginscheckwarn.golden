@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+  ╭─ demo 1.0.0 - Demo ──────────────────────────────────────────────────────╮
+  │ result       demo: errors 0, warnings 2                                  │
+  │ warning      locales.en.setting.mode.choice.fast: the translation lacks  │
+  │              the key setting.mode.choice.fast                            │
+  │ warning      locales.en.setting.mode.choice.safe: the translation lacks  │
+  │              the key setting.mode.choice.safe                            │
+  │ contributes  - command go: tool '{x}'                                    │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    esc close · ↑↓ scroll
+
+
+
+
+
+
+
+
+== 40x12
+  ╭─ demo 1.0.0 - Demo ──────────────╮
+  │ result      demo: errors 0,      │
+  │             warnings 2           │
+  │ warning     locales.en.setting.m │
+  │             ode.choice.fast: the │
+  │             translation lacks    │
+  │             the key …            │
+  │ warning     locales.en.setting.m │
+  │ ↓ 5 more                         │
+  ╰──────────────────────────────────╯
+   esc · ↑↓
+
+== 24x7
+  ╭─ demo 1.0.0 … ───╮
+  │ resu…  demo:     │
+  │        errors 0, │
+  │        warnings  │
+  ╰──────────────────╯
+   esc · ↑↓
+

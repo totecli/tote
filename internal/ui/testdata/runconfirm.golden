@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+
+    ╭─ gft: Drop a stash ──────────────────────────────────────────────────╮
+    │ Drop stash 3 of proj?                                                │
+    │ → gft stash drop 3 --yes                                             │
+    │ Directory: /usr                                                      │
+    │                                                                      │
+    │                         [ Cancel ]   [ Run ]                         │
+    ╰──────────────────────────────────────────────────────────────────────╯
+      h/l choose · ⏎ apply · esc cancel
+
+
+
+
+
+
+
+
+== 40x12
+
+
+  ╭─ gft: Drop a stash ──────────────╮
+  │ Drop stash 3 of proj?            │
+  │ → gft stash drop 3 --yes         │
+  │ Directory: /usr                  │
+  │                                  │
+  │       [ Cancel ]   [ Run ]       │
+  ╰──────────────────────────────────╯
+   h/l · ⏎ · esc
+
+
+== 24x7
+  ╭─ gft: Drop a s… ─╮
+  │ → gft stash      │
+  │ drop 3 --yes     │
+  │  [Cancel] [Run]  │
+  ╰──────────────────╯
+   h/l · ⏎ · esc
+

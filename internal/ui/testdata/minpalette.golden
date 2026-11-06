@@ -1,0 +1,28 @@
+== 24x7
+  ╭─ Palette ────────╮
+  │ ❯ staging▏       │
+  │   Connections ›… │
+  │ ❯ Connections ›… │
+  ╰──────────────────╯
+   ↑↓ · ⏎ · esc · tab
+   → ssh -l deploy --…
+== 26x8
+  ╭─ Palette ──────────╮
+  │ ❯ staging▏         │
+  ├────────────────────┤
+  │   Connections › p… │
+  │ ❯ Connections › s… │
+  ╰────────────────────╯
+   ↑↓ · ⏎ · esc · tab
+   → ssh -l deploy -- s…
+== 36x10
+  ╭─ Palette ────────────────────╮
+  │ ❯ staging▏                   │
+  ├──────────────────────────────┤
+  │   Connections › prod         │
+  │ ❯ Connections › staging      │
+  │   Connections › bastion      │
+  │   ↓ 23 more                  │
+  ╰──────────────────────────────╯
+   ↑↓ · ⏎ · esc · tab · ctrl+e
+   → ssh -l deploy -- staging.exa…

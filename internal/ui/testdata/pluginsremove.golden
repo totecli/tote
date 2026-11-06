@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+
+              ╭─ Remove a plugin ────────────────────────────────╮
+              │ Remove plugin demo? This deletes:                │
+              │ its installed files, its install record and      │
+              │ enabled = false in its table of config.toml      │
+              │                                                  │
+              │                 [ No ]   [ Yes ]                 │
+              ╰──────────────────────────────────────────────────╯
+                y yes · n no · h/l choose · ⏎ apply
+
+
+
+
+
+
+
+
+== 40x12
+
+  ╭─ Remove a plugin ────────────────╮
+  │ Remove plugin demo? This         │
+  │ deletes:                         │
+  │ its installed files, its install │
+  │ record and enabled = false in    │
+  │ its table of config.toml         │
+  │                                  │
+  │         [ No ]   [ Yes ]         │
+  ╰──────────────────────────────────╯
+   y · n · h/l · ⏎
+
+== 24x7
+  ╭─ Remove a plug… ─╮
+  │ Remove plugin    │
+  │ demo? This …     │
+  │ [ No ]   [ Yes ] │
+  ╰──────────────────╯
+   y · n · h/l · ⏎
+

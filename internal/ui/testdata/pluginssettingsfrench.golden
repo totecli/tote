@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+    ╭─ Réglages de demo ───────────────────────────────────────────────────╮
+    │ ❯ Owner   someone                                                    │
+    │           Who owns the notes.                                        │
+    │   Verbose [ ] Non                                                    │
+    │   Limit   10                                                         │
+    │   Mode     fast   safe                                               │
+    │   Tags    éléments : 1 (x)                                           │
+    ╰──────────────────────────────────────────────────────────────────────╯
+      tab suivant · ctrl+s enregistrer · esc annuler
+
+
+
+
+
+
+
+
+== 40x12
+
+  ╭─ Réglages de demo ───────────────╮
+  │ ❯ Owner   someone                │
+  │           Who owns the notes.    │
+  │   Verbose [ ] Non                │
+  │   Limit   10                     │
+  │   Mode     fast   safe           │
+  │   Tags    éléments : 1 (x)       │
+  ╰──────────────────────────────────╯
+   tab · ctrl+s · esc
+
+
+== 24x7
+  ╭─ Réglages de d… ─╮
+  │ ❯ Owner   …eone  │
+  │           Who    │
+  │           owns … │
+  ╰──────────────────╯
+   tab · ctrl+s · esc
+

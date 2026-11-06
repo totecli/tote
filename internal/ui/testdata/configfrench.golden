@@ -1,0 +1,104 @@
+== 60x12
+❯_ tote › Réglages                                      14
+   Langue                                        auto (en)
+   Éditeur                                         nano -w
+   Racine des dépôts                             /srv/work
+ ❯ Après une connexion         exit (quitter en fin norma…
+   Keepalive SSH                                       Oui
+   Après l’ouverture d’un dé…   return (retour à la liste)
+   Thème                                            sombre
+   Page d’accueil                                    cadre
+   ↓ 6 de plus
+ connect.after_disconnect: Ce qui se passe à la fin d’une c…
+ ⏎ · ←→ · d · esc · ctrl+k · q · ?
+== 80x24
+❯_ tote › Réglages                                                          14
+
+    Langue                                                           auto (en)
+    Éditeur                                                            nano -w
+    Racine des dépôts                                                /srv/work
+  ❯ Après une connexion                      ‹ exit (quitter en fin normale) ›
+    Keepalive SSH                                                          Oui
+    Après l’ouverture d’un dépôt                    return (retour à la liste)
+    Thème                                                               sombre
+    Page d’accueil                                                       cadre
+    Disposition compacte                                                  auto
+    Largeur de la page                              auto (largeur du terminal)
+    Souris                                                                 Oui
+    Recherche au démarrage                                                 Oui
+    Couleurs utilisées                                                    none
+    Chercher une mise à jour                                             1.2.3
+
+╭─ Après une connexion ────────────────────────────────────────────────────────╮
+│ connect.after_disconnect · défini dans config.toml                           │
+│ Ce qui se passe à la fin d’une connexion. Un échec attend toujours Entrée.   │
+│ valeurs : menu (retour à la liste), exit (quitter en fin normale) · appliqu… │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ modifier · ←→ régler · esc retour · ctrl+k palette · q quitter · ? aide
+== 100x40
+❯_ tote › Réglages                                                                              14
+
+    Langue                        Langue de l’interface                                  auto (en)
+    Éditeur                       Programme qui ouvre un dépôt                             nano -w
+    Racine des dépôts             Dossier proposé pour un nouv…                          /srv/work
+  ❯ Après une connexion           Ce qui suit la fin d’une con…  ‹ exit (quitter en fin normale) ›
+    Keepalive SSH                 Garder en vie les sessions s…                                Oui
+    Après l’ouverture d’un dépôt  Ce qui suit l’ouverture dans…         return (retour à la liste)
+    Thème                         Palette de couleurs                                       sombre
+    Page d’accueil                La page d’accueil                                          cadre
+    Disposition compacte          Quand la disposition sur une…                               auto
+    Largeur de la page            Tout le terminal, ou plafonn…         auto (largeur du terminal)
+    Souris                        Survol, clic, molette, gliss…                                Oui
+    Recherche au démarrage        Chercher une nouvelle versio…                                Oui
+    Couleurs utilisées            TOTE_COLOR (lecture seule)                                  none
+    Chercher une mise à jour      Chercher une nouvelle versio…                              1.2.3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+╭─ Après une connexion ────────────────────────────────────────────────────────────────────────────╮
+│ connect.after_disconnect · défini dans config.toml                                               │
+│ Ce qui se passe à la fin d’une connexion. Un échec attend toujours Entrée.                       │
+│ valeurs : menu (retour à la liste), exit (quitter en fin normale) · appliqué tout de suite       │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ modifier · ←→ régler · d rétablir · esc retour · ctrl+k palette · q quitter · ? aide
+== 120x24
+❯_ tote › Réglages                                                                                                  14
+
+    Langue                        Langue de l’interface                                                      auto (en)
+    Éditeur                       Programme qui ouvre un dépôt                                                 nano -w
+    Racine des dépôts             Dossier proposé pour un nouveau dépôt                                      /srv/work
+  ❯ Après une connexion           Ce qui suit la fin d’une connexion                 ‹ exit (quitter en fin normale) ›
+    Keepalive SSH                 Garder en vie les sessions ssh inactives                                         Oui
+    Après l’ouverture d’un dépôt  Ce qui suit l’ouverture dans l’éditeur                    return (retour à la liste)
+    Thème                         Palette de couleurs                                                           sombre
+    Page d’accueil                La page d’accueil                                                              cadre
+    Disposition compacte          Quand la disposition sur une ligne s’applique                                   auto
+    Largeur de la page            Tout le terminal, ou plafonnée                            auto (largeur du terminal)
+    Souris                        Survol, clic, molette, glisser pour copier                                       Oui
+    Recherche au démarrage        Chercher une nouvelle version au démarrage                                       Oui
+    Couleurs utilisées            TOTE_COLOR (lecture seule)                                                      none
+    Chercher une mise à jour      Chercher une nouvelle version maintenant                                       1.2.3
+
+╭─ Après une connexion ────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ connect.after_disconnect · défini dans config.toml                                                                   │
+│ Ce qui se passe à la fin d’une connexion. Un échec attend toujours Entrée.                                           │
+│ valeurs : menu (retour à la liste), exit (quitter en fin normale) · appliqué tout de suite                           │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ modifier · ←→ régler · d rétablir · esc retour · ctrl+k palette · q quitter · ↑↓ naviguer · v détails · ? aide

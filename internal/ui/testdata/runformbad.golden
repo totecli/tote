@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+
+
+    ╭─ gft: Drop a stash ──────────────────────────────────────────────────╮
+    │ ❯ Stash number x                                                     │
+    │                ! does not match the pattern                          │
+    │ ! Some fields are not valid.                                         │
+    ╰──────────────────────────────────────────────────────────────────────╯
+      ⏎ run · esc cancel
+
+
+
+
+
+
+
+
+
+== 40x12
+
+
+  ╭─ gft: Drop a stash ──────────────╮
+  │ ❯ Stash number x                 │
+  │                ! does not match  │
+  │                the pattern       │
+  │ ! Some fields are not valid.     │
+  ╰──────────────────────────────────╯
+   ⏎ · esc
+
+
+
+== 24x7
+  ╭─ gft: Drop a s… ─╮
+  │ ❯ Stash nu… x    │
+  │             !    │
+  │             doe… │
+  ╰──────────────────╯
+   ⏎ · esc
+

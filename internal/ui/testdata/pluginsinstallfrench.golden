@@ -1,0 +1,46 @@
+== 80x24
+  ╭─ Installer le plugin gft 1.0.0 ? ────────────────────────────────────────╮
+  │ Origine : livré avec tote                                                │
+  │ Somme de contrôle : sha256 f56d20b069f5, couverte par la signature de    │
+  │                     cette version de tote                                │
+  │ Aucun code propre : tote ne lance que les programmes listés ci-dessous.  │
+  │                                                                          │
+  │ Description (écrite par le plugin, non vérifiée par tote)                │
+  │   | Releases GitHub et stashes git avec la commande gft.                 │
+  │                                                                          │
+  │ Commandes qu’il lancera :                                                │
+  │   $ commande get : gft '{slug}' '{tag?}' --get '{pattern}' '{verify?}'   │
+  │   $ commande install : gft '{slug}' '{tag?}' --install                   │
+  │   $ commande open : open https://github.com/{slug}/releases              │
+  │   $ commande show : gft '{slug}' '{tag?}' '{view?}'                      │
+  │   $ action d’élément assets : gft '{repo.slug}' --assets                 │
+  │   $ action d’élément notes : gft '{repo.slug}' --notes                   │
+  │   $ action d’élément release : gft '{repo.slug}'                         │
+  │   $ action d’élément stash-clean : gft stash clean --yes                 │
+  │ ↓ 31 de plus                                                             │
+  │                                                                          │
+  │                  [ Annuler ]   [ Installer et activer ]                  │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    ⏎ valider · h/l choisir · esc annuler · ↑↓ défiler
+
+== 40x12
+  ╭─ Installer le plugin gft 1.0.0… ─╮
+  │ gft                              │
+  │ Origine : livré avec tote        │
+  │ Somme de contrôle : sha256 …     │
+  │ Aucun code propre : tote ne      │
+  │ lance que les programmes listés  │
+  │ ↓ 88 de plus                     │
+  │                                  │
+  │ [Annuler] [Installer et activer] │
+  ╰──────────────────────────────────╯
+   ⏎ · h/l · esc · ↑↓
+
+== 24x7
+  ╭─ Installer le … ─╮
+  │ gft              │
+  │ Origine : livré… │
+  │ [Annu…] [Insta…] │
+  ╰──────────────────╯
+   ⏎ · h/l · esc · ↑↓
+

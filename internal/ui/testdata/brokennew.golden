@@ -1,0 +1,104 @@
+== 60x12
+❯_ tote › Connections                                    0
+ / filter…
+ ! connections.toml has a syntax error and is read-only (li…
+ Nothing to show: the file cannot be read.
+
+
+
+
+
+
+ connections.toml has a syntax error and is read-only (line…
+ esc · ctrl+k · q · h/l · ctrl+r · ?
+== 80x24
+❯_ tote › Connections                                                        0
+
+  / filter…
+  ! connections.toml has a syntax error and is read-only (line 3, column 13): e…
+
+    NAME      TARGET        USER      DESCRIPTION
+  Nothing to show: the file cannot be read.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  connections.toml has a syntax error and is read-only (line 3, column 13): exp…
+  esc back · ctrl+k palette · q quit · h/l switch · ctrl+r reload · ? help
+== 100x40
+❯_ tote › Connections                                                                            0
+
+  / filter…
+  ! connections.toml has a syntax error and is read-only (line 3, column 13): expected '.' or ']' t…
+
+    NAME      TARGET        USER      DESCRIPTION
+  Nothing to show: the file cannot be read.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  connections.toml has a syntax error and is read-only (line 3, column 13): expected '.' or ']' to …
+  esc back · ctrl+k palette · q quit · h/l switch · ctrl+r reload · ? help
+== 120x24
+❯_ tote › Connections                                                                                                0
+
+  / filter…
+  ! connections.toml has a syntax error and is read-only (line 3, column 13): expected '.' or ']' to end table name, bu…
+
+    NAME      TARGET        USER      DESCRIPTION
+  Nothing to show: the file cannot be read.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  connections.toml has a syntax error and is read-only (line 3, column 13): expected '.' or ']' to end table name, but …
+  esc back · ctrl+k palette · q quit · h/l switch · ctrl+r reload · ? help

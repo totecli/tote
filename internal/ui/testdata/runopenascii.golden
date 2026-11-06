@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+
+    +- gft : Ouvrir la page des releases ----------------------------------+
+    | Ouvrir cette adresse ?                                               |
+    | https://github.com/demo/proj/releases                                |
+    |                                                                      |
+    |                       [ Annuler ]   [ Ouvrir ]                       |
+    +----------------------------------------------------------------------+
+      h/l choisir - enter valider - esc annuler
+
+
+
+
+
+
+
+
+
+== 40x12
+
+
+  +- gft : Ouvrir la page des re... -+
+  | Ouvrir cette adresse ?           |
+  | https://github.com/demo/proj/rel |
+  | eases                            |
+  |                                  |
+  |     [ Annuler ]   [ Ouvrir ]     |
+  +----------------------------------+
+   h/l - enter - esc
+
+
+== 24x7
+  +- gft : Ouvri... -+
+  | https://github.c |
+  | trop petit po... |
+  | [An...] [Ouvrir] |
+  +------------------+
+   h/l - enter - esc
+

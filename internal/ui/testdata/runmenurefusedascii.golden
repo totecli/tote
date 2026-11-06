@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+                +- Actions : proj -----------------------------+
+                | >    Afficher la derniere release     ce ... |
+                |      Lister les assets de la release  ce ... |
+                |      Afficher les notes de release    ce ... |
+                |   s  Lister les stashes               gft    |
+                |      Afficher un stash...             gft    |
+                |      Supprimer un stash...            gft    |
+                |      Supprimer tous les stashes...    gft    |
+                +----------------------------------------------+
+                  enter choisir - esc fermer - up/down naviguer
+                  gft : ce depot n'a pas de remote GitHub
+
+
+
+
+
+
+== 40x12
+
+  +- Actions : proj -----------------+
+  | >    Afficher la derniere rel... |
+  |      Lister les assets de la ... |
+  |      Afficher les notes de re... |
+  |   s  Lister les stashes          |
+  |      Afficher un stash...        |
+  |      Supprimer un stash...       |
+  |      Supprimer tous les stash... |
+  +----------------------------------+
+   enter - esc - up/down
+   gft : ce depot n'a pas de remote...
+== 24x7
+  +- Actions : proj -+
+  | >    Afficher... |
+  |      Lister l... |
+  |      Afficher... |
+  +------------------+
+   enter - esc
+   gft : ce depot n...

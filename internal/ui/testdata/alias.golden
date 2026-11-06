@@ -1,0 +1,104 @@
+== 60x12
+❯_ tote › Aliases                                        2
+ / filter…
+   ll        ls -la                Long list
+ ❯ gs        git status
+
+
+
+
+
+
+ git status
+ ⏎ · e · d · esc · ctrl+k · q · ?
+== 80x24
+❯_ tote › Aliases                                                            2
+
+  / filter…
+
+    NAME      COMMAND               DESCRIPTION
+    ll        ls -la                Long list
+  ❯ gs        git status
+
+
+
+
+
+
+
+
+
+
+╭─ gs ─────────────────────────────────────────────────────────────────────────╮
+│ git status                                                                   │
+│                                                                              │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ insert · e edit · d delete · esc back · ctrl+k palette · q quit · ? help
+== 100x40
+❯_ tote › Aliases                                                                                2
+
+  / filter…
+
+    NAME      COMMAND               DESCRIPTION
+    ll        ls -la                Long list
+  ❯ gs        git status
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+╭─ gs ─────────────────────────────────────────────────────────────────────────────────────────────╮
+│ git status                                                                                       │
+│                                                                                                  │
+│                                                                                                  │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ insert · e edit · d delete · n new · / filter · esc back · ctrl+k palette · q quit · ? help
+== 120x24
+❯_ tote › Aliases                                                                                                    2
+
+  / filter…
+
+    NAME      COMMAND               DESCRIPTION
+    ll        ls -la                Long list
+  ❯ gs        git status
+
+
+
+
+
+
+
+
+
+
+╭─ gs ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ git status                                                                                                           │
+│                                                                                                                      │
+│                                                                                                                      │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ insert · e edit · d delete · n new · / filter · C copy · v details · esc back · ctrl+k palette · q quit · ? help

@@ -1,0 +1,28 @@
+== 24x7
+  ╭─ New connection ─╮
+  │ ❯ name   ab      │
+  │          short   │
+  │          handle… │
+  ╰──────────────────╯
+   tab · ctrl+s · esc
+
+== 26x8
+  ╭─ New connection ───╮
+  │ ❯ name   ab        │
+  │          short     │
+  │          handle: … │
+  │   ↓ 6 more         │
+  ╰────────────────────╯
+   tab · ctrl+s · esc
+
+== 36x10
+  ╭─ New connection ─────────────╮
+  │ ❯ name       ab              │
+  │              short handle:   │
+  │              letters, …      │
+  │   target                     │
+  │   via        ssh             │
+  │   ↓ 4 more                   │
+  ╰──────────────────────────────╯
+   tab · ctrl+s · esc
+
