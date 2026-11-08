@@ -1,0 +1,68 @@
+api = 1
+id = "ghrel"
+version = "1.0.0"
+tote = ">=1.0.0, <2"
+title = "ghrel"
+description = "Latest GitHub release of each repository in a list."
+license = "MIT"
+tier = "exec"
+permissions = [
+    "env:GH_TOKEN",
+    "env:GITHUB_TOKEN",
+    "exec:gh",
+    "exec:jq",
+    "host:open-url",
+    "net:api.github.com",
+]
+
+[exec]
+bin = "bin/ghrel"
+
+[[requires]]
+bin = "gh"
+hint = "Install the GitHub CLI, then run: gh auth login"
+
+[[requires]]
+bin = "jq"
+hint = "Install jq with your package manager"
+
+[[setting]]
+id = "owner"
+type = "string"
+label = "Default owner"
+description = "Used for bare names in the list. Empty means the login of gh."
+pattern = "^[A-Za-z0-9-]{0,39}$"
+
+[[setting]]
+id = "repos"
+type = "list"
+label = "Repositories"
+description = "owner/name, or a bare name that uses the default owner."
+pattern = "^([A-Za-z0-9_.-]+/)?[A-Za-z0-9_.-]+$"
+max_items = 100
+
+[[list]]
+id = "latest"
+label = "Latest releases"
+timeout = "60s"
+[[list.column]]
+id = "repo"
+label = "Repository"
+width = 30
+[[list.column]]
+id = "tag"
+label = "Latest tag"
+width = 18
+[[list.column]]
+id = "date"
+label = "Published"
+width = 12
+[[list.action]]
+id = "notes"
+label = "Show the release notes"
+run = ["gh", "release", "view", "--repo", "{item.id}"]
+output = "pager"
+[[list.action]]
+id = "open"
+label = "Open the release page"
+open = "{item.data.url}"

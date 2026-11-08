@@ -1,0 +1,181 @@
+api = 1
+id = "gft"
+version = "1.0.0"
+tote = ">=1.0.0, <2"
+title = "gft"
+description = "GitHub releases and git stashes through the gft command."
+license = "MIT"
+tier = "declarative"
+permissions = [
+    "env:GITHUB_TOKEN",
+    "exec:gft",
+    "fs:read:cwd",
+    "fs:write:cwd",
+    "fs:write:home",
+    "host:open-url",
+    "host:read:repos",
+    "net:api.github.com",
+    "net:github.com",
+    "net:*.githubusercontent.com",
+]
+
+[[requires]]
+bin = "gft"
+hint = "Install gft: see https://github.com/20syldev/gft"
+
+# Release actions on a saved repository: Tab on the row, no retyping of user/repo.
+# They are greyed when the repository has no GitHub remote.
+
+[[item_action]]
+id = "release"
+target = "repo"
+label = "Show the latest release"
+run = ["gft", "{repo.slug}"]
+output = "pager"
+
+[[item_action]]
+id = "assets"
+target = "repo"
+label = "List the release assets"
+run = ["gft", "{repo.slug}", "--assets"]
+output = "pager"
+
+[[item_action]]
+id = "notes"
+target = "repo"
+label = "Show the release notes"
+run = ["gft", "{repo.slug}", "--notes"]
+output = "pager"
+
+# Stash actions. gft stash works on the repository of its working directory,
+# so cwd is the selected repository (also the default for target "repo").
+# The number of a stash comes from "List stashes", which is opened first.
+
+[[item_action]]
+id = "stash-list"
+target = "repo"
+label = "List stashes"
+key = "l"
+run = ["gft", "stash", "list"]
+output = "pager"
+
+[[item_action]]
+id = "stash-show"
+target = "repo"
+label = "Show a stash"
+run = ["gft", "stash", "show", "{n}"]
+output = "pager"
+[[item_action.field]]
+id = "n"
+type = "text"
+label = "Stash number"
+default = "0"
+pattern = "^[0-9]{1,4}$"
+
+[[item_action]]
+id = "stash-drop"
+target = "repo"
+label = "Drop a stash"
+run = ["gft", "stash", "drop", "{n}", "--yes"]
+confirm = "Drop stash {n} of {repo.name}?"
+output = "pager"
+[[item_action.field]]
+id = "n"
+type = "text"
+label = "Stash number"
+required = true
+pattern = "^[0-9]{1,4}$"
+
+[[item_action]]
+id = "stash-clean"
+target = "repo"
+label = "Delete all stashes"
+run = ["gft", "stash", "clean", "--yes"]
+confirm = "Delete all stashes of {repo.name}?"
+output = "pager"
+
+# Palette commands for any repository. The slug defaults to the current repository.
+
+[[command]]
+id = "show"
+label = "Show a GitHub release"
+keywords = ["release", "assets", "notes"]
+run = ["gft", "{slug}", "{tag?}", "{view?}"]
+output = "pager"
+[[command.field]]
+id = "slug"
+type = "text"
+label = "Repository"
+default = "{repo.slug}"
+required = true
+pattern = "^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$"
+[[command.field]]
+id = "tag"
+type = "text"
+label = "Tag (empty for the latest)"
+pattern = "^[A-Za-z0-9._+-]{0,64}$"
+[[command.field]]
+id = "view"
+type = "choice"
+label = "View"
+choices = ["", "--releases", "--assets", "--detect", "--notes"]
+
+[[command]]
+id = "open"
+label = "Open the releases page"
+open = "https://github.com/{slug}/releases"
+[[command.field]]
+id = "slug"
+type = "text"
+label = "Repository"
+default = "{repo.slug}"
+required = true
+pattern = "^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$"
+
+[[command]]
+id = "get"
+label = "Download a release asset"
+run = ["gft", "{slug}", "{tag?}", "--get", "{pattern}", "{verify?}"]
+output = "terminal"
+[[command.field]]
+id = "slug"
+type = "text"
+label = "Repository"
+default = "{repo.slug}"
+required = true
+pattern = "^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$"
+[[command.field]]
+id = "tag"
+type = "text"
+label = "Tag (empty for the latest)"
+pattern = "^[A-Za-z0-9._+-]{0,64}$"
+[[command.field]]
+id = "pattern"
+type = "text"
+label = "Asset pattern, e.g. linux-amd64"
+required = true
+pattern = "^[A-Za-z0-9._*+-]{1,64}$"
+[[command.field]]
+id = "verify"
+type = "bool"
+label = "Verify the checksum"
+flag = "--checksum"
+
+[[command]]
+id = "install"
+label = "Install a release binary"
+run = ["gft", "{slug}", "{tag?}", "--install"]
+confirm = "Download and install {slug}?"
+output = "terminal"
+[[command.field]]
+id = "slug"
+type = "text"
+label = "Repository"
+default = "{repo.slug}"
+required = true
+pattern = "^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$"
+[[command.field]]
+id = "tag"
+type = "text"
+label = "Tag (empty for the latest)"
+pattern = "^[A-Za-z0-9._+-]{0,64}$"

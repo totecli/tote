@@ -1,0 +1,13 @@
+# One block per bundled plugin, in alphabetical order of the id, next to the directory
+# plugins/<id>/ that holds its files. Adding a plugin is that directory and that block, nothing
+# else. The hashes are those of the installed files (tree_sha256) and of the commands they run
+# (surface_sha256). TestBundledPins fails when a file, a version or a hash moves without the
+# matching edit here; scripts/vendor.sh writes the directory and the block, in order.
+
+schema = 1
+
+[[plugin]]
+id = "gft"
+version = "1.0.0"
+tree_sha256 = "f56d20b069f52ab5d1e18bc9e8a45ce30de964f55b0801e8208decd21e623098"
+surface_sha256 = "aa61a534bc43b24875969ea4188bb8afff5637e2f8287a6717e4f97938491e6e"

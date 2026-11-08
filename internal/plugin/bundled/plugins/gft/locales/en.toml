@@ -1,0 +1,6 @@
+# The only English texts that the manifest cannot carry: the labels of the choices of "View".
+"command.show.field.view.choice._" = "Release info"
+"command.show.field.view.choice.--releases" = "All releases"
+"command.show.field.view.choice.--assets" = "Assets"
+"command.show.field.view.choice.--detect" = "Asset for this machine"
+"command.show.field.view.choice.--notes" = "Release notes"

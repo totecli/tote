@@ -1,0 +1,6 @@
+# English test catalog of the gft example: only the labels of choices have no literal.
+"command.show.field.view.choice.--assets" = "Assets"
+"command.show.field.view.choice.--detect" = "Detect"
+"command.show.field.view.choice.--notes" = "Notes"
+"command.show.field.view.choice.--releases" = "Releases"
+"command.show.field.view.choice._" = "Default"
