@@ -1,0 +1,27 @@
+Installer le plugin demo 1.0.0 ?
+
+Source : <sandbox>/src/demo
+Origine : fichiers locaux, non vérifiés
+Somme de contrôle : sha256 1898271005ac, calculée ici, rien à comparer
+Aucun code propre : tote ne lance que les programmes listés ci-dessous.
+
+Description (écrite par le plugin, non vérifiée par tote)
+  | A neutral demo plugin.
+
+Commandes qu’il lancera :
+  $ commande hello : echo hello
+
+Ce plugin pourra :
+  - lancer le programme echo [imposé]
+  - contacter example.org (déclaré ; tote ne peut pas le bloquer) [déclaré]
+    imposé : tote refuse lui-même tout le reste
+    déclaré seulement : le plugin l’annonce, tote ne peut pas l’imposer
+
+! tote ne lance que les programmes listés, mais ces programmes peuvent faire tout ce que vous pouvez faire avec eux.
+
+le consentement est demandé parce que :
+  - c’est un nouveau plugin
+Code de consentement exec:echo,net:example.org@c440f18bd808
+
+simulation : rien n’a été changé
+pour l’accepter sans terminal, relancez la commande sans --dry-run et avec --grant exec:echo,net:example.org@c440f18bd808

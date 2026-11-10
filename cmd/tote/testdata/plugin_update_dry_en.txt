@@ -1,0 +1,24 @@
+demo 1.1.0 asks for more access
+
+Source: <sandbox>/src/demo
+Origin: local files, not verified
+Checksum: sha256 3ce62aa8ce26, computed here, nothing to compare it with
+No code of its own: tote runs only the programs listed below.
+
+Description (written by the plugin, not checked by tote)
+  | A neutral demo plugin.
+
+New access:
+  + contact example.org (declared; tote cannot block it) [declared]
+Unchanged: 1
+No longer asked: 0
+Commands: 0 added, 0 removed, 0 changed
+
+! tote runs only the listed programs, but those programs can do whatever you can do with them.
+
+consent is asked because:
+  - it asks for more access than you allowed
+Consent code exec:echo,net:example.org@c440f18bd808
+
+dry run: nothing was changed
+to accept it without a terminal, run the command again without --dry-run and with --grant exec:echo,net:example.org@c440f18bd808

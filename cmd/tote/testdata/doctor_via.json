@@ -1,0 +1,14 @@
+{
+  "id": "via",
+  "status": "warn",
+  "message": "connections whose via program is not found in PATH: 7",
+  "fix": "the program is not found in PATH; a shell alias or function cannot be used as a via, set the via to a full command, for example ssh -t admin@jump.example.org {user@}{host}",
+  "details": [
+    "db: jmp",
+    "a1: a1x",
+    "a2: a2x",
+    "a3: a3x",
+    "a4: a4x",
+    "and 2 more"
+  ]
+}

@@ -1,0 +1,2 @@
+WARN  clipboard         no clipboard program, and this terminal (or tmux) does not take OSC 52: a selection is shown, not copied
+                        fix: install xclip or xsel (X11) or wl-clipboard (Wayland), or select with Shift+drag and copy with Ctrl+Shift+C; inside tmux, set set-clipboard on lets the terminal take the text

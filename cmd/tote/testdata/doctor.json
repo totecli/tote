@@ -1,0 +1,162 @@
+{
+  "schema": 1,
+  "version": "1.2.3",
+  "ok": false,
+  "summary": {
+    "ok": 24,
+    "warn": 3,
+    "fail": 1
+  },
+  "checks": [
+    {
+      "id": "version",
+      "status": "ok",
+      "message": "tote 1.2.3 (linux/amd64)"
+    },
+    {
+      "id": "install",
+      "status": "ok",
+      "message": "no install receipt, running ~/bin/tote"
+    },
+    {
+      "id": "path",
+      "status": "ok",
+      "message": "tote is found in PATH: ~/bin/tote"
+    },
+    {
+      "id": "dir.config",
+      "status": "warn",
+      "message": "config directory ~/.config/tote is open to other users (mode 0755), 0700 is expected",
+      "fix": "chmod 700 ~/.config/tote"
+    },
+    {
+      "id": "dir.data",
+      "status": "ok",
+      "message": "data directory ~/.local/share/tote (mode 0700)"
+    },
+    {
+      "id": "dir.state",
+      "status": "ok",
+      "message": "state directory ~/.local/state/tote (mode 0700)"
+    },
+    {
+      "id": "dir.cache",
+      "status": "ok",
+      "message": "cache directory ~/.cache/tote does not exist yet, tote creates it when needed"
+    },
+    {
+      "id": "dir.plugins",
+      "status": "ok",
+      "message": "plugins directory ~/.local/share/tote/plugins does not exist yet, tote creates it when needed"
+    },
+    {
+      "id": "file.config",
+      "status": "ok",
+      "message": "config.toml does not exist, the defaults apply"
+    },
+    {
+      "id": "file.connections",
+      "status": "ok",
+      "message": "connections.toml does not exist, there is no record yet"
+    },
+    {
+      "id": "via",
+      "status": "ok",
+      "message": "no connection runs a via program"
+    },
+    {
+      "id": "file.aliases",
+      "status": "fail",
+      "message": "aliases.toml: line 5, column 6: expected value but found '\\n' instead",
+      "fix": "edit the line, tote never rewrites a file it cannot parse",
+      "details": [
+        "the file is read-only for tote and the shell ignores its records until it is fixed"
+      ]
+    },
+    {
+      "id": "file.repos",
+      "status": "ok",
+      "message": "repos.toml: valid, records: 2"
+    },
+    {
+      "id": "file.funcs",
+      "status": "ok",
+      "message": "funcs.toml does not exist, there is no record yet"
+    },
+    {
+      "id": "names",
+      "status": "ok",
+      "message": "no name clash, records checked: 2"
+    },
+    {
+      "id": "shell",
+      "status": "warn",
+      "message": "the shell integration is not set up: without it tote cannot change your directory or fill your command line",
+      "fix": "add this line to ~/.bashrc: eval \"$(tote init bash)\""
+    },
+    {
+      "id": "ssh",
+      "status": "ok",
+      "message": "ssh: ~/bin/ssh"
+    },
+    {
+      "id": "git",
+      "status": "ok",
+      "message": "git: ~/bin/git"
+    },
+    {
+      "id": "term",
+      "status": "ok",
+      "message": "TERM is xterm-256color"
+    },
+    {
+      "id": "locale",
+      "status": "ok",
+      "message": "the locale is UTF-8 (LANG=en_US.UTF-8)"
+    },
+    {
+      "id": "color",
+      "status": "ok",
+      "message": "the interface would use 24-bit colors"
+    },
+    {
+      "id": "mouse",
+      "status": "ok",
+      "message": "the mouse works in the interface (click, double click, wheel and hover)"
+    },
+    {
+      "id": "clipboard",
+      "status": "ok",
+      "message": "copy goes through the terminal (OSC 52), which gives no answer"
+    },
+    {
+      "id": "size",
+      "status": "ok",
+      "message": "120×40, the full layout is used"
+    },
+    {
+      "id": "tmux",
+      "status": "ok",
+      "message": "not inside tmux or screen"
+    },
+    {
+      "id": "runtime",
+      "status": "ok",
+      "message": "hand-off directory ~/run (mode 0700)"
+    },
+    {
+      "id": "handoff",
+      "status": "warn",
+      "message": "hand-off files left behind by a killed shell: 1, in ~/run",
+      "fix": "rm -f -- ~/run/tote.abcd1234",
+      "details": [
+        "~/run/tote.abcd1234"
+      ]
+    },
+    {
+      "id": "update",
+      "status": "ok",
+      "message": "no update check has run yet"
+    }
+  ]
+}

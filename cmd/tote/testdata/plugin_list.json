@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "plugins": [
+    {
+      "id": "demo",
+      "title": "Demo demo",
+      "version": "1.0.0",
+      "tier": "declarative",
+      "kind": "local",
+      "origin": "",
+      "state": "enabled",
+      "reasons": [],
+      "enabled": true,
+      "consented": true,
+      "caps": [
+        "exec:echo"
+      ],
+      "grant": "exec:echo@c440f18bd808",
+      "contributes": {
+        "item_actions": 0,
+        "commands": 1,
+        "lists": 0,
+        "settings": 0
+      }
+    },
+    {
+      "id": "gft",
+      "title": "gft",
+      "version": "1.0.0",
+      "tier": "declarative",
+      "kind": "bundled",
+      "origin": "",
+      "state": "available",
+      "reasons": [],
+      "enabled": false,
+      "consented": false,
+      "caps": [
+        "derived:tty",
+        "env:GITHUB_TOKEN",
+        "exec:gft",
+        "fs:read:cwd",
+        "fs:write:any",
+        "fs:write:cwd",
+        "host:open-url",
+        "host:read:repos",
+        "net:*.githubusercontent.com",
+        "net:api.github.com",
+        "net:github.com"
+      ],
+      "grant": "derived:tty,env:GITHUB_TOKEN,exec:gft,fs:read:cwd,fs:write:any,fs:write:cwd,host:open-url,host:read:repos,net:*.githubusercontent.com,net:api.github.com,net:github.com@aa61a534bc43",
+      "contributes": {
+        "item_actions": 7,
+        "commands": 4,
+        "lists": 0,
+        "settings": 0
+      }
+    },
+    {
+      "id": "zed",
+      "title": "Demo zed",
+      "version": "2.1.0",
+      "tier": "declarative",
+      "kind": "local",
+      "origin": "",
+      "state": "disabled",
+      "reasons": [
+        {
+          "code": "config_off",
+          "args": [],
+          "message": "turned off in config.toml (enabled = false)"
+        },
+        {
+          "code": "lock_off",
+          "args": [],
+          "message": "turned off by tote plugin disable"
+        }
+      ],
+      "enabled": false,
+      "consented": true,
+      "caps": [
+        "exec:echo",
+        "net:example.org"
+      ],
+      "grant": "exec:echo,net:example.org@c440f18bd808",
+      "contributes": {
+        "item_actions": 0,
+        "commands": 1,
+        "lists": 0,
+        "settings": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "ok": true,
+  "dry_run": true,
+  "plugin": {
+    "id": "demo",
+    "title": "Demo demo",
+    "version": "1.0.0",
+    "tier": "declarative",
+    "kind": "local",
+    "origin": "",
+    "class": "local",
+    "source": "<sandbox>/src/demo",
+    "tree_sha256": "1898271005aca371c03f520f7e015a431af11ccf3371d70da8899a19e7d25b0f",
+    "surface_sha256": "c440f18bd8080e931f86f72ca2c23eeb22886ce4f95c6f949d6ce44bcbd3dd31",
+    "update": false,
+    "caps": [
+      "exec:echo",
+      "net:example.org"
+    ],
+    "added": [
+      "exec:echo",
+      "net:example.org"
+    ],
+    "removed": [],
+    "unchanged": 0,
+    "commands": [
+      {
+        "table": "command",
+        "id": "hello",
+        "run": [
+          "echo",
+          "hello"
+        ]
+      }
+    ],
+    "missing": [],
+    "warnings": [],
+    "needs_consent": true,
+    "why": [
+      "new"
+    ],
+    "grant": "exec:echo,net:example.org@c440f18bd808"
+  },
+  "already_installed": false
+}

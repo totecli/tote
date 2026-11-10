@@ -1,0 +1,16 @@
+Manage plugins: list, info, install, update, enable, disable, remove, check
+
+Usage:
+  tote plugin [list] [--format table|tsv|json | --json]
+  tote plugin info <id> [--json]
+  tote plugin install <source> [--sha256 <hex>] [--grant <token>] [--dry-run] [--force] [--json]
+  tote plugin update <id> [<source>] [--sha256 <hex>] [--grant <token>] [--dry-run] [--force] [--json]
+  tote plugin enable <id> [--grant <token>] [--json]
+  tote plugin disable <id> [--json]
+  tote plugin remove <id> [--yes] [--purge] [--json]
+  tote plugin check [<id|dir|archive>] [--strict] [--official] [--argv [--set <field=value>] [--repo <name>]] [--json]
+  <source> is a release URL of github.com, owner/repo@tag, the id of a plugin shipped with tote, or a path that starts with /, ./, ../ or ~/
+  a release needs --sha256, the checksum its author published; --dry-run shows what the plugin asks for and the --grant token, and changes nothing
+  --set can be given several times; with --argv, check prints the command each entry would run
+  --no-plugins, before the verb, turns every plugin off for one run (also TOTE_NO_PLUGINS=1); plugins is another name for plugin
+  exit codes: 0 done, 1 failure, 2 usage or a flag is needed, 3 authentication required, 4 refused (state, policy, --grant mismatch), 5 integrity (hash, archive, tree)

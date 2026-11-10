@@ -1,0 +1,8 @@
+ALERTE  via               connexions dont le programme de via est introuvable dans le PATH : 7
+                          - db : jmp
+                          - a1 : a1x
+                          - a2 : a2x
+                          - a3 : a3x
+                          - a4 : a4x
+                          - et 2 de plus
+                          à faire : le programme est introuvable dans le PATH ; un alias ou une fonction du shell ne peut pas servir de via, mettez dans le via une commande complète, par exemple ssh -t admin@jump.example.org {user@}{host}

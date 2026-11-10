@@ -1,0 +1,31 @@
+gft 1.0.0 - gft
+description: GitHub releases and git stashes through the gft command.
+tier: declarative (no program of its own)
+kind: shipped with tote
+state: available
+declared access:
+  - derived:tty
+  - env:GITHUB_TOKEN
+  - exec:gft
+  - fs:read:cwd
+  - fs:write:any
+  - fs:write:cwd
+  - host:open-url
+  - host:read:repos
+  - net:*.githubusercontent.com
+  - net:api.github.com
+  - net:github.com
+grant token: derived:tty,env:GITHUB_TOKEN,exec:gft,fs:read:cwd,fs:write:any,fs:write:cwd,host:open-url,host:read:repos,net:*.githubusercontent.com,net:api.github.com,net:github.com@aa61a534bc43
+contributes:
+  - command show: Show a GitHub release
+  - command open: Open the releases page
+  - command get: Download a release asset
+  - command install: Install a release binary
+  - item action release: Show the latest release
+  - item action assets: List the release assets
+  - item action notes: Show the release notes
+  - item action stash-list: List stashes
+  - item action stash-show: Show a stash
+  - item action stash-drop: Drop a stash
+  - item action stash-clean: Delete all stashes
+available, not installed: tote plugin install gft

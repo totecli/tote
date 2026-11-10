@@ -1,0 +1,14 @@
+checking installed plugin: demo
+demo 1.0.0 (declarative)
+state: enabled
+what it runs:
+  - command hello: echo hello
+    in <cwd>
+    cannot be built: the program echo is not installed.
+access it asks for:
+  - exec:echo
+hashes:
+  tree sha256: 26cad27a770663e02204417f067b0dfe548f83250cd2a9ad76144a92ff9e9895
+  surface sha256: c440f18bd8080e931f86f72ca2c23eeb22886ce4f95c6f949d6ce44bcbd3dd31
+grant token: exec:echo@c440f18bd808
+demo: no problem found

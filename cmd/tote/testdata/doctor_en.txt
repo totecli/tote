@@ -1,0 +1,38 @@
+Checking this tote installation
+
+OK    version           tote 1.2.3 (linux/amd64)
+OK    install           no install receipt, running ~/bin/tote
+OK    path              tote is found in PATH: ~/bin/tote
+WARN  dir.config        config directory ~/.config/tote is open to other users (mode 0755), 0700 is expected
+                        fix: chmod 700 ~/.config/tote
+OK    dir.data          data directory ~/.local/share/tote (mode 0700)
+OK    dir.state         state directory ~/.local/state/tote (mode 0700)
+OK    dir.cache         cache directory ~/.cache/tote does not exist yet, tote creates it when needed
+OK    dir.plugins       plugins directory ~/.local/share/tote/plugins does not exist yet, tote creates it when needed
+OK    file.config       config.toml does not exist, the defaults apply
+OK    file.connections  connections.toml does not exist, there is no record yet
+OK    via               no connection runs a via program
+FAIL  file.aliases      aliases.toml: line 5, column 6: expected value but found '\n' instead
+                        - the file is read-only for tote and the shell ignores its records until it is fixed
+                        fix: edit the line, tote never rewrites a file it cannot parse
+OK    file.repos        repos.toml: valid, records: 2
+OK    file.funcs        funcs.toml does not exist, there is no record yet
+OK    names             no name clash, records checked: 2
+WARN  shell             the shell integration is not set up: without it tote cannot change your directory or fill your command line
+                        fix: add this line to ~/.bashrc: eval "$(tote init bash)"
+OK    ssh               ssh: ~/bin/ssh
+OK    git               git: ~/bin/git
+OK    term              TERM is xterm-256color
+OK    locale            the locale is UTF-8 (LANG=en_US.UTF-8)
+OK    color             the interface would use 24-bit colors
+OK    mouse             the mouse works in the interface (click, double click, wheel and hover)
+OK    clipboard         copy goes through the terminal (OSC 52), which gives no answer
+OK    size              120×40, the full layout is used
+OK    tmux              not inside tmux or screen
+OK    runtime           hand-off directory ~/run (mode 0700)
+WARN  handoff           hand-off files left behind by a killed shell: 1, in ~/run
+                        - ~/run/tote.abcd1234
+                        fix: rm -f -- ~/run/tote.abcd1234
+OK    update            no update check has run yet
+
+24 OK, 3 WARN, 1 FAIL

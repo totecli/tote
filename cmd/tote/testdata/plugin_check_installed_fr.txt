@@ -1,0 +1,14 @@
+vérification (plugin installé) : demo
+demo 1.0.0 (déclaratif)
+état : activé
+ce qu’il lance :
+  - commande hello : echo hello
+    dans <cwd>
+    ne peut pas être construit : le programme echo n’est pas installé.
+accès demandés :
+  - exec:echo
+sommes :
+  sha256 de l’arbre : 26cad27a770663e02204417f067b0dfe548f83250cd2a9ad76144a92ff9e9895
+  sha256 de la surface : c440f18bd8080e931f86f72ca2c23eeb22886ce4f95c6f949d6ce44bcbd3dd31
+jeton --grant : exec:echo@c440f18bd808
+demo : aucun problème trouvé

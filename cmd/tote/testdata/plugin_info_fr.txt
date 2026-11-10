@@ -1,0 +1,28 @@
+zed 2.1.0 - Demo zed
+description : A neutral demo plugin.
+niveau : déclaratif (aucun programme propre)
+type : local
+source : <sandbox>/src/zed
+état : désactivé
+  - coupé dans config.toml (enabled = false)
+  - coupé par tote plugin disable
+  remède : lancez : tote plugin enable zed
+licence : MIT
+accès déclarés :
+  - exec:echo
+  - net:example.org
+accès autorisés :
+  - exec:echo
+  - net:example.org
+jeton --grant : exec:echo,net:example.org@c440f18bd808
+apporte :
+  - commande hello : Say hello
+chemins :
+  fichiers installés : <sandbox>/data/plugins/zed/a2e432af3c40b93f8e199267fc0cbddb
+  fichier de réglages : <sandbox>/config/plugins/zed.toml
+  dossier d’état : <sandbox>/state/plugins/zed
+  dossier de cache : <sandbox>/cache/plugins/zed
+  dossier hôte : <sandbox>/state/plugins-host/zed
+sommes :
+  sha256 de l’arbre : a2e432af3c40b93f8e199267fc0cbddbd42e918dbf3b112426be6410368c6bcb
+  sha256 de la surface : c440f18bd8080e931f86f72ca2c23eeb22886ce4f95c6f949d6ce44bcbd3dd31

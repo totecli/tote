@@ -1,0 +1,4 @@
+NOM   VERSION  ÉTAT        ORIGINE          DESCRIPTION
+demo  1.0.0    activé      local            A neutral demo plugin.
+gft   1.0.0    disponible  livré avec tote  Releases GitHub et stashes git avec la commande gft.
+zed   2.1.0    désactivé   local            A neutral demo plugin.

@@ -1,0 +1,27 @@
+Install plugin demo 1.0.0?
+
+Source: <sandbox>/src/demo
+Origin: local files, not verified
+Checksum: sha256 1898271005ac, computed here, nothing to compare it with
+No code of its own: tote runs only the programs listed below.
+
+Description (written by the plugin, not checked by tote)
+  | A neutral demo plugin.
+
+Commands it will run:
+  $ command hello: echo hello
+
+This plugin will be able to:
+  - run the program echo [enforced]
+  - contact example.org (declared; tote cannot block it) [declared]
+    enforced: tote itself refuses anything else
+    declared only: the plugin states it, tote cannot enforce it
+
+! tote runs only the listed programs, but those programs can do whatever you can do with them.
+
+consent is asked because:
+  - it is a new plugin
+Consent code exec:echo,net:example.org@c440f18bd808
+
+dry run: nothing was changed
+to accept it without a terminal, run the command again without --dry-run and with --grant exec:echo,net:example.org@c440f18bd808

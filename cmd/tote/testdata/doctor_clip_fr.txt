@@ -1,0 +1,2 @@
+ALERTE  clipboard         aucun programme de presse-papiers, et ce terminal (ou tmux) n’accepte pas OSC 52 : une sélection est affichée, pas copiée
+                          à faire : installez xclip ou xsel (X11) ou wl-clipboard (Wayland), ou sélectionnez avec Maj+glisser et copiez avec Ctrl+Maj+C ; dans tmux, set-clipboard on laisse le terminal prendre le texte

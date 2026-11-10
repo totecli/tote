@@ -1,0 +1,3 @@
+demo	1.0.0	enabled	local	A neutral demo plugin.	true
+gft	1.0.0	available	bundled	GitHub releases and git stashes through the gft command.	false
+zed	2.1.0	disabled	local	A neutral demo plugin.	false

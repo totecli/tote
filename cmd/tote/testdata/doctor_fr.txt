@@ -1,0 +1,38 @@
+Vérification de cette installation de tote
+
+OK      version           tote 1.2.3 (linux/amd64)
+OK      install           aucun reçu d’installation, programme en cours : ~/bin/tote
+OK      path              tote est dans le PATH : ~/bin/tote
+ALERTE  dir.config        dossier de configuration ~/.config/tote est ouvert aux autres utilisateurs (mode 0755), 0700 est attendu
+                          à faire : chmod 700 ~/.config/tote
+OK      dir.data          dossier de données ~/.local/share/tote (mode 0700)
+OK      dir.state         dossier d’état ~/.local/state/tote (mode 0700)
+OK      dir.cache         dossier de cache ~/.cache/tote n’existe pas encore, tote le crée au besoin
+OK      dir.plugins       dossier des plugins ~/.local/share/tote/plugins n’existe pas encore, tote le crée au besoin
+OK      file.config       config.toml n’existe pas, les valeurs par défaut s’appliquent
+OK      file.connections  connections.toml n’existe pas, il n’y a encore aucun enregistrement
+OK      via               aucune connexion ne lance un programme de via
+ÉCHEC   file.aliases      aliases.toml : ligne 5, colonne 6 : expected value but found '\n' instead
+                          - le fichier est en lecture seule pour tote et le shell ignore ses enregistrements tant qu’il n’est pas corrigé
+                          à faire : modifiez la ligne, tote ne réécrit jamais un fichier qu’il ne sait pas lire
+OK      file.repos        repos.toml : valide, enregistrements : 2
+OK      file.funcs        funcs.toml n’existe pas, il n’y a encore aucun enregistrement
+OK      names             aucun conflit de nom, enregistrements vérifiés : 2
+ALERTE  shell             l’intégration au shell n’est pas installée : sans elle tote ne peut ni changer votre dossier ni remplir votre ligne de commande
+                          à faire : ajoutez cette ligne à ~/.bashrc : eval "$(tote init bash)"
+OK      ssh               ssh : ~/bin/ssh
+OK      git               git : ~/bin/git
+OK      term              TERM vaut xterm-256color
+OK      locale            la locale est UTF-8 (LANG=en_US.UTF-8)
+OK      color             l’interface utiliserait : couleurs 24 bits
+OK      mouse             la souris fonctionne dans l’interface (clic, double-clic, molette et survol)
+OK      clipboard         la copie passe par le terminal (OSC 52), qui ne donne aucune réponse
+OK      size              120×40, la disposition complète est utilisée
+OK      tmux              hors de tmux et de screen
+OK      runtime           dossier de passage ~/run (mode 0700)
+ALERTE  handoff           fichiers de passage laissés par un shell tué : 1, dans ~/run
+                          - ~/run/tote.abcd1234
+                          à faire : rm -f -- ~/run/tote.abcd1234
+OK      update            aucune recherche de mise à jour n’a encore eu lieu
+
+24 OK, 3 ALERTE, 1 ÉCHEC

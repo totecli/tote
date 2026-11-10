@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "ok": true,
+  "id": "demo",
+  "title": "Demo demo",
+  "version": "1.0.0",
+  "tier": "declarative",
+  "kind": "local",
+  "origin": "",
+  "state": "enabled",
+  "reasons": [],
+  "enabled": true,
+  "consented": true,
+  "caps": [
+    "exec:echo"
+  ],
+  "grant": "exec:echo@c440f18bd808",
+  "contributes": {
+    "item_actions": 0,
+    "commands": 1,
+    "lists": 0,
+    "settings": 0
+  },
+  "description": "A neutral demo plugin.",
+  "contributions": [
+    {
+      "table": "command",
+      "id": "hello",
+      "label": "Say hello"
+    }
+  ],
+  "license": "MIT",
+  "source": "<sandbox>/src/demo",
+  "granted_caps": [
+    "exec:echo"
+  ],
+  "requires": [],
+  "settings": [],
+  "paths": {
+    "tree": "<sandbox>/data/plugins/demo/26cad27a770663e02204417f067b0dfe",
+    "settings": "<sandbox>/config/plugins/demo.toml",
+    "state": "<sandbox>/state/plugins/demo",
+    "cache": "<sandbox>/cache/plugins/demo",
+    "host": "<sandbox>/state/plugins-host/demo"
+  },
+  "hashes": {
+    "tree_sha256": "26cad27a770663e02204417f067b0dfe548f83250cd2a9ad76144a92ff9e9895",
+    "surface_sha256": "c440f18bd8080e931f86f72ca2c23eeb22886ce4f95c6f949d6ce44bcbd3dd31"
+  },
+  "warnings": []
+}

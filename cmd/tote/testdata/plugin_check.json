@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "ok": true,
+  "errors": 0,
+  "warnings": 0,
+  "findings": [],
+  "target": "<sandbox>/src/demo",
+  "kind": "directory",
+  "id": "demo",
+  "version": "1.0.0",
+  "tier": "declarative",
+  "title": "Demo demo",
+  "strict": false,
+  "contributions": [
+    {
+      "table": "command",
+      "id": "hello",
+      "label": "Say hello",
+      "output": "pager",
+      "run": [
+        "echo",
+        "hello"
+      ],
+      "argv": [
+        "echo",
+        "hello"
+      ],
+      "display": "echo hello",
+      "dir": "<cwd>",
+      "available": true,
+      "why": {
+        "code": "dependency_missing",
+        "args": [
+          "echo"
+        ]
+      }
+    }
+  ],
+  "tree_sha256": "26cad27a770663e02204417f067b0dfe548f83250cd2a9ad76144a92ff9e9895",
+  "surface_sha256": "c440f18bd8080e931f86f72ca2c23eeb22886ce4f95c6f949d6ce44bcbd3dd31",
+  "caps": [
+    "exec:echo"
+  ],
+  "grant": "exec:echo@c440f18bd808"
+}
