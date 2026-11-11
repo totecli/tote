@@ -1,0 +1,2160 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "tote plugin manifest, API 1",
+    "description": "Structure of plugin.toml as parsed from TOML into JSON, for plugin API 1 as read by tote 1.0. Length limits given in bytes by tote are checked here in characters. Rules that need several values at once or the machine (coverage of exec: and env: permissions by the commands, placeholder scopes, anchored patterns, defaults that fit their field, duplicate ids, the 64 contributions in all, the base name of the running binary) are checked by tote plugin check and are not expressible here. Patterns are ECMA-262 in unicode mode (they use \\p{...} classes). The lists of reserved ids, shells and blocked environment names are copied from internal/plugin/reserved.go.",
+    "type": "object",
+    "required": ["api", "id", "version", "tote", "tier", "description", "license"],
+    "additionalProperties": false,
+    "properties": {
+        "api": {
+            "type": "integer",
+            "const": 1,
+            "description": "The contract version. Only 1 exists."
+        },
+        "id": {
+            "$ref": "#/$defs/pluginId",
+            "description": "The plugin id: never empty (an empty id is id_invalid)."
+        },
+        "version": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 64,
+            "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$",
+            "description": "Strict Semantic Version, no v prefix, never empty (an empty version is version_invalid). Equals the release tag."
+        },
+        "tote": {
+            "type": "string",
+            "maxLength": 128,
+            "pattern": "^\\s*(?:>=|<=|>|<|=)?\\s*(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*)){0,2}\\s*(?:,\\s*(?:>=|<=|>|<|=)?\\s*(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*)){0,2}\\s*){0,7}$",
+            "description": "Range of tote versions: comparators >= > <= < = joined by commas, partial versions completed with zeros. No ||, ^ or ~."
+        },
+        "tier": {
+            "enum": ["declarative", "exec"],
+            "description": "declarative is the only tier tote 1.0 supports. exec is reserved for a later version: the value is kept in the enumeration so that the structure of an exec plugin can be described, but tote 1.0 refuses a manifest with tier = \"exec\" (reserved_not_available, which makes the plugin incompatible) and never reads its [exec] table, so validating against this schema does not make such a plugin installable."
+        },
+        "title": {
+            "type": "string",
+            "$ref": "#/$defs/plain",
+            "minLength": 1,
+            "maxLength": 40,
+            "description": "Display text. Menus show the id first."
+        },
+        "description": {
+            "type": "string",
+            "$ref": "#/$defs/plain",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "One sentence."
+        },
+        "license": {
+            "type": "string",
+            "$ref": "#/$defs/plain",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9.+-]+(?: (?:AND|OR|WITH) [A-Za-z0-9.+-]+)*$",
+            "description": "SPDX-shaped identifier or expression."
+        },
+        "homepage": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^[Hh][Tt][Tt][Pp][Ss]://[^/?#@\\s\\\\]+(?:[/?#][^\\s\\\\]*)?$",
+            "$ref": "#/$defs/plain"
+        },
+        "requires_features": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_.]{0,63}$",
+                "examples": [
+                    "command",
+                    "item_action.repo",
+                    "setting.list",
+                    "field.bool",
+                    "open.url",
+                    "output.terminal"
+                ]
+            },
+            "maxItems": 32,
+            "description": "Names of host features the plugin needs. The pattern is the grammar of a feature name, not the list of the names that exist: a later tote announces more names, and a manifest that needs one must stay valid for this schema. The examples are the six that tote 1.0 announces. Any other name makes the plugin incompatible with tote 1.0 (feature_missing), the exec features exec.list and exec.run included: they come back with the exec tier."
+        },
+        "platforms": {
+            "type": "array",
+            "items": {
+                "enum": ["linux", "darwin"]
+            },
+            "minItems": 1,
+            "maxItems": 2,
+            "uniqueItems": true,
+            "description": "Defaults to linux and darwin."
+        },
+        "permissions": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/permission"
+            },
+            "maxItems": 64,
+            "uniqueItems": true
+        },
+        "requires": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/requires"
+            },
+            "maxItems": 16
+        },
+        "exec": {
+            "$ref": "#/$defs/execTable"
+        },
+        "platform": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/platformBuild"
+            }
+        },
+        "command": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/command"
+            },
+            "maxItems": 64
+        },
+        "item_action": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/item_action"
+            },
+            "maxItems": 64
+        },
+        "action": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/action"
+            },
+            "maxItems": 64
+        },
+        "list": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/list"
+            },
+            "maxItems": 64
+        },
+        "setting": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/setting"
+            },
+            "maxItems": 64
+        },
+        "i18n": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "en": {
+                    "$ref": "#/$defs/localeTable"
+                },
+                "fr": {
+                    "$ref": "#/$defs/localeTable"
+                }
+            },
+            "description": "Translations: only en and fr. A locales/<lang>.toml file wins."
+        },
+        "widget": false,
+        "panel": false,
+        "decorator": false,
+        "provider": false,
+        "connector": false,
+        "hook": false,
+        "job": false,
+        "screen": false,
+        "import": false,
+        "badge": false,
+        "search": false
+    },
+    "allOf": [
+        {
+            "if": {
+                "properties": {
+                    "tier": {
+                        "const": "declarative"
+                    }
+                },
+                "required": ["tier"],
+                "type": "object"
+            },
+            "then": {
+                "properties": {
+                    "exec": false,
+                    "platform": {
+                        "type": "array",
+                        "maxItems": 0
+                    },
+                    "action": {
+                        "type": "array",
+                        "maxItems": 0
+                    },
+                    "list": {
+                        "type": "array",
+                        "maxItems": 0
+                    },
+                    "permissions": {
+                        "items": {
+                            "not": {
+                                "pattern": "^exec:(?:[sS][hH]|[bB][aA][sS][hH]|[zZ][sS][hH]|[dD][aA][sS][hH]|[kK][sS][hH]|[fF][iI][sS][hH]|[cC][sS][hH]|[tT][cC][sS][hH]|[eE][nN][vV]|[xX][aA][rR][gG][sS]|[sS][uU][dD][oO]|[dD][oO][aA][sS]|[sS][uU]|[nN][oO][hH][uU][pP]|[nN][iI][cC][eE]|[iI][oO][nN][iI][cC][eE]|[tT][iI][mM][eE]|[tT][iI][mM][eE][oO][uU][tT]|[sS][eE][tT][sS][iI][dD]|[sS][tT][dD][bB][uU][fF]|[wW][aA][tT][cC][hH]|[fF][iI][nN][dD]|[aA][wW][kK]|[gG][aA][wW][kK]|[pP][eE][rR][lL]|[pP][yY][tT][hH][oO][nN]|[pP][yY][tT][hH][oO][nN]3|[rR][uU][bB][yY]|[nN][oO][dD][eE]|[lL][uU][aA]|[pP][hH][pP]|[tT][cC][lL][sS][hH]|[oO][sS][aA][sS][cC][rR][iI][pP][tT]|[eE][vV][aA][lL])$",
+                                "type": "string"
+                            }
+                        },
+                        "type": "array"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        {
+            "if": {
+                "properties": {
+                    "tier": {
+                        "const": "exec"
+                    }
+                },
+                "required": ["tier"],
+                "type": "object"
+            },
+            "then": {
+                "properties": {
+                    "command": {
+                        "items": {
+                            "properties": {
+                                "output": {
+                                    "not": {
+                                        "const": "terminal"
+                                    }
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "type": "array"
+                    },
+                    "item_action": {
+                        "items": {
+                            "properties": {
+                                "output": {
+                                    "not": {
+                                        "const": "terminal"
+                                    }
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "type": "array"
+                    },
+                    "list": {
+                        "items": {
+                            "properties": {
+                                "action": {
+                                    "items": {
+                                        "properties": {
+                                            "output": {
+                                                "not": {
+                                                    "const": "terminal"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "type": "array"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "type": "array"
+                    }
+                },
+                "oneOf": [
+                    {
+                        "required": ["exec"],
+                        "properties": {
+                            "exec": {
+                                "required": ["bin"],
+                                "type": "object"
+                            },
+                            "platform": {
+                                "maxItems": 0,
+                                "type": "array"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "required": ["platform"],
+                        "properties": {
+                            "platform": {
+                                "minItems": 1,
+                                "type": "array"
+                            }
+                        },
+                        "not": {
+                            "required": ["exec"],
+                            "properties": {
+                                "exec": {
+                                    "required": ["bin"],
+                                    "type": "object"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "type": "object"
+                    }
+                ],
+                "allOf": [
+                    {
+                        "if": {
+                            "required": ["list", "exec"],
+                            "properties": {
+                                "list": {
+                                    "minItems": 1,
+                                    "type": "array"
+                                },
+                                "exec": {
+                                    "required": ["modes"],
+                                    "properties": {
+                                        "modes": {
+                                            "minItems": 1,
+                                            "type": "array"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "then": {
+                            "properties": {
+                                "exec": {
+                                    "properties": {
+                                        "modes": {
+                                            "contains": {
+                                                "const": "list"
+                                            },
+                                            "type": "array"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    {
+                        "if": {
+                            "required": ["action", "exec"],
+                            "properties": {
+                                "action": {
+                                    "minItems": 1,
+                                    "type": "array"
+                                },
+                                "exec": {
+                                    "required": ["modes"],
+                                    "properties": {
+                                        "modes": {
+                                            "minItems": 1,
+                                            "type": "array"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "then": {
+                            "properties": {
+                                "exec": {
+                                    "properties": {
+                                        "modes": {
+                                            "contains": {
+                                                "const": "run"
+                                            },
+                                            "type": "array"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                ],
+                "type": "object"
+            }
+        }
+    ],
+    "$defs": {
+        "template": {
+            "type": "string",
+            "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{(?:cwd|home|setting\\.[a-z][a-z0-9_]{0,31}|repo\\.(?:path|name|remote|slug|branch)|(?!(?:repo|setting|item)\\??\\})[a-z][a-z0-9_]{0,31})\\??\\})*$",
+            "description": "Text with {name} and {name?} placeholders. {{ and }} are literal braces. Names: a field id, setting.<id>, repo.path|name|remote|slug|branch, cwd, home. Whether a field or setting id exists is not checked by this schema."
+        },
+        "templateItem": {
+            "type": "string",
+            "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{(?:cwd|home|setting\\.[a-z][a-z0-9_]{0,31}|repo\\.(?:path|name|remote|slug|branch)|item\\.(?:id|data\\.[a-z][a-z0-9_]{0,31})|(?!(?:repo|setting|item)\\??\\})[a-z][a-z0-9_]{0,31})\\??\\})*$",
+            "description": "A template of a [[list.action]], where item.id and item.data.<key> also exist."
+        },
+        "plain": {
+            "type": "string",
+            "pattern": "^(?:[^\\p{Cc}\\p{Zl}\\p{Zp}\\p{Cf}]|[\u200c\u200d])*$",
+            "description": "No control character, no line or paragraph separator and no format character except the two joiners: what tote accepts as plain text."
+        },
+        "pluginId": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 32,
+            "pattern": "^[a-z0-9][a-z0-9-]*$",
+            "not": {
+                "anyOf": [
+                    {
+                        "enum": [
+                            "__complete",
+                            "a",
+                            "alias",
+                            "aliases",
+                            "all",
+                            "attach",
+                            "builtin",
+                            "bundled",
+                            "cmd",
+                            "co",
+                            "complete",
+                            "completion",
+                            "config",
+                            "conn",
+                            "connections",
+                            "connexions",
+                            "core",
+                            "cwd",
+                            "desc",
+                            "doctor",
+                            "edit",
+                            "f",
+                            "fav",
+                            "find",
+                            "func",
+                            "funcs",
+                            "health",
+                            "help",
+                            "hidden",
+                            "history",
+                            "host",
+                            "import",
+                            "init",
+                            "ip",
+                            "jump",
+                            "keep",
+                            "key",
+                            "kind",
+                            "mac",
+                            "man",
+                            "managed",
+                            "mn",
+                            "mode",
+                            "name",
+                            "needs_review",
+                            "none",
+                            "opener",
+                            "path",
+                            "pick",
+                            "plugin",
+                            "plugins",
+                            "port",
+                            "ports",
+                            "proc",
+                            "process",
+                            "processes",
+                            "procs",
+                            "r",
+                            "recent",
+                            "refresh",
+                            "registry",
+                            "remote",
+                            "repo",
+                            "repos",
+                            "restore",
+                            "schema",
+                            "scheme",
+                            "script",
+                            "session",
+                            "snippets",
+                            "start",
+                            "stats",
+                            "status",
+                            "sync",
+                            "tags",
+                            "target",
+                            "tote",
+                            "tunnel",
+                            "tunnels",
+                            "uninstall",
+                            "update",
+                            "upgrade",
+                            "user",
+                            "version",
+                            "via",
+                            "when"
+                        ]
+                    },
+                    {
+                        "pattern": "^tote-",
+                        "type": "string"
+                    }
+                ]
+            },
+            "description": "Names the install directory, the settings file, the lock record and the TOTE_PLUGIN_<ID>_ variables. Verbs, reserved words, record field names and ids that start with tote- are refused. The official ids (gft, ghrel, ghsec, konsolai, ssh-tools) pass this schema: tote lets only the copy it ships and the official release of each id (totecli/<id>) use them."
+        },
+        "permission": {
+            "type": "string",
+            "maxLength": 128,
+            "$ref": "#/$defs/plain",
+            "allOf": [
+                {
+                    "anyOf": [
+                        {
+                            "pattern": "^exec:[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+                            "type": "string"
+                        },
+                        {
+                            "pattern": "^net:(?:\\*\\.)?(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$",
+                            "type": "string"
+                        },
+                        {
+                            "pattern": "^fs:(?:read|write):(?:home|cwd|repo|config|ssh|tmp|any)$",
+                            "type": "string"
+                        },
+                        {
+                            "pattern": "^env:[A-Z_][A-Z0-9_]{0,63}$",
+                            "type": "string"
+                        },
+                        {
+                            "pattern": "^host:(?:read:repos|open-url)$",
+                            "type": "string"
+                        }
+                    ]
+                },
+                {
+                    "not": {
+                        "pattern": "^exec:[tT][oO][tT][eE]$",
+                        "type": "string"
+                    }
+                },
+                {
+                    "if": {
+                        "pattern": "^net:",
+                        "type": "string"
+                    },
+                    "then": {
+                        "not": {
+                            "pattern": "\\.[0-9]+$",
+                            "type": "string"
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "pattern": "^env:",
+                        "type": "string"
+                    },
+                    "then": {
+                        "not": {
+                            "anyOf": [
+                                {
+                                    "pattern": "^env:(?:PATH|HOME|SHELL|IFS|ENV|BASH_ENV|SHELLOPTS|BASHOPTS|PS4|PROMPT_COMMAND|CDPATH|GLOBIGNORE|JAVA_TOOL_OPTIONS|SSH_ASKPASS|GIT_DIR|GIT_WORK_TREE|GIT_INDEX_FILE|GIT_EXTERNAL_DIFF|GIT_PAGER|GIT_EDITOR|GIT_SEQUENCE_EDITOR|GIT_TEMPLATE_DIR|GIT_ALLOW_PROTOCOL|GIT_OBJECT_DIRECTORY|GIT_ALTERNATE_OBJECT_DIRECTORIES|GIT_NAMESPACE|GIT_COMMON_DIR|GIT_ATTR_SOURCE|GIT_REPLACE_REF_BASE|PAGER|EDITOR|VISUAL|MANPAGER|MANOPT|BROWSER|LUA_INIT|OPENSSL_CONF|SSL_CERT_FILE|SSL_CERT_DIR|GCONV_PATH|LOCPATH|NLSPATH|HOSTALIASES|XDG_CONFIG_HOME|XDG_CONFIG_DIRS|XDG_DATA_HOME|XDG_DATA_DIRS)$",
+                                    "type": "string"
+                                },
+                                {
+                                    "pattern": "^env:(?:LD_|DYLD_|TOTE_|PYTHON|PERL5|RUBY|NODE_|GIT_SSH|GIT_CONFIG|GIT_ASKPASS|GIT_EXEC_PATH|GIT_PROXY_COMMAND|BASH_FUNC_|GIT_TRACE|LESS|SSH_ASKPASS)",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ],
+            "description": "Closed vocabulary: exec:<program>, net:<host>, fs:read:<zone>, fs:write:<zone>, env:<NAME>, host:read:repos, host:open-url. exec:tote and the base name of the running binary are refused too, which a schema cannot know. The reserved entries (host:read:connections, host:handoff, host:clipboard, host:notify, host:editor) and the refused ones (hook:intercept, host:write:settings) are errors."
+        },
+        "requires": {
+            "type": "object",
+            "required": ["bin"],
+            "additionalProperties": false,
+            "properties": {
+                "bin": {
+                    "type": "string",
+                    "$ref": "#/$defs/plain",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+                    "description": "Program name, looked up on PATH, never run by check."
+                },
+                "hint": {
+                    "type": "string",
+                    "$ref": "#/$defs/plain",
+                    "minLength": 0,
+                    "maxLength": 200,
+                    "description": "Text shown when the program is missing, never run."
+                },
+                "optional": {
+                    "type": "boolean",
+                    "description": "A missing optional program is a warning."
+                }
+            }
+        },
+        "packagePath": {
+            "type": "string",
+            "$ref": "#/$defs/plain",
+            "minLength": 1,
+            "maxLength": 255,
+            "pattern": "^(?!/)(?!(?:.*/)?\\.\\.?(?:/|$))(?![pP][lL][uU][gG][iI][nN]\\.[tT][oO][mM][lL]$)(?![lL][oO][cC][aA][lL][eE][sS]/)[A-Za-z0-9._][A-Za-z0-9._-]*(?:/[A-Za-z0-9._][A-Za-z0-9._-]*){0,5}$",
+            "description": "Relative path inside the package, at most 6 segments."
+        },
+        "execTable": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Exec tier only. Reserved: tote 1.0 reads and checks this table and never starts the program.",
+            "properties": {
+                "bin": {
+                    "$ref": "#/$defs/packagePath"
+                },
+                "args": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "$ref": "#/$defs/plain",
+                        "minLength": 0,
+                        "maxLength": 1024
+                    },
+                    "maxItems": 16
+                },
+                "modes": {
+                    "type": "array",
+                    "items": {
+                        "enum": ["list", "run"]
+                    },
+                    "maxItems": 2
+                },
+                "session": {
+                    "enum": ["once"]
+                }
+            }
+        },
+        "platformBuild": {
+            "type": "object",
+            "required": ["os", "arch", "bin", "asset", "sha256"],
+            "additionalProperties": false,
+            "description": "Exec tier only. One compiled program per operating system and architecture.",
+            "properties": {
+                "os": {
+                    "enum": ["linux", "darwin"]
+                },
+                "arch": {
+                    "enum": ["amd64", "arm64"]
+                },
+                "bin": {
+                    "$ref": "#/$defs/packagePath"
+                },
+                "asset": {
+                    "type": "string",
+                    "$ref": "#/$defs/plain",
+                    "minLength": 1,
+                    "maxLength": 255,
+                    "pattern": "^(?!\\.\\.?$)[A-Za-z0-9._+-]{1,255}$"
+                },
+                "sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                }
+            }
+        },
+        "field": {
+            "type": "object",
+            "required": ["id", "type", "label"],
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9_]{0,31}$",
+                    "not": {
+                        "enum": ["repo", "conn", "setting", "item", "cwd", "home"]
+                    }
+                },
+                "type": {
+                    "enum": ["text", "choice", "bool"]
+                },
+                "label": {
+                    "type": "string",
+                    "$ref": "#/$defs/plain",
+                    "minLength": 1,
+                    "maxLength": 60
+                },
+                "hint": {
+                    "type": "string",
+                    "$ref": "#/$defs/plain",
+                    "minLength": 0,
+                    "maxLength": 200
+                },
+                "required": {
+                    "type": "boolean"
+                },
+                "default": {
+                    "oneOf": [
+                        {
+                            "type": "string",
+                            "allOf": [
+                                {
+                                    "$ref": "#/$defs/plain"
+                                },
+                                {
+                                    "$ref": "#/$defs/template"
+                                }
+                            ],
+                            "minLength": 0,
+                            "maxLength": 1024
+                        },
+                        {
+                            "type": "boolean"
+                        }
+                    ]
+                },
+                "pattern": {
+                    "type": "string",
+                    "$ref": "#/$defs/plain",
+                    "minLength": 1,
+                    "maxLength": 256,
+                    "description": "RE2 expression, tried with MatchString: it must start with ^ and end with $, which a schema cannot check."
+                },
+                "max_len": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1024
+                },
+                "choices": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "$ref": "#/$defs/plain",
+                        "minLength": 0,
+                        "maxLength": 64
+                    },
+                    "minItems": 1,
+                    "maxItems": 64,
+                    "uniqueItems": true
+                },
+                "flag": {
+                    "type": "string",
+                    "$ref": "#/$defs/plain",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-[^ \\t]*$"
+                },
+                "secret": false,
+                "remember": false,
+                "choices_from": false
+            },
+            "allOf": [
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "text"
+                            }
+                        },
+                        "required": ["type"],
+                        "type": "object"
+                    },
+                    "then": {
+                        "properties": {
+                            "choices": false,
+                            "flag": false,
+                            "default": {
+                                "type": "string",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/plain"
+                                    },
+                                    {
+                                        "$ref": "#/$defs/template"
+                                    }
+                                ],
+                                "minLength": 0,
+                                "maxLength": 1024
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "choice"
+                            }
+                        },
+                        "required": ["type"],
+                        "type": "object"
+                    },
+                    "then": {
+                        "required": ["choices"],
+                        "properties": {
+                            "pattern": false,
+                            "max_len": false,
+                            "flag": false,
+                            "default": {
+                                "type": "string",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/plain"
+                                    },
+                                    {
+                                        "$ref": "#/$defs/template"
+                                    }
+                                ],
+                                "minLength": 0,
+                                "maxLength": 1024
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "bool"
+                            }
+                        },
+                        "required": ["type"],
+                        "type": "object"
+                    },
+                    "then": {
+                        "required": ["flag"],
+                        "properties": {
+                            "pattern": false,
+                            "max_len": false,
+                            "choices": false,
+                            "default": {
+                                "type": "boolean"
+                            }
+                        },
+                        "type": "object"
+                    }
+                }
+            ]
+        },
+        "command": {
+            "type": "object",
+            "required": ["id", "label"],
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+                },
+                "label": {
+                    "type": "string",
+                    "$ref": "#/$defs/plain",
+                    "minLength": 1,
+                    "maxLength": 60
+                },
+                "description": {
+                    "type": "string",
+                    "$ref": "#/$defs/plain",
+                    "minLength": 0,
+                    "maxLength": 200
+                },
+                "cwd": {
+                    "type": "string",
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/plain"
+                        },
+                        {
+                            "$ref": "#/$defs/template"
+                        }
+                    ],
+                    "minLength": 1,
+                    "maxLength": 1024
+                },
+                "env": {
+                    "type": "object",
+                    "maxProperties": 16,
+                    "propertyNames": {
+                        "pattern": "^[A-Z_][A-Z0-9_]{0,63}$",
+                        "not": {
+                            "anyOf": [
+                                {
+                                    "pattern": "^(?:PATH|HOME|SHELL|IFS|ENV|BASH_ENV|SHELLOPTS|BASHOPTS|PS4|PROMPT_COMMAND|CDPATH|GLOBIGNORE|JAVA_TOOL_OPTIONS|SSH_ASKPASS|GIT_DIR|GIT_WORK_TREE|GIT_INDEX_FILE|GIT_EXTERNAL_DIFF|GIT_PAGER|GIT_EDITOR|GIT_SEQUENCE_EDITOR|GIT_TEMPLATE_DIR|GIT_ALLOW_PROTOCOL|GIT_OBJECT_DIRECTORY|GIT_ALTERNATE_OBJECT_DIRECTORIES|GIT_NAMESPACE|GIT_COMMON_DIR|GIT_ATTR_SOURCE|GIT_REPLACE_REF_BASE|PAGER|EDITOR|VISUAL|MANPAGER|MANOPT|BROWSER|LUA_INIT|OPENSSL_CONF|SSL_CERT_FILE|SSL_CERT_DIR|GCONV_PATH|LOCPATH|NLSPATH|HOSTALIASES|XDG_CONFIG_HOME|XDG_CONFIG_DIRS|XDG_DATA_HOME|XDG_DATA_DIRS)$",
+                                    "type": "string"
+                                },
+                                {
+                                    "pattern": "^(?:LD_|DYLD_|TOTE_|PYTHON|PERL5|RUBY|NODE_|GIT_SSH|GIT_CONFIG|GIT_ASKPASS|GIT_EXEC_PATH|GIT_PROXY_COMMAND|BASH_FUNC_|GIT_TRACE|LESS|SSH_ASKPASS)",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "type": "string"
+                    },
+                    "additionalProperties": {
+                        "type": "string",
+                        "allOf": [
+                            {
+                                "$ref": "#/$defs/plain"
+                            },
+                            {
+                                "$ref": "#/$defs/template"
+                            }
+                        ],
+                        "minLength": 0,
+                        "maxLength": 1024
+                    },
+                    "description": "Variable names to templates. Each name needs an env:<NAME> permission. Loader and interpreter variables are refused."
+                },
+                "confirm": {
+                    "oneOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "string",
+                            "allOf": [
+                                {
+                                    "$ref": "#/$defs/plain"
+                                },
+                                {
+                                    "$ref": "#/$defs/template"
+                                }
+                            ],
+                            "minLength": 1,
+                            "maxLength": 200
+                        }
+                    ]
+                },
+                "output": {
+                    "enum": ["pager", "silent", "terminal"]
+                },
+                "timeout": {
+                    "type": "string",
+                    "pattern": "^(?=[0-9]{1,6}[sm]$)(?:0*(?:[1-9]|[12][0-9]|30)m|0*(?:[1-9][0-9]{0,2}|1[0-7][0-9]{2}|1800)s)$"
+                },
+                "allow_dash": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "$ref": "#/$defs/plain",
+                        "minLength": 1,
+                        "maxLength": 96,
+                        "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)*$"
+                    },
+                    "maxItems": 16
+                },
+                "key": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9]$"
+                },
+                "field": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/field"
+                    },
+                    "maxItems": 16
+                },
+                "run": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "allOf": [
+                            {
+                                "$ref": "#/$defs/plain"
+                            },
+                            {
+                                "$ref": "#/$defs/template"
+                            }
+                        ],
+                        "minLength": 0,
+                        "maxLength": 1024
+                    },
+                    "minItems": 1,
+                    "maxItems": 64,
+                    "prefixItems": [
+                        {
+                            "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+                            "not": {
+                                "pattern": "^(?:[sS][hH]|[bB][aA][sS][hH]|[zZ][sS][hH]|[dD][aA][sS][hH]|[kK][sS][hH]|[fF][iI][sS][hH]|[cC][sS][hH]|[tT][cC][sS][hH]|[eE][nN][vV]|[xX][aA][rR][gG][sS]|[sS][uU][dD][oO]|[dD][oO][aA][sS]|[sS][uU]|[nN][oO][hH][uU][pP]|[nN][iI][cC][eE]|[iI][oO][nN][iI][cC][eE]|[tT][iI][mM][eE]|[tT][iI][mM][eE][oO][uU][tT]|[sS][eE][tT][sS][iI][dD]|[sS][tT][dD][bB][uU][fF]|[wW][aA][tT][cC][hH]|[fF][iI][nN][dD]|[aA][wW][kK]|[gG][aA][wW][kK]|[pP][eE][rR][lL]|[pP][yY][tT][hH][oO][nN]|[pP][yY][tT][hH][oO][nN]3|[rR][uU][bB][yY]|[nN][oO][dD][eE]|[lL][uU][aA]|[pP][hH][pP]|[tT][cC][lL][sS][hH]|[oO][sS][aA][sS][cC][rR][iI][pP][tT]|[eE][vV][aA][lL]|[tT][oO][tT][eE])$",
+                                "type": "string"
+                            },
+                            "description": "The program: a literal word, never a placeholder, never a shell or launcher, never tote. It also needs an exec:<program> permission, which a schema cannot check.",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "open": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2048,
+                    "pattern": "^https://[^@/?#{]*(?:[/?#{].*)?$|^\\{(?!\\{)",
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/plain"
+                        },
+                        {
+                            "$ref": "#/$defs/template"
+                        }
+                    ]
+                },
+                "pause": {
+                    "enum": ["always", "error", "never"]
+                },
+                "keywords": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "$ref": "#/$defs/plain",
+                        "minLength": 1,
+                        "maxLength": 24
+                    },
+                    "maxItems": 8
+                }
+            },
+            "allOf": [
+                {
+                    "not": {
+                        "required": ["run", "open"],
+                        "type": "object"
+                    }
+                },
+                {
+                    "anyOf": [
+                        {
+                            "required": ["run"],
+                            "type": "object"
+                        },
+                        {
+                            "required": ["open"],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "if": {
+                        "required": ["run"],
+                        "type": "object"
+                    },
+                    "then": {
+                        "required": ["output"],
+                        "type": "object"
+                    }
+                },
+                {
+                    "if": {
+                        "required": ["pause"],
+                        "type": "object"
+                    },
+                    "then": {
+                        "required": ["output"],
+                        "properties": {
+                            "output": {
+                                "const": "terminal"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                {
+                    "if": {
+                        "required": ["output"],
+                        "properties": {
+                            "output": {
+                                "const": "terminal"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "then": {
+                        "not": {
+                            "required": ["timeout"],
+                            "type": "object"
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "required": ["open"],
+                        "type": "object"
+                    },
+                    "then": {
+                        "not": {
+                            "anyOf": [
+                                {
+                                    "required": ["cwd"],
+                                    "type": "object"
+                                },
+                                {
+                                    "required": ["output"],
+                                    "type": "object"
+                                },
+                                {
+                                    "required": ["pause"],
+                                    "type": "object"
+                                },
+                                {
+                                    "required": ["timeout"],
+                                    "type": "object"
+                                }
+                            ]
+                        },
+                        "properties": {
+                            "env": {
+                                "maxProperties": 0,
+                                "type": "object"
+                            },
+                            "allow_dash": {
+                                "maxItems": 0,
+                                "type": "array"
+                            }
+                        },
+                        "type": "object"
+                    }
+                }
+            ]
+        },
+        "item_action": {
+            "type": "object",
+            "required": ["id", "label", "target"],
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+                },
+                "label": {
+                    "type": "string",
+                    "$ref": "#/$defs/plain",
+                    "minLength": 1,
+                    "maxLength": 60
+                },
+                "description": {
+                    "type": "string",
+                    "$ref": "#/$defs/plain",
+                    "minLength": 0,
+                    "maxLength": 200
+                },
+                "cwd": {
+                    "type": "string",
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/plain"
+                        },
+                        {
+                            "$ref": "#/$defs/template"
+                        }
+                    ],
+                    "minLength": 1,
+                    "maxLength": 1024
+                },
+                "env": {
+                    "type": "object",
+                    "maxProperties": 16,
+                    "propertyNames": {
+                        "pattern": "^[A-Z_][A-Z0-9_]{0,63}$",
+                        "not": {
+                            "anyOf": [
+                                {
+                                    "pattern": "^(?:PATH|HOME|SHELL|IFS|ENV|BASH_ENV|SHELLOPTS|BASHOPTS|PS4|PROMPT_COMMAND|CDPATH|GLOBIGNORE|JAVA_TOOL_OPTIONS|SSH_ASKPASS|GIT_DIR|GIT_WORK_TREE|GIT_INDEX_FILE|GIT_EXTERNAL_DIFF|GIT_PAGER|GIT_EDITOR|GIT_SEQUENCE_EDITOR|GIT_TEMPLATE_DIR|GIT_ALLOW_PROTOCOL|GIT_OBJECT_DIRECTORY|GIT_ALTERNATE_OBJECT_DIRECTORIES|GIT_NAMESPACE|GIT_COMMON_DIR|GIT_ATTR_SOURCE|GIT_REPLACE_REF_BASE|PAGER|EDITOR|VISUAL|MANPAGER|MANOPT|BROWSER|LUA_INIT|OPENSSL_CONF|SSL_CERT_FILE|SSL_CERT_DIR|GCONV_PATH|LOCPATH|NLSPATH|HOSTALIASES|XDG_CONFIG_HOME|XDG_CONFIG_DIRS|XDG_DATA_HOME|XDG_DATA_DIRS)$",
+                                    "type": "string"
+                                },
+                                {
+                                    "pattern": "^(?:LD_|DYLD_|TOTE_|PYTHON|PERL5|RUBY|NODE_|GIT_SSH|GIT_CONFIG|GIT_ASKPASS|GIT_EXEC_PATH|GIT_PROXY_COMMAND|BASH_FUNC_|GIT_TRACE|LESS|SSH_ASKPASS)",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "type": "string"
+                    },
+                    "additionalProperties": {
+                        "type": "string",
+                        "allOf": [
+                            {
+                                "$ref": "#/$defs/plain"
+                            },
+                            {
+                                "$ref": "#/$defs/template"
+                            }
+                        ],
+                        "minLength": 0,
+                        "maxLength": 1024
+                    },
+                    "description": "Variable names to templates. Each name needs an env:<NAME> permission. Loader and interpreter variables are refused."
+                },
+                "confirm": {
+                    "oneOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "string",
+                            "allOf": [
+                                {
+                                    "$ref": "#/$defs/plain"
+                                },
+                                {
+                                    "$ref": "#/$defs/template"
+                                }
+                            ],
+                            "minLength": 1,
+                            "maxLength": 200
+                        }
+                    ]
+                },
+                "output": {
+                    "enum": ["pager", "silent", "terminal"]
+                },
+                "timeout": {
+                    "type": "string",
+                    "pattern": "^(?=[0-9]{1,6}[sm]$)(?:0*(?:[1-9]|[12][0-9]|30)m|0*(?:[1-9][0-9]{0,2}|1[0-7][0-9]{2}|1800)s)$"
+                },
+                "allow_dash": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "$ref": "#/$defs/plain",
+                        "minLength": 1,
+                        "maxLength": 96,
+                        "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)*$"
+                    },
+                    "maxItems": 16
+                },
+                "key": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9]$"
+                },
+                "field": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/field"
+                    },
+                    "maxItems": 16
+                },
+                "run": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "allOf": [
+                            {
+                                "$ref": "#/$defs/plain"
+                            },
+                            {
+                                "$ref": "#/$defs/template"
+                            }
+                        ],
+                        "minLength": 0,
+                        "maxLength": 1024
+                    },
+                    "minItems": 1,
+                    "maxItems": 64,
+                    "prefixItems": [
+                        {
+                            "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+                            "not": {
+                                "pattern": "^(?:[sS][hH]|[bB][aA][sS][hH]|[zZ][sS][hH]|[dD][aA][sS][hH]|[kK][sS][hH]|[fF][iI][sS][hH]|[cC][sS][hH]|[tT][cC][sS][hH]|[eE][nN][vV]|[xX][aA][rR][gG][sS]|[sS][uU][dD][oO]|[dD][oO][aA][sS]|[sS][uU]|[nN][oO][hH][uU][pP]|[nN][iI][cC][eE]|[iI][oO][nN][iI][cC][eE]|[tT][iI][mM][eE]|[tT][iI][mM][eE][oO][uU][tT]|[sS][eE][tT][sS][iI][dD]|[sS][tT][dD][bB][uU][fF]|[wW][aA][tT][cC][hH]|[fF][iI][nN][dD]|[aA][wW][kK]|[gG][aA][wW][kK]|[pP][eE][rR][lL]|[pP][yY][tT][hH][oO][nN]|[pP][yY][tT][hH][oO][nN]3|[rR][uU][bB][yY]|[nN][oO][dD][eE]|[lL][uU][aA]|[pP][hH][pP]|[tT][cC][lL][sS][hH]|[oO][sS][aA][sS][cC][rR][iI][pP][tT]|[eE][vV][aA][lL]|[tT][oO][tT][eE])$",
+                                "type": "string"
+                            },
+                            "description": "The program: a literal word, never a placeholder, never a shell or launcher, never tote. It also needs an exec:<program> permission, which a schema cannot check.",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "open": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2048,
+                    "pattern": "^https://[^@/?#{]*(?:[/?#{].*)?$|^\\{(?!\\{)",
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/plain"
+                        },
+                        {
+                            "$ref": "#/$defs/template"
+                        }
+                    ]
+                },
+                "pause": {
+                    "enum": ["always", "error", "never"]
+                },
+                "target": {
+                    "enum": ["repo"]
+                }
+            },
+            "allOf": [
+                {
+                    "not": {
+                        "required": ["run", "open"],
+                        "type": "object"
+                    }
+                },
+                {
+                    "anyOf": [
+                        {
+                            "required": ["run"],
+                            "type": "object"
+                        },
+                        {
+                            "required": ["open"],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "if": {
+                        "required": ["run"],
+                        "type": "object"
+                    },
+                    "then": {
+                        "required": ["output"],
+                        "type": "object"
+                    }
+                },
+                {
+                    "if": {
+                        "required": ["pause"],
+                        "type": "object"
+                    },
+                    "then": {
+                        "required": ["output"],
+                        "properties": {
+                            "output": {
+                                "const": "terminal"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                {
+                    "if": {
+                        "required": ["output"],
+                        "properties": {
+                            "output": {
+                                "const": "terminal"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "then": {
+                        "not": {
+                            "required": ["timeout"],
+                            "type": "object"
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "required": ["open"],
+                        "type": "object"
+                    },
+                    "then": {
+                        "not": {
+                            "anyOf": [
+                                {
+                                    "required": ["cwd"],
+                                    "type": "object"
+                                },
+                                {
+                                    "required": ["output"],
+                                    "type": "object"
+                                },
+                                {
+                                    "required": ["pause"],
+                                    "type": "object"
+                                },
+                                {
+                                    "required": ["timeout"],
+                                    "type": "object"
+                                }
+                            ]
+                        },
+                        "properties": {
+                            "env": {
+                                "maxProperties": 0,
+                                "type": "object"
+                            },
+                            "allow_dash": {
+                                "maxItems": 0,
+                                "type": "array"
+                            }
+                        },
+                        "type": "object"
+                    }
+                }
+            ]
+        },
+        "action": {
+            "type": "object",
+            "required": ["id", "label", "output"],
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+                },
+                "label": {
+                    "type": "string",
+                    "$ref": "#/$defs/plain",
+                    "minLength": 1,
+                    "maxLength": 60
+                },
+                "description": {
+                    "type": "string",
+                    "$ref": "#/$defs/plain",
+                    "minLength": 0,
+                    "maxLength": 200
+                },
+                "cwd": {
+                    "type": "string",
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/plain"
+                        },
+                        {
+                            "$ref": "#/$defs/template"
+                        }
+                    ],
+                    "minLength": 1,
+                    "maxLength": 1024
+                },
+                "env": {
+                    "type": "object",
+                    "maxProperties": 16,
+                    "propertyNames": {
+                        "pattern": "^[A-Z_][A-Z0-9_]{0,63}$",
+                        "not": {
+                            "anyOf": [
+                                {
+                                    "pattern": "^(?:PATH|HOME|SHELL|IFS|ENV|BASH_ENV|SHELLOPTS|BASHOPTS|PS4|PROMPT_COMMAND|CDPATH|GLOBIGNORE|JAVA_TOOL_OPTIONS|SSH_ASKPASS|GIT_DIR|GIT_WORK_TREE|GIT_INDEX_FILE|GIT_EXTERNAL_DIFF|GIT_PAGER|GIT_EDITOR|GIT_SEQUENCE_EDITOR|GIT_TEMPLATE_DIR|GIT_ALLOW_PROTOCOL|GIT_OBJECT_DIRECTORY|GIT_ALTERNATE_OBJECT_DIRECTORIES|GIT_NAMESPACE|GIT_COMMON_DIR|GIT_ATTR_SOURCE|GIT_REPLACE_REF_BASE|PAGER|EDITOR|VISUAL|MANPAGER|MANOPT|BROWSER|LUA_INIT|OPENSSL_CONF|SSL_CERT_FILE|SSL_CERT_DIR|GCONV_PATH|LOCPATH|NLSPATH|HOSTALIASES|XDG_CONFIG_HOME|XDG_CONFIG_DIRS|XDG_DATA_HOME|XDG_DATA_DIRS)$",
+                                    "type": "string"
+                                },
+                                {
+                                    "pattern": "^(?:LD_|DYLD_|TOTE_|PYTHON|PERL5|RUBY|NODE_|GIT_SSH|GIT_CONFIG|GIT_ASKPASS|GIT_EXEC_PATH|GIT_PROXY_COMMAND|BASH_FUNC_|GIT_TRACE|LESS|SSH_ASKPASS)",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "type": "string"
+                    },
+                    "additionalProperties": {
+                        "type": "string",
+                        "allOf": [
+                            {
+                                "$ref": "#/$defs/plain"
+                            },
+                            {
+                                "$ref": "#/$defs/template"
+                            }
+                        ],
+                        "minLength": 0,
+                        "maxLength": 1024
+                    },
+                    "description": "Variable names to templates. Each name needs an env:<NAME> permission. Loader and interpreter variables are refused."
+                },
+                "confirm": {
+                    "oneOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "string",
+                            "allOf": [
+                                {
+                                    "$ref": "#/$defs/plain"
+                                },
+                                {
+                                    "$ref": "#/$defs/template"
+                                }
+                            ],
+                            "minLength": 1,
+                            "maxLength": 200
+                        }
+                    ]
+                },
+                "output": {
+                    "enum": ["pager", "silent"]
+                },
+                "timeout": {
+                    "type": "string",
+                    "pattern": "^(?=[0-9]{1,6}[sm]$)(?:0*(?:[1-9]|[12][0-9]|30)m|0*(?:[1-9][0-9]{0,2}|1[0-7][0-9]{2}|1800)s)$"
+                },
+                "allow_dash": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "$ref": "#/$defs/plain",
+                        "minLength": 1,
+                        "maxLength": 96,
+                        "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)*$"
+                    },
+                    "maxItems": 16
+                },
+                "key": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9]$"
+                },
+                "field": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/field"
+                    },
+                    "maxItems": 16
+                },
+                "pause": false,
+                "keywords": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "$ref": "#/$defs/plain",
+                        "minLength": 1,
+                        "maxLength": 24
+                    },
+                    "maxItems": 8
+                },
+                "target": {
+                    "enum": ["none", "repo"]
+                }
+            }
+        },
+        "list_action": {
+            "type": "object",
+            "required": ["id", "label"],
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+                },
+                "label": {
+                    "type": "string",
+                    "$ref": "#/$defs/plain",
+                    "minLength": 1,
+                    "maxLength": 60
+                },
+                "description": {
+                    "type": "string",
+                    "$ref": "#/$defs/plain",
+                    "minLength": 0,
+                    "maxLength": 200
+                },
+                "cwd": {
+                    "type": "string",
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/plain"
+                        },
+                        {
+                            "$ref": "#/$defs/templateItem"
+                        }
+                    ],
+                    "minLength": 1,
+                    "maxLength": 1024
+                },
+                "env": {
+                    "type": "object",
+                    "maxProperties": 16,
+                    "propertyNames": {
+                        "pattern": "^[A-Z_][A-Z0-9_]{0,63}$",
+                        "not": {
+                            "anyOf": [
+                                {
+                                    "pattern": "^(?:PATH|HOME|SHELL|IFS|ENV|BASH_ENV|SHELLOPTS|BASHOPTS|PS4|PROMPT_COMMAND|CDPATH|GLOBIGNORE|JAVA_TOOL_OPTIONS|SSH_ASKPASS|GIT_DIR|GIT_WORK_TREE|GIT_INDEX_FILE|GIT_EXTERNAL_DIFF|GIT_PAGER|GIT_EDITOR|GIT_SEQUENCE_EDITOR|GIT_TEMPLATE_DIR|GIT_ALLOW_PROTOCOL|GIT_OBJECT_DIRECTORY|GIT_ALTERNATE_OBJECT_DIRECTORIES|GIT_NAMESPACE|GIT_COMMON_DIR|GIT_ATTR_SOURCE|GIT_REPLACE_REF_BASE|PAGER|EDITOR|VISUAL|MANPAGER|MANOPT|BROWSER|LUA_INIT|OPENSSL_CONF|SSL_CERT_FILE|SSL_CERT_DIR|GCONV_PATH|LOCPATH|NLSPATH|HOSTALIASES|XDG_CONFIG_HOME|XDG_CONFIG_DIRS|XDG_DATA_HOME|XDG_DATA_DIRS)$",
+                                    "type": "string"
+                                },
+                                {
+                                    "pattern": "^(?:LD_|DYLD_|TOTE_|PYTHON|PERL5|RUBY|NODE_|GIT_SSH|GIT_CONFIG|GIT_ASKPASS|GIT_EXEC_PATH|GIT_PROXY_COMMAND|BASH_FUNC_|GIT_TRACE|LESS|SSH_ASKPASS)",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "type": "string"
+                    },
+                    "additionalProperties": {
+                        "type": "string",
+                        "allOf": [
+                            {
+                                "$ref": "#/$defs/plain"
+                            },
+                            {
+                                "$ref": "#/$defs/templateItem"
+                            }
+                        ],
+                        "minLength": 0,
+                        "maxLength": 1024
+                    },
+                    "description": "Variable names to templates. Each name needs an env:<NAME> permission. Loader and interpreter variables are refused."
+                },
+                "confirm": {
+                    "oneOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "string",
+                            "allOf": [
+                                {
+                                    "$ref": "#/$defs/plain"
+                                },
+                                {
+                                    "$ref": "#/$defs/templateItem"
+                                }
+                            ],
+                            "minLength": 1,
+                            "maxLength": 200
+                        }
+                    ]
+                },
+                "output": {
+                    "enum": ["pager", "silent", "terminal"]
+                },
+                "timeout": {
+                    "type": "string",
+                    "pattern": "^(?=[0-9]{1,6}[sm]$)(?:0*(?:[1-9]|[12][0-9]|30)m|0*(?:[1-9][0-9]{0,2}|1[0-7][0-9]{2}|1800)s)$"
+                },
+                "allow_dash": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "$ref": "#/$defs/plain",
+                        "minLength": 1,
+                        "maxLength": 96,
+                        "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)*$"
+                    },
+                    "maxItems": 16
+                },
+                "key": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9]$"
+                },
+                "field": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/field"
+                    },
+                    "maxItems": 16
+                },
+                "run": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "allOf": [
+                            {
+                                "$ref": "#/$defs/plain"
+                            },
+                            {
+                                "$ref": "#/$defs/templateItem"
+                            }
+                        ],
+                        "minLength": 0,
+                        "maxLength": 1024
+                    },
+                    "minItems": 1,
+                    "maxItems": 64,
+                    "prefixItems": [
+                        {
+                            "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+                            "not": {
+                                "pattern": "^(?:[sS][hH]|[bB][aA][sS][hH]|[zZ][sS][hH]|[dD][aA][sS][hH]|[kK][sS][hH]|[fF][iI][sS][hH]|[cC][sS][hH]|[tT][cC][sS][hH]|[eE][nN][vV]|[xX][aA][rR][gG][sS]|[sS][uU][dD][oO]|[dD][oO][aA][sS]|[sS][uU]|[nN][oO][hH][uU][pP]|[nN][iI][cC][eE]|[iI][oO][nN][iI][cC][eE]|[tT][iI][mM][eE]|[tT][iI][mM][eE][oO][uU][tT]|[sS][eE][tT][sS][iI][dD]|[sS][tT][dD][bB][uU][fF]|[wW][aA][tT][cC][hH]|[fF][iI][nN][dD]|[aA][wW][kK]|[gG][aA][wW][kK]|[pP][eE][rR][lL]|[pP][yY][tT][hH][oO][nN]|[pP][yY][tT][hH][oO][nN]3|[rR][uU][bB][yY]|[nN][oO][dD][eE]|[lL][uU][aA]|[pP][hH][pP]|[tT][cC][lL][sS][hH]|[oO][sS][aA][sS][cC][rR][iI][pP][tT]|[eE][vV][aA][lL]|[tT][oO][tT][eE])$",
+                                "type": "string"
+                            },
+                            "description": "The program: a literal word, never a placeholder, never a shell or launcher, never tote. It also needs an exec:<program> permission, which a schema cannot check.",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "open": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2048,
+                    "pattern": "^https://[^@/?#{]*(?:[/?#{].*)?$|^\\{(?!\\{)",
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/plain"
+                        },
+                        {
+                            "$ref": "#/$defs/templateItem"
+                        }
+                    ]
+                },
+                "pause": {
+                    "enum": ["always", "error", "never"]
+                }
+            },
+            "allOf": [
+                {
+                    "not": {
+                        "required": ["run", "open"],
+                        "type": "object"
+                    }
+                },
+                {
+                    "anyOf": [
+                        {
+                            "required": ["run"],
+                            "type": "object"
+                        },
+                        {
+                            "required": ["open"],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "if": {
+                        "required": ["run"],
+                        "type": "object"
+                    },
+                    "then": {
+                        "required": ["output"],
+                        "type": "object"
+                    }
+                },
+                {
+                    "if": {
+                        "required": ["pause"],
+                        "type": "object"
+                    },
+                    "then": {
+                        "required": ["output"],
+                        "properties": {
+                            "output": {
+                                "const": "terminal"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                {
+                    "if": {
+                        "required": ["output"],
+                        "properties": {
+                            "output": {
+                                "const": "terminal"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "then": {
+                        "not": {
+                            "required": ["timeout"],
+                            "type": "object"
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "required": ["open"],
+                        "type": "object"
+                    },
+                    "then": {
+                        "not": {
+                            "anyOf": [
+                                {
+                                    "required": ["cwd"],
+                                    "type": "object"
+                                },
+                                {
+                                    "required": ["output"],
+                                    "type": "object"
+                                },
+                                {
+                                    "required": ["pause"],
+                                    "type": "object"
+                                },
+                                {
+                                    "required": ["timeout"],
+                                    "type": "object"
+                                }
+                            ]
+                        },
+                        "properties": {
+                            "env": {
+                                "maxProperties": 0,
+                                "type": "object"
+                            },
+                            "allow_dash": {
+                                "maxItems": 0,
+                                "type": "array"
+                            }
+                        },
+                        "type": "object"
+                    }
+                }
+            ]
+        },
+        "list": {
+            "type": "object",
+            "required": ["id", "label", "column"],
+            "additionalProperties": false,
+            "description": "Exec tier only. Reserved: tote 1.0 reads and checks this table, shows no screen for it and runs nothing for it.",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+                },
+                "label": {
+                    "type": "string",
+                    "$ref": "#/$defs/plain",
+                    "minLength": 1,
+                    "maxLength": 60
+                },
+                "description": {
+                    "type": "string",
+                    "$ref": "#/$defs/plain",
+                    "minLength": 0,
+                    "maxLength": 200
+                },
+                "keywords": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "$ref": "#/$defs/plain",
+                        "minLength": 1,
+                        "maxLength": 24
+                    },
+                    "maxItems": 8
+                },
+                "timeout": {
+                    "type": "string",
+                    "pattern": "^(?=[0-9]{1,6}[sm]$)(?:0*[12]m|0*(?:[1-9][0-9]?|1[01][0-9]|120)s)$"
+                },
+                "column": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "required": ["id", "label"],
+                        "additionalProperties": false,
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "pattern": "^[a-z][a-z0-9_]{0,31}$"
+                            },
+                            "label": {
+                                "type": "string",
+                                "$ref": "#/$defs/plain",
+                                "minLength": 1,
+                                "maxLength": 60
+                            },
+                            "width": {
+                                "type": "integer",
+                                "minimum": 4,
+                                "maximum": 80
+                            },
+                            "align": {
+                                "enum": ["left", "right"]
+                            }
+                        }
+                    },
+                    "minItems": 1,
+                    "maxItems": 8,
+                    "description": "At least one column, and each column needs a non-empty id and label: column = [] and an empty entry are refused by tote (value_invalid, key_missing)."
+                },
+                "action": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/list_action"
+                    },
+                    "maxItems": 16
+                }
+            }
+        },
+        "setting": {
+            "type": "object",
+            "required": ["id", "type", "label"],
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9_]{0,31}$",
+                    "not": {
+                        "anyOf": [
+                            {
+                                "enum": ["token_env", "token_cmd", "schema"]
+                            },
+                            {
+                                "pattern": "__"
+                            }
+                        ]
+                    }
+                },
+                "type": {
+                    "enum": ["string", "bool", "int", "enum", "path", "list"]
+                },
+                "label": {
+                    "type": "string",
+                    "$ref": "#/$defs/plain",
+                    "minLength": 1,
+                    "maxLength": 60
+                },
+                "description": {
+                    "type": "string",
+                    "$ref": "#/$defs/plain",
+                    "minLength": 0,
+                    "maxLength": 200
+                },
+                "default": {
+                    "oneOf": [
+                        {
+                            "type": "string",
+                            "$ref": "#/$defs/plain",
+                            "minLength": 0,
+                            "maxLength": 1024
+                        },
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "integer",
+                            "minimum": -2147483648,
+                            "maximum": 2147483647
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "$ref": "#/$defs/plain",
+                                "minLength": 0,
+                                "maxLength": 1024
+                            },
+                            "maxItems": 500
+                        }
+                    ]
+                },
+                "pattern": {
+                    "type": "string",
+                    "$ref": "#/$defs/plain",
+                    "minLength": 1,
+                    "maxLength": 256
+                },
+                "max_len": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1024
+                },
+                "min": {
+                    "type": "integer",
+                    "minimum": -2147483648,
+                    "maximum": 2147483647
+                },
+                "max": {
+                    "type": "integer",
+                    "minimum": -2147483648,
+                    "maximum": 2147483647
+                },
+                "choices": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "$ref": "#/$defs/plain",
+                        "minLength": 1,
+                        "maxLength": 64
+                    },
+                    "minItems": 1,
+                    "maxItems": 64,
+                    "uniqueItems": true
+                },
+                "must_exist": {
+                    "type": "boolean"
+                },
+                "max_items": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 500
+                }
+            },
+            "allOf": [
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "string"
+                            }
+                        },
+                        "required": ["type"],
+                        "type": "object"
+                    },
+                    "then": {
+                        "properties": {
+                            "min": false,
+                            "max": false,
+                            "choices": false,
+                            "must_exist": false,
+                            "max_items": false,
+                            "default": {
+                                "type": "string",
+                                "$ref": "#/$defs/plain",
+                                "minLength": 0,
+                                "maxLength": 1024
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "list"
+                            }
+                        },
+                        "required": ["type"],
+                        "type": "object"
+                    },
+                    "then": {
+                        "properties": {
+                            "min": false,
+                            "max": false,
+                            "choices": false,
+                            "must_exist": false,
+                            "default": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "$ref": "#/$defs/plain",
+                                    "minLength": 0,
+                                    "maxLength": 1024
+                                },
+                                "maxItems": 500
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "int"
+                            }
+                        },
+                        "required": ["type"],
+                        "type": "object"
+                    },
+                    "then": {
+                        "properties": {
+                            "pattern": false,
+                            "max_len": false,
+                            "choices": false,
+                            "must_exist": false,
+                            "max_items": false,
+                            "default": {
+                                "type": "integer",
+                                "minimum": -2147483648,
+                                "maximum": 2147483647
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "enum"
+                            }
+                        },
+                        "required": ["type"],
+                        "type": "object"
+                    },
+                    "then": {
+                        "required": ["choices"],
+                        "properties": {
+                            "pattern": false,
+                            "max_len": false,
+                            "min": false,
+                            "max": false,
+                            "must_exist": false,
+                            "max_items": false,
+                            "default": {
+                                "type": "string",
+                                "$ref": "#/$defs/plain",
+                                "minLength": 0,
+                                "maxLength": 1024
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "path"
+                            }
+                        },
+                        "required": ["type"],
+                        "type": "object"
+                    },
+                    "then": {
+                        "properties": {
+                            "pattern": false,
+                            "max_len": false,
+                            "min": false,
+                            "max": false,
+                            "choices": false,
+                            "max_items": false,
+                            "default": {
+                                "type": "string",
+                                "$ref": "#/$defs/plain",
+                                "minLength": 0,
+                                "maxLength": 1024
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "bool"
+                            }
+                        },
+                        "required": ["type"],
+                        "type": "object"
+                    },
+                    "then": {
+                        "properties": {
+                            "pattern": false,
+                            "max_len": false,
+                            "min": false,
+                            "max": false,
+                            "choices": false,
+                            "must_exist": false,
+                            "max_items": false,
+                            "default": {
+                                "type": "boolean"
+                            }
+                        },
+                        "type": "object"
+                    }
+                }
+            ]
+        },
+        "localeTable": {
+            "type": "object",
+            "additionalProperties": {
+                "oneOf": [
+                    {
+                        "type": "string",
+                        "$ref": "#/$defs/plain",
+                        "minLength": 0,
+                        "maxLength": 1024
+                    },
+                    {
+                        "$ref": "#/$defs/localeTable"
+                    }
+                ]
+            }
+        }
+    }
+}
