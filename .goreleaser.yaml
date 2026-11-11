@@ -1,0 +1,176 @@
+# GoReleaser v2 configuration for tote. Checked with `goreleaser check`; docs/RELEASING.md
+# describes the release steps and the pipeline (.github/workflows/release.yml).
+#
+# Dry run, no signing key and nothing uploaded:
+#   goreleaser release --snapshot --skip=sign --clean
+# Real release: run by the release workflow after a `v*` tag push, or by the maintainer with
+# TOTE_RELEASE_KEYS, MINISIGN_KEY_FILE, MINISIGN_PASSWORD and GITHUB_TOKEN in the environment.
+# packaging/preflight.sh refuses a real release that lacks one of them, and the GitHub release
+# is created as a draft.
+#
+# Tags carry a "v" prefix (go install needs it): v1.0.0, v1.1.0-beta.1; file names do not.
+# A tag with a prerelease part becomes a GitHub pre-release, which GitHub never returns as
+# /releases/latest.
+version: 2
+
+project_name: tote
+
+git:
+    # 1.1.0-beta.1 sorts before 1.1.0 when GoReleaser looks for the previous tag.
+    prerelease_suffix: "-"
+
+before:
+    hooks:
+        - go mod verify
+        - bash packaging/preflight.sh {{ if .IsSnapshot }}snapshot{{ else }}release{{ end }}
+
+builds:
+    - id: tote
+      main: ./cmd/tote
+      binary: tote
+      env:
+          - CGO_ENABLED=0
+          - GOTOOLCHAIN=local
+      goos: [linux, darwin]
+      goarch: [amd64, arm64]
+      flags:
+          - -trimpath
+      # TOTE_RELEASE_KEYS holds the minisign public keys (current, then next), separated by a
+      # space: the build refuses to update itself without them. A snapshot may go without them
+      # and then embeds the placeholders; a real release must set them (preflight.sh checks
+      # that they are well formed, and the template fails when the variable is missing). The
+      # value is quoted because the linker splits its flags on spaces.
+      ldflags:
+          - >-
+              -s -w -X main.version={{ .Version }}
+              -X 'github.com/totecli/tote/internal/update.releaseKeys={{ if .IsSnapshot }}{{ envOrDefault "TOTE_RELEASE_KEYS" "RW_CURRENT_RELEASE_KEY_PLACEHOLDER RW_NEXT_RELEASE_KEY_PLACEHOLDER" }}{{ else }}{{ .Env.TOTE_RELEASE_KEYS }}{{ end }}'
+      # Reproducible binaries: file times come from the tagged commit.
+      mod_timestamp: "{{ .CommitTimestamp }}"
+
+archives:
+    - id: tote
+      ids: [tote]
+      formats: [tar.gz]
+      # tote_1.1.0-beta.1_linux_amd64.tar.gz: install.sh and `tote update` build this name.
+      name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+      # Reproducible archives: fixed owner, group and modes (not the local user and umask),
+      # commit time.
+      builds_info:
+          owner: root
+          group: root
+          mtime: "{{ .CommitDate }}"
+      files:
+          - src: LICENSE
+            info:
+                owner: root
+                group: root
+                mode: 0644
+                mtime: "{{ .CommitDate }}"
+          - src: README.md
+            info:
+                owner: root
+                group: root
+                mode: 0644
+                mtime: "{{ .CommitDate }}"
+
+checksum:
+    # The version is part of the name, and of the minisign trusted comment below.
+    name_template: "{{ .ProjectName }}_{{ .Version }}_checksums.txt"
+    algorithm: sha256
+
+signs:
+    # minisign, default prehashed mode (signature algorithm "ED", BLAKE2b-512 of the file).
+    # The trusted comment is covered by the global signature: install.sh and `tote update`
+    # check project, version, channel and file against what they asked for, and the timestamp
+    # against the last accepted one (rollback and mix-and-match protection).
+    # A missing MINISIGN_KEY_FILE or MINISIGN_PASSWORD stops the build with a template error
+    # (and preflight.sh stops it earlier); --skip=sign is for snapshots only.
+    - id: minisign
+      artifacts: checksum
+      cmd: minisign
+      signature: "${artifact}.minisig"
+      # minisign reads the key password from stdin when stdin is not a terminal.
+      stdin: "{{ .Env.MINISIGN_PASSWORD }}"
+      args:
+          - -S
+          - -s
+          - "{{ .Env.MINISIGN_KEY_FILE }}"
+          - -m
+          - "${artifact}"
+          - -x
+          - "${signature}"
+          - -t
+          - "project:tote\tversion:{{ .Version }}\ttag:{{ .Tag }}\tchannel:{{ if .Prerelease }}beta{{ else }}stable{{ end }}\ttimestamp:{{ .Timestamp }}\tfile:{{ .ProjectName }}_{{ .Version }}_checksums.txt"
+      output: true
+
+nfpms:
+    # The .deb served by the apt repository (Debian bookworm/trixie, every Ubuntu): the same
+    # static binary as the archives, covered by the signed checksums file.
+    - id: tote
+      ids: [tote]
+      package_name: tote
+      vendor: 20syldev
+      # TOTE_MAINTAINER ("Name <address>") sets the Maintainer field of the package. A release
+      # requires it (packaging/preflight.sh); a snapshot says maintainer@example.org.
+      maintainer: '{{ if isEnvSet "TOTE_MAINTAINER" }}{{ .Env.TOTE_MAINTAINER }}{{ else }}20syldev <maintainer@example.org>{{ end }}'
+      homepage: https://github.com/totecli/tote
+      description: |-
+          terminal launcher for SSH connections, git repositories and aliases
+          tote is a full-screen terminal user interface that lists SSH connections,
+          git repositories and shell aliases, and launches them in place.
+      license: MIT
+      formats: [deb]
+      section: utils
+      priority: optional
+      bindir: /usr/bin
+      # Debian version: SemVer 1.1.0-beta.1 becomes 1.1.0~beta.1, then "-1" is appended:
+      # 1.1.0~beta.1-1 < 1.1.0-1, and the PPA builds (1.1.0-0ppa1~24.04.1) sort below.
+      release: "1"
+      # Reproducible package: file times come from the tagged commit.
+      mtime: "{{ .CommitDate }}"
+      # Default file name (tote_1.1.0-beta.1_linux_amd64.deb): never a "~" in an asset name,
+      # GitHub would rename it and checksums would no longer match.
+      # Keep the Recommends line in step with the control file of the PPA source package.
+      recommends:
+          - git
+          - openssh-client
+          # One entry with alternatives: the .deb says "xclip | xsel | wl-clipboard".
+          - xclip | xsel | wl-clipboard
+      contents:
+          - src: LICENSE
+            dst: /usr/share/doc/tote/copyright
+            file_info:
+                mode: 0644
+          # Read by `tote update`: an apt-installed tote never updates itself.
+          # The file holds two lines: install_method=apt and package=deb (the PPA build
+          # ships the same file with package=ppa).
+          - src: packaging/deb/install-method
+            dst: /usr/share/tote/install-method
+            file_info:
+                mode: 0644
+      deb:
+          lintian_overrides:
+              - statically-linked-binary
+
+release:
+    github:
+        owner: totecli
+        name: tote
+    # The maintainer reviews the draft, then publishes it by hand.
+    draft: true
+    prerelease: auto
+    # A draft of the same name (the tag) is reused by a second run, with the notes the
+    # maintainer wrote in it: the notes are never generated nor replaced, and the assets
+    # already uploaded to it are replaced (GitHub refuses a second upload of the same name).
+    use_existing_draft: true
+    replace_existing_artifacts: true
+    mode: keep-existing
+    # Empty is replaced by "{{ .Tag }}", which is also what GitHub shows for an empty title.
+    name_template: "{{ .Tag }}"
+
+changelog:
+    # Release notes are written by hand in the draft release.
+    disable: true
+
+snapshot:
+    version_template: "{{ incpatch .Version }}-snapshot.{{ .ShortCommit }}"
