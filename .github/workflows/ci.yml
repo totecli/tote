@@ -1,0 +1,114 @@
+name: ci
+
+on:
+    push:
+        branches: [master]
+    pull_request:
+
+permissions:
+    contents: read
+
+jobs:
+    test:
+        name: Test
+        runs-on: ubuntu-latest
+        timeout-minutes: 40
+        steps:
+            - uses: actions/checkout@v7
+            - uses: actions/setup-go@v7
+              with:
+                  go-version-file: go.mod
+            - name: Install zsh, tmux, shellcheck and minisign
+              # CI=true makes the tests that need one of these programs fail instead of skipping.
+              run: sudo apt-get update && sudo apt-get install -y zsh tmux shellcheck minisign
+            - name: Check formatting
+              run: test -z "$(gofmt -l .)"
+            - name: Vet
+              run: go vet ./...
+            - name: Check the shell scripts
+              run: shellcheck -x scripts/*.sh packaging/*.sh
+            - name: Check the Markdown
+              run: scripts/docs.sh
+            - name: Test
+              run: |
+                  mapfile -t pkgs < <(go list ./... | grep -v '/internal/ui$')
+                  go test -race -timeout 30m "${pkgs[@]}"
+            - name: Test the interface
+              # The frame tests take over 30 minutes under the race detector on a runner: "make race"
+              # runs them with it before a release.
+              run: go test -timeout 30m ./internal/ui
+
+    vuln:
+        name: Vulnerabilities
+        # The release is built with the latest patch of the 1.26 line (release.yml), so this job
+        # audits that toolchain and the modules the same way, not the minimum of go.mod.
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        steps:
+            - uses: actions/checkout@v7
+            - uses: actions/setup-go@v7
+              with:
+                  go-version: "1.26"
+                  check-latest: true
+            - name: Check the known vulnerabilities
+              # A fixed version of the tool: the code and the modules change only through a commit.
+              run: go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
+
+    release-dry-run:
+        name: Release dry run
+        # What the release job does, without secrets and without publishing: a broken
+        # .goreleaser.yaml, hook or packaging file shows here and not behind the approval of a tag.
+        # A fresh runner has no dist/ folder, so no --clean is needed.
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0
+            - uses: actions/setup-go@v7
+              with:
+                  go-version: "1.26"
+                  check-latest: true
+            - name: Check the GoReleaser configuration
+              uses: goreleaser/goreleaser-action@v7
+              with:
+                  distribution: goreleaser
+                  version: v2.20.0
+                  args: check
+            - name: Build a snapshot
+              uses: goreleaser/goreleaser-action@v7
+              with:
+                  distribution: goreleaser
+                  version: v2.20.0
+                  args: release --snapshot --skip=publish,sign
+            - name: Check the archives and the packages
+              run: |
+                  count() { find dist -maxdepth 1 -name "$1" | wc -l; }
+                  test "$(count '*.tar.gz')" -eq 4
+                  test "$(count '*.deb')" -eq 2
+                  test "$(count '*_checksums.txt')" -eq 1
+
+    macos:
+        name: macOS
+        # The darwin binaries are shipped: build one natively, run it and run the tests of every
+        # package except the interface and the tmux end-to-end tests, which stay on Linux. The job
+        # does not block the run until the owner trusts it (see docs/RELEASING.md).
+        runs-on: macos-latest
+        timeout-minutes: 40
+        continue-on-error: true
+        steps:
+            - uses: actions/checkout@v7
+            - uses: actions/setup-go@v7
+              with:
+                  go-version-file: go.mod
+            - name: Build and run the binary
+              run: |
+                  make build VERSION=0.0.0-ci
+                  test "$(bin/tote version | head -n 1)" = "tote 0.0.0-ci"
+            - name: Install tmux, shellcheck, minisign and a current bash
+              # CI=true makes the tests that need one of these programs fail instead of skipping.
+              run: brew install tmux shellcheck minisign bash
+            - name: Test
+              run: |
+                  go test -p 1 -timeout 30m ./internal/store/... ./internal/config/... ./internal/i18n/... \
+                    ./internal/shell/... ./internal/update/... ./internal/plugin/... ./cmd/tote/...
