@@ -1,0 +1,83 @@
+name: release
+
+# A push of a tag named v* builds the release with GoReleaser, signs the checksums file with
+# minisign and creates a DRAFT GitHub release. The maintainer approves the run (environment
+# "release"), then reviews and publishes the draft by hand. See docs/RELEASING.md.
+#
+# The other workflows use the moving tags (@v7). This one holds the signing secrets, so its
+# actions are pinned to a commit: a tag can be moved, a commit cannot.
+
+on:
+    push:
+        tags: ["v*"]
+
+permissions:
+    contents: read
+
+concurrency:
+    group: release
+    cancel-in-progress: false
+
+jobs:
+    release:
+        name: Draft release
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        environment: release
+        permissions:
+            contents: write
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 0
+                  persist-credentials: false
+            - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+              with:
+                  # The latest patch of the line that go.mod asks for (go 1.26.0 alone would install the
+                  # first release of the line and miss its security fixes). ci.yml keeps the minimum.
+                  go-version: "1.26"
+                  check-latest: true
+                  # This job holds the signing secrets: no module or build cache restored from, or
+                  # saved for, other runs.
+                  cache: false
+            - name: Install minisign
+              run: sudo apt-get update && sudo apt-get install -y minisign
+            - name: Check the tag
+              run: |
+                  re='^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)'
+                  re+='(-(0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)'
+                  re+='(\.(0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*)?$'
+                  if ! [[ "$GITHUB_REF_NAME" =~ $re ]]; then
+                      echo "::error::$GITHUB_REF_NAME is not a version tag such as v1.0.0 or v1.1.0-beta.1"
+                      exit 1
+                  fi
+                  if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/master; then
+                      echo "::error::$GITHUB_REF_NAME does not point at a commit of master"
+                      exit 1
+                  fi
+            - name: Write the signing key
+              env:
+                  MINISIGN_SECRET_KEY: ${{ secrets.MINISIGN_SECRET_KEY }}
+              run: |
+                  umask 077
+                  key="$RUNNER_TEMP/tote.key"
+                  printf '%s\n' "$MINISIGN_SECRET_KEY" > "$key"
+                  echo "MINISIGN_KEY_FILE=$key" >> "$GITHUB_ENV"
+            - name: Build, sign and create the draft release
+              uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
+              with:
+                  distribution: goreleaser
+                  version: v2.20.0
+                  args: release --clean
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  MINISIGN_PASSWORD: ${{ secrets.MINISIGN_PASSWORD }}
+                  TOTE_RELEASE_KEYS: ${{ vars.TOTE_RELEASE_KEYS }}
+                  TOTE_MAINTAINER: ${{ vars.TOTE_MAINTAINER }}
+            - name: Verify the signature and the checksums
+              env:
+                  TOTE_RELEASE_KEYS: ${{ vars.TOTE_RELEASE_KEYS }}
+              run: packaging/verify.sh dist
+            - name: Remove the signing key
+              if: always()
+              run: rm -f "$RUNNER_TEMP/tote.key"
