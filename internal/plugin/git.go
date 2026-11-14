@@ -83,9 +83,10 @@ type RepoNeeds struct {
 // repoInfo derives the {repo.*} data of one saved repository.
 //
 // The path and the name never need git. The remote, the slug and the branch do: they come from a
-// git run on the scrubbed PATH, in an environment built from nothing, with a timeout of 1500 ms,
-// and are cached for 5 seconds. The remote is read from the repository's own config file
-// (--local), so it runs no hook and reads no global or included file.
+// git run on the scrubbed PATH, in an environment built from nothing, with a timeout of 1500 ms
+// for the two runs together (they start side by side), and are cached for 5 seconds. The remote is
+// read from the repository's own config file (--local), so it runs no hook and reads no global or
+// included file.
 //
 // Parameters:
 //   - ctx: inputs of the pass (PATH and the places a program may not be found in)
@@ -138,16 +139,26 @@ func (r *Registry) gitFacts(ctx *loadContext, dir string) (remote, branch string
 	run, cancel := context.WithTimeout(context.Background(), gitTimeout)
 	defer cancel()
 
-	out, ok := runGit(run, bin, env, dir, "config", "--local", "--get-regexp",
-		`^remote\..*\.url$`)
-	if ok {
-		remote = pickRemote(out)
-	}
+	// The two runs go side by side so that a slow start of git (cold disk, loaded runner) in one
+	// cannot use up the shared deadline and leave nothing for the other.
+	var wg sync.WaitGroup
 
-	out, ok = runGit(run, bin, env, dir, "symbolic-ref", "--short", "-q", "HEAD")
-	if ok {
+	wg.Add(1)
+
+	go func() {
+		defer wg.Done()
+
+		if out, ok := runGit(run, bin, env, dir, "config", "--local", "--get-regexp",
+			`^remote\..*\.url$`); ok {
+			remote = pickRemote(out)
+		}
+	}()
+
+	if out, ok := runGit(run, bin, env, dir, "symbolic-ref", "--short", "-q", "HEAD"); ok {
 		branch = cleanBranch(string(out))
 	}
+
+	wg.Wait()
 
 	return remote, branch
 }

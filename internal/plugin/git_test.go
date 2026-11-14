@@ -20,10 +20,14 @@ import (
 func fakeGit(l *lab) string {
 	log := filepath.Join(l.root, "git.log")
 
-	l.script("git", `{
+	// The two runs of the helper start together: each one writes its record in one piece.
+	l.script("git", `t=$(mktemp)
+{
 printf 'ARGS'; printf ' <%s>' "$@"; printf '\n'
 env | grep -v '^PWD=\|^OLDPWD=\|^SHLVL=\|^_=' | sort | sed 's/^/ENV /'
-} >> `+log+`
+} > "$t"
+cat "$t" >> `+log+`
+rm -f "$t"
 case "$*" in
 *get-regexp*) echo "remote.origin.url git@github.com:o/r.git";;
 *symbolic-ref*) echo main;;
