@@ -23,6 +23,30 @@ func (l *lab) useSystemTools() {
 	l.env["PATH"] = l.bin + ":" + shellPath
 }
 
+// useOnlyTools gives the programs of the sandbox the named system tools and nothing else, so that
+// a program installed on the machine (gft, say) cannot hide the absence that a test checks.
+//
+// Parameters:
+//   - names: tools to link into a directory that follows the fake program directory in PATH
+func (l *lab) useOnlyTools(names ...string) {
+	l.t.Helper()
+
+	dir := l.t.TempDir()
+
+	for _, name := range names {
+		path, err := exec.LookPath(name)
+		if err != nil {
+			l.t.Skipf("%s is not installed: %v", name, err)
+		}
+
+		if err := os.Symlink(path, filepath.Join(dir, name)); err != nil {
+			l.t.Fatal(err)
+		}
+	}
+
+	l.env["PATH"] = l.bin + ":" + dir
+}
+
 // script writes an executable POSIX shell script into the fake PATH directory.
 //
 // Parameters:

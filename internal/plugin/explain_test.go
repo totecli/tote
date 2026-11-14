@@ -205,7 +205,9 @@ func TestCheckArgvRefusals(t *testing.T) {
 //   - t: test to report to
 func TestCheckArgvMissingProgram(t *testing.T) {
 	l := chkLab(t)
-	l.useSystemTools()
+
+	// Only git, which finds the repository: gft may be installed on this machine.
+	l.useOnlyTools("git")
 
 	repo := l.gitRepo("myrepo", "git@github.com:20syldev/tote.git")
 

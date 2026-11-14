@@ -121,6 +121,8 @@ func TestRepoOffersMissingProgram(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	l.useOnlyTools()
+
 	for _, o := range r.RepoOffers(r.Load(), "myrepo", "en") {
 		if o.Available || o.Why == nil || o.Why.Code != CodeDepMissing || o.Why.Args[0] != "gft" ||
 			len(o.Why.Args) < 2 || o.Why.Args[1] == "" {
