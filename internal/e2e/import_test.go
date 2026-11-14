@@ -1126,6 +1126,55 @@ func TestImportReservedNames(t *testing.T) {
 	}
 }
 
+// TestImportViaNotAProgram checks that a via which is not a program (a shell alias, say) is
+// imported as it is and noted, and that a program of PATH, a template and plain ssh raise nothing.
+//
+// Parameters:
+//   - t: test to report to
+func TestImportViaNotAProgram(t *testing.T) {
+	r := newMNRig(t)
+
+	r.data(t, "connexions.dat",
+		dat("alias", "ghost", "a.example.org", "", "", "", ""),
+		dat("path", "xe", "b.example.org", "", "", "", ""),
+		dat("tpl", "ssh -t {user@}{host}", "e.example.org", "ops", "", "", ""),
+		dat("plain", "ssh", "f.example.org", "", "", "", ""),
+	)
+
+	out, errs, code := r.runImport(t)
+	if code != 0 || errs != "" {
+		t.Fatalf("exit %d\n%s\n%s", code, out, errs)
+	}
+
+	for _, n := range []string{"alias", "path", "tpl", "plain"} {
+		found := false
+
+		for _, row := range rowsOf(out) {
+			if row.Kind == "co" && row.Name == n && row.Status == "import" {
+				found = true
+			}
+		}
+
+		if !found {
+			t.Errorf("connection %q is not imported\n%s", n, out)
+		}
+	}
+
+	notes := out[strings.Index(out, "Notes:"):]
+
+	for _, want := range []string{`co alias:`, `via "ghost" is not a program in PATH`} {
+		if !strings.Contains(notes, want) {
+			t.Errorf("no note %q\n%s", want, notes)
+		}
+	}
+
+	for _, n := range []string{"co path:", "co tpl:", "co plain:"} {
+		if strings.Contains(notes, n) {
+			t.Errorf("unexpected note for %q\n%s", n, notes)
+		}
+	}
+}
+
 // TestImportHelp checks that the help documents the options and exits with 0.
 //
 // Parameters:

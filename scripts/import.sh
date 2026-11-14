@@ -92,6 +92,10 @@ Rules:
   - Aliases, repos and funcs share one namespace in tote, with the reserved shell words: the
     first claimed wins, in the order aliases, repos, funcs (as in mn, an alias shadows a script).
     Connection names and aliases are compared ignoring case; names are claimed before aliases.
+  - A via whose first word is not a program (a path to an executable, or a name found in PATH) is
+    imported as it is and noted: a shell alias or function cannot be a via, tote never runs it
+    through a shell. Write the command in full, for example ssh -t admin@jump.example.org
+    {user@}{host}.
   - A tote record is never changed. The same record already there is "same"; a record of the same
     name with other content is a "conflict", kept as it is, and counts as skipped.
   - Idempotent: a second --apply imports nothing and changes no file.
@@ -213,6 +217,12 @@ v_via() {
     rest=$v
     for w in 'user@' user host ip name; do rest=${rest//\{$w\}/}; done
     [[ $rest != *[\{\}]* ]] || fail "via has an unknown placeholder or a stray brace"
+}
+
+# via_found WORD: true when the first word of a via is a program that tote can start: a path to an
+# executable file, or a name that PATH resolves to one. A shell alias or function is not.
+via_found() {
+    if [[ $1 == */* ]]; then [[ -f $1 && -x $1 ]]; else type -P -- "$1" >/dev/null 2>&1; fi
 }
 
 v_target() {
@@ -522,6 +532,12 @@ h_co_check() {
         WORDS[${name,,}]=$name
     fi
     PEND[$name]=1
+    if [[ -n $via ]] && ! via_found "${via%% *}"; then
+        msg="co $name: $LINE: via \"${via%% *}\" is not a program in PATH (a shell alias or"
+        msg+=" function cannot be a via), kept as it is; write the command in full, for example:"
+        msg+=" ssh -t admin@jump.example.org {user@}{host}"
+        note "$msg"
+    fi
     if [[ -n $ip ]] && ! valid_ip "$ip"; then
         drop "co $name: $LINE: ip \"$ip\" is not an IP address, left out"; ip=""
     fi
