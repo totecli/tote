@@ -172,14 +172,15 @@ type diagEnv struct {
 // diagnosis is one run of the checks, with what the first ones learned for the later ones.
 //
 // settings holds config.toml, the defaults when it is missing or unusable, receipt the install
-// receipt when it describes the running program, and the four slices the records of the data
-// files that could be read.
+// receipt when it describes the running program, managed whether a package manager owns the
+// running program, and the four slices the records of the data files that could be read.
 type diagnosis struct {
 	env      diagEnv
 	paths    config.Paths
 	pathsErr error
 	settings config.Settings
 	receipt  *update.Receipt
+	managed  bool
 	conns    []store.Connection
 	aliases  []store.Alias
 	repos    []store.Repo

@@ -53,12 +53,19 @@ func (d *diagnosis) install() finding {
 
 	inst := update.Detect(exe, d.receipt, d.env.Marker)
 	method := string(inst.Method)
+	d.managed = inst.Managed
 
 	switch {
 	case bad != nil:
 		return note("install", levelWarn, "cli_doctor_install_bad_receipt", d.scrub(bad.Error())).
 			fix("cli_doctor_fix_receipt", d.word(d.paths.ReceiptFile())).
 			detail("cli_doctor_install_guess", method, where)
+	case inst.Managed && foreign != "":
+		// A package manager owns this program: the receipt of a program installed earlier
+		// elsewhere (a script install that apt replaced) changes nothing, so it is only noted.
+		return note("install", levelOK, "cli_doctor_install_managed", method, where,
+			inst.UpdateCommand).
+			detail("cli_doctor_install_foreign", d.tilde(foreign), where)
 	case foreign != "":
 		return note("install", levelWarn, "cli_doctor_install_foreign", d.tilde(foreign), where).
 			detail("cli_doctor_install_guess", method, where)
@@ -166,9 +173,10 @@ func isRelease(version string) bool {
 // updateCache reports the state of the update check that the status line reads.
 //
 // Returns a warning when this release build cannot verify an update because it has no usable
-// release key, and when the cache file is unusable or dated in the future.
+// release key, and when the cache file is unusable or dated in the future. A program that a
+// package manager owns never installs an update itself, so a missing key is not reported then.
 func (d *diagnosis) updateCache() finding {
-	if isRelease(d.env.Version) && d.env.Keys != nil {
+	if !d.managed && isRelease(d.env.Version) && d.env.Keys != nil {
 		if _, err := d.env.Keys(); err != nil {
 			return note("update", levelWarn, "cli_doctor_update_nokey").fix("cli_doctor_fix_nokey")
 		}

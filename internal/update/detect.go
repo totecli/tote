@@ -53,7 +53,7 @@ const (
 
 	// MarkerFile is the file the .deb packages ship, two lines: install_method=apt and
 	// package=deb for the file of a GitHub release, package=ppa for the Launchpad package and
-	// package=apt for a file published in an apt repository, the last two being updated by apt.
+	// package=apt for another package that apt updates, the last two being updated by apt.
 	MarkerFile = "/usr/share/tote/install-method"
 )
 

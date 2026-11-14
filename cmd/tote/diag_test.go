@@ -273,6 +273,13 @@ func hostScenarios() []scenario {
 			levelOK, "cli_doctor_install_managed", "",
 			[]string{"brew", "brew upgrade"},
 		},
+		{
+			"apt with the receipt of a script install", func(f *fixture) {
+				f.env.Exe = "/usr/lib/tote-doctor-test/tote"
+				f.write(".local/state/tote/install.json", receipt("/elsewhere/tote", "script"), 0o600)
+			}, "install", levelOK, "cli_doctor_install_managed", "",
+			[]string{"apt", "sudo apt", "cli_doctor_install_foreign", "/elsewhere/tote"},
+		},
 		{"unknown exe", func(f *fixture) {
 			f.env.Exe, f.env.ExeErr = "", fmt.Errorf("gone")
 		}, "install", levelWarn, "cli_doctor_install_noexe", "", []string{"gone"}},
@@ -1226,6 +1233,10 @@ func updateScenarios() []scenario {
 		{"no release key", func(f *fixture) {
 			f.env.Keys = func() ([]update.PublicKey, error) { return nil, update.ErrNoKey }
 		}, "update", levelWarn, "cli_doctor_update_nokey", "cli_doctor_fix_nokey", nil},
+		{"no release key in a program of apt", func(f *fixture) {
+			f.env.Exe = "/usr/lib/tote-doctor-test/tote"
+			f.env.Keys = func() ([]update.PublicKey, error) { return nil, update.ErrNoKey }
+		}, "update", levelOK, "cli_doctor_update_never", "", nil},
 		{"no release key in a development build", func(f *fixture) {
 			f.env.Version = "dev"
 			f.env.Keys = func() ([]update.PublicKey, error) { return nil, update.ErrNoKey }
