@@ -880,14 +880,14 @@ func nameScenarios() []scenario {
 			"connection named like a sub-verb", func(f *fixture) {
 				f.conf("connections.toml", "schema = 1\n[[connection]]\nname = \"edit\"\n"+
 					"target = \"h\"\naliases = [\"ok\", \"Find\"]\n")
-			}, "names", levelWarn, "cli_doctor_names_command", "cli_doctor_fix_rename",
+			}, "names", levelWarn, "cli_doctor_names_command", "cli_doctor_fix_command_word",
 			[]string{"kind_connection edit", "Find edit"},
 		},
 		{
 			"alias and repository named like a sub-verb", func(f *fixture) {
 				f.conf("aliases.toml", "schema = 1\n[[alias]]\nname = \"status\"\ncmd = \"ls\"\n")
 				f.conf("repos.toml", "schema = 1\n[[repo]]\nname = \"sync\"\npath = \"~/s\"\n")
-			}, "names", levelWarn, "cli_doctor_names_command", "cli_doctor_fix_rename",
+			}, "names", levelWarn, "cli_doctor_names_command", "cli_doctor_fix_command_word",
 			[]string{"kind_alias status", "kind_repo sync"},
 		},
 		{

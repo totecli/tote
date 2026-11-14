@@ -429,7 +429,7 @@ func (d *diagnosis) commandWords() []finding {
 
 	warn := func(kind, name string) {
 		out = append(out, note("names", levelWarn, "cli_doctor_names_command",
-			msg{Key: kind}, name).fix("cli_doctor_fix_rename"))
+			msg{Key: kind}, name).fix("cli_doctor_fix_command_word"))
 	}
 
 	for _, c := range d.conns {
@@ -440,7 +440,7 @@ func (d *diagnosis) commandWords() []finding {
 		for _, w := range c.Aliases {
 			if store.ReservedRecordName(w) {
 				out = append(out, note("names", levelWarn, "cli_doctor_names_command_alias",
-					w, c.Name).fix("cli_doctor_fix_rename"))
+					w, c.Name).fix("cli_doctor_fix_command_word"))
 			}
 		}
 	}
