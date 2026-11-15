@@ -27,8 +27,9 @@ type repoMenuReadyMsg struct {
 }
 
 // actionMenu is the menu of the actions that plugins offer on one repository. An action that
-// cannot run now stays in the list, muted, with the reason at its right; Enter on it shows the
-// reason in full and starts nothing. It is a list of choices like the others, so it scrolls, takes
+// cannot run now stays in the list, muted, with its plugin at its right as the others; the status
+// line gives the reason in full while the row is selected, and Enter on it shows it again and
+// starts nothing. It is a list of choices like the others, so it scrolls, takes
 // clicks and fits a terminal of 24 lines by 7.
 //
 // Repo is the raw name of the repository and Offers the actions in the order of the list. Why is
@@ -67,7 +68,7 @@ func newActionMenu(e *env, repo string, offers []plugin.Offer) *actionMenu {
 
 		if !o.Available && o.Why != nil {
 			m.why[i] = e.errorText(&plugin.Error{Code: o.Why.Code, Args: o.Why.Args})
-			items[i].off, items[i].note = true, m.why[i]
+			items[i].off = true
 		}
 	}
 

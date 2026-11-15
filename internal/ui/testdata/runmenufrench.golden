@@ -7,13 +7,13 @@
 
 
                 ╭─ Actions : proj ─────────────────────────────╮
-                │ ❯    Afficher la dernière release     ce dé… │
-                │      Lister les assets de la release  ce dé… │
-                │      Afficher les notes de release    ce dé… │
-                │   s  Lister les stashes               gft    │
-                │      Afficher un stash…               gft    │
-                │      Supprimer un stash…              gft    │
-                │      Supprimer tous les stashes…      gft    │
+                │ ❯    Afficher la dernière release        gft │
+                │      Lister les assets de la release     gft │
+                │      Afficher les notes de release       gft │
+                │   s  Lister les stashes                  gft │
+                │      Afficher un stash…                  gft │
+                │      Supprimer un stash…                 gft │
+                │      Supprimer tous les stashes…         gft │
                 ╰──────────────────────────────────────────────╯
                   ⏎ choisir · esc fermer · ↑↓ naviguer
                   ce dépôt n’a pas de remote GitHub
