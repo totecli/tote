@@ -82,8 +82,8 @@ type Confirmation struct {
 //
 // A Prepared of Registry.Choices has Output OutputChoices and FieldID, the field it lists values
 // for. Dir is the plugin cache directory, Timeout is ChoicesTimeout, Env holds no env: variable
-// and sets NO_COLOR, Confirm is empty, and Display is the argv for the footer. Only the launcher
-// of the suggestions runs it.
+// and Confirm is empty. Only Registry.RunChoices runs it, and it filters the values it prints by
+// the rules of the field, max_len and pattern.
 type Prepared struct {
 	PluginID  string
 	Table     string
@@ -108,6 +108,7 @@ type Prepared struct {
 	program   statID
 	opener    string
 	secrets   []string
+	rules     ChoiceRules
 }
 
 // IsOpen reports whether the run only asks the platform to open a URL.

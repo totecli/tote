@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"sync"
 	"sync/atomic"
 	"syscall"
 	"time"
@@ -300,8 +301,14 @@ type pump struct {
 	truncated bool
 	tail      tailBuf
 	overflow  chan struct{}
-	reads     atomic.Int64
-	busy      atomic.Bool
+	activity
+}
+
+// activity counts what a reader of a pipe does, so that the end of a run can tell a pipe that is
+// silent from one that is still being written to and read.
+type activity struct {
+	reads atomic.Int64
+	busy  atomic.Bool
 }
 
 // run reads the pipe until it ends.
@@ -350,11 +357,22 @@ func (pu *pump) run(pr io.Reader) {
 //
 // Returns the function that stops the watch.
 func (pu *pump) closeWhenIdle(pr *os.File) func() {
+	return pu.activity.closeWhenIdle(func() { _ = pr.Close() })
+}
+
+// closeWhenIdle calls closeAll once the readers it watches have been idle for 250 ms, or after 5
+// seconds at the latest.
+//
+// Parameters:
+//   - closeAll: closes the read ends
+//
+// Returns the function that stops the watch.
+func (a *activity) closeWhenIdle(closeAll func()) func() {
 	stop := make(chan struct{})
 
 	go func() {
 		began := time.Now()
-		seen := pu.reads.Load()
+		seen := a.reads.Load()
 
 		for {
 			select {
@@ -363,12 +381,12 @@ func (pu *pump) closeWhenIdle(pr *os.File) func() {
 			case <-time.After(pipeDrain):
 			}
 
-			now := pu.reads.Load()
-			active := now != seen || pu.busy.Load()
+			now := a.reads.Load()
+			active := now != seen || a.busy.Load()
 			seen = now
 
 			if !active || time.Since(began) >= drainMax {
-				_ = pr.Close()
+				closeAll()
 
 				return
 			}
@@ -648,4 +666,359 @@ func (r *Registry) openerEnv() []string {
 	}
 
 	return flattenEnv(env)
+}
+
+// RunChoices executes a prepared run of the suggestions of a field (Registry.Choices) and reads
+// the list it prints. It is the launcher of a key press on a text field, and the only one that
+// starts a choices_from.
+//
+// The program is started as in Run, with its standard output and its standard error on two pipes
+// of their own, in the plugin cache directory that the preparation chose. The limits are
+// ChoicesTimeout and ChoicesStdoutCap; more output fails the whole list, a result that is told
+// apart from a timeout and from a cancel. A status other than 0, or a signal, discards the list
+// whatever was printed, and the raw bytes are never shown: a failure shows only the line that
+// choiceDetail picks.
+//
+// Parameters:
+//   - ctx: cancelling it stops the run and gives the state ChoicesCancelled
+//   - p: prepared run, which must come from Registry.Choices
+func (r *Registry) RunChoices(ctx context.Context, p Prepared) ChoicesResult {
+	began := time.Now()
+	res := r.runChoices(ctx, p)
+	res.Duration = time.Since(began)
+
+	return res
+}
+
+// runChoices is RunChoices without the clock.
+//
+// Parameters:
+//   - ctx: cancelling it stops the run
+//   - p: prepared run
+func (r *Registry) runChoices(ctx context.Context, p Prepared) ChoicesResult {
+	switch {
+	case !p.IsChoices() || p.FieldID == "" || len(p.Argv) == 0 || len(p.Env) == 0 ||
+		p.Dir == "" || !utf8.ValidString(p.Dir):
+		return choicesFailure(p, ChoicesReasonRefused, "", "", nil)
+	case ctx.Err() != nil:
+		return ChoicesResult{State: ChoicesCancelled}
+	case !r.rt.acquire():
+		return choicesFailure(p, ChoicesReasonBusy, "", "", newError(CodeBusy, p.PluginID))
+	}
+
+	defer r.rt.release()
+
+	if err := r.Guard(p); err != nil {
+		return choicesFailure(p, ChoicesReasonState, err.Code, "", err)
+	}
+
+	return r.launchChoices(ctx, p)
+}
+
+// choicesFailure builds a failed result.
+//
+// Parameters:
+//   - p: the run
+//   - reason: one of the ChoicesReason constants
+//   - arg: status, signal or code that goes with the reason
+//   - detail: line of the program, already cleaned
+//   - cause: the error behind it, may be nil
+func choicesFailure(p Prepared, reason, arg, detail string, cause error) ChoicesResult {
+	err := newError(CodeChoicesFailed, p.FieldID, reason, detail)
+	err.Err = cause
+
+	return ChoicesResult{State: ChoicesFailed, Reason: reason, Arg: arg, Detail: detail, Err: err}
+}
+
+// launchChoices starts the program and follows it to its end.
+//
+// Parameters:
+//   - ctx: cancelling it stops the run
+//   - p: prepared run
+func (r *Registry) launchChoices(ctx context.Context, p Prepared) ChoicesResult {
+	pf, perr := openProcs(r.opts.Paths.ProcsFile(), r.uid())
+	if perr != nil {
+		return choicesFailure(p, ChoicesReasonStart, CodeProcsFile, "", wrapError(CodeProcsFile, perr))
+	}
+
+	pf.close()
+
+	outR, outW, err := os.Pipe()
+	if err != nil {
+		return choicesFailure(p, ChoicesReasonStart, CodeStartFailed, "", wrapError(CodeStartFailed, err))
+	}
+
+	errR, errW, err := os.Pipe()
+	if err != nil {
+		_, _ = outR.Close(), outW.Close()
+
+		return choicesFailure(p, ChoicesReasonStart, CodeStartFailed, "", wrapError(CodeStartFailed, err))
+	}
+
+	// Stdin is left nil: the program reads /dev/null.
+	cmd := &exec.Cmd{
+		Path: p.Argv[0], Args: append([]string{p.Name}, p.Argv[1:]...), Env: p.Env, Dir: p.Dir,
+		SysProcAttr: &syscall.SysProcAttr{Setsid: true}, Stdout: outW, Stderr: errW,
+	}
+
+	startErr := cmd.Start()
+	_, _ = outW.Close(), errW.Close()
+
+	if startErr != nil {
+		_, _ = outR.Close(), errR.Close()
+
+		return choicesFailure(p, ChoicesReasonStart, CodeStartFailed, "", wrapError(CodeStartFailed,
+			startErr, p.Name))
+	}
+
+	pid := cmd.Process.Pid
+	done := make(chan error, 1)
+
+	go func() { done <- cmd.Wait() }()
+
+	if afterStart != nil {
+		afterStart()
+	}
+
+	entry, terr := r.trackProc(p.PluginID, pid)
+	if terr != nil {
+		stopGroup(pid, done)
+		_, _ = outR.Close(), errR.Close()
+
+		return choicesFailure(p, ChoicesReasonStart, CodeProcsFile, "", wrapError(CodeProcsFile, terr))
+	}
+
+	if gerr := r.Guard(p); gerr != nil {
+		stopGroup(pid, done)
+		_, _ = outR.Close(), errR.Close()
+		r.forgetIfEmpty(entry)
+
+		return choicesFailure(p, ChoicesReasonState, gerr.Code, "", gerr)
+	}
+
+	res := r.followChoices(ctx, p, cmd, [2]*os.File{outR, errR}, pid, done)
+
+	endChoicesGroup(entry, pid)
+	r.forgetIfEmpty(entry)
+
+	return res
+}
+
+// endChoicesGroup kills what a suggestions program left running after its end. A list is a
+// bounded lookup: nothing it started is meant to outlive it, and the form can ask for it again.
+// The group is signalled only while the recorded session is the one that was started, so a
+// process id that the system reused is never hit.
+//
+// Parameters:
+//   - e: entry returned by trackProc
+//   - pid: process id of the leader, which is also its group
+func endChoicesGroup(e ProcEntry, pid int) {
+	if !sessionAlive(e.SID, e.Start) {
+		return
+	}
+
+	_ = killGroup(pid, syscall.SIGKILL)
+
+	for i := 0; i < 20 && sessionAlive(e.SID, e.Start); i++ {
+		time.Sleep(25 * time.Millisecond)
+	}
+}
+
+// choiceStream reads one pipe of a suggestions program: it counts the bytes, keeps a cleaned tail
+// of 4 KiB for the failure line and, for the standard output, the raw bytes up to the cap.
+type choiceStream struct {
+	act   *activity
+	sink  *lineSink
+	tail  tailBuf
+	raw   []byte
+	keep  bool
+	limit int64
+	total int64
+}
+
+// newChoiceStream creates the reader of a pipe.
+//
+// Parameters:
+//   - act: activity shared by the two pipes, for the drain
+//   - secrets: exact secrets to hide in the tail
+//   - keep: true to keep the raw bytes
+//   - limit: most bytes the pipe may carry
+func newChoiceStream(act *activity, secrets []string, keep bool, limit int64) *choiceStream {
+	sink := newLineSink(NewRedactor(secrets), false)
+
+	return &choiceStream{act: act, sink: sink, keep: keep, limit: limit}
+}
+
+// run reads the pipe to its end, or until it carried more than its limit, in which case it sends
+// on over and stops.
+//
+// Parameters:
+//   - pr: read end of the pipe
+//   - over: receives one value when the limit is passed
+func (cs *choiceStream) run(pr io.Reader, over chan<- struct{}) {
+	buf := make([]byte, readChunk)
+
+	for {
+		n, err := pr.Read(buf)
+		if n > 0 {
+			cs.act.busy.Store(true)
+			cs.act.reads.Add(1)
+
+			cs.total += int64(n)
+
+			if cs.keep && cs.total <= cs.limit+int64(readChunk) {
+				cs.raw = append(cs.raw, buf[:n]...)
+			}
+
+			for _, c := range cs.sink.write(buf[:n]) {
+				cs.tail.add(c)
+			}
+
+			cs.act.busy.Store(false)
+
+			if cs.total > cs.limit {
+				select {
+				case over <- struct{}{}:
+				default:
+				}
+
+				return
+			}
+		}
+
+		if err != nil {
+			break
+		}
+	}
+
+	for _, c := range cs.sink.flush() {
+		cs.tail.add(c)
+	}
+}
+
+// followChoices waits for the end of a started suggestions program and builds the result.
+//
+// Parameters:
+//   - ctx: cancelling it stops the run
+//   - p: prepared run
+//   - cmd: started command
+//   - pipes: read ends of the standard output and of the standard error
+//   - pid: process id of the leader, which is also its group and session
+//   - done: receives the result of Wait
+func (r *Registry) followChoices(ctx context.Context, p Prepared, cmd *exec.Cmd, pipes [2]*os.File,
+	pid int, done chan error,
+) ChoicesResult {
+	act := &activity{}
+	over := make(chan struct{}, 2)
+	out := newChoiceStream(act, p.secrets, true, ChoicesStdoutCap)
+	errs := newChoiceStream(act, p.secrets, false, choicesStderrCap)
+
+	var readers sync.WaitGroup
+
+	for i, cs := range []*choiceStream{out, errs} {
+		readers.Add(1)
+
+		go func() {
+			defer readers.Done()
+
+			cs.run(pipes[i], over)
+		}()
+	}
+
+	limit := p.Timeout
+	if limit <= 0 || limit > ChoicesTimeout {
+		limit = ChoicesTimeout
+	}
+
+	timer := time.NewTimer(limit)
+	defer timer.Stop()
+
+	status := OutcomeOK
+
+	select {
+	case waitErr := <-done:
+		_ = waitErr // the exit status is read from the process state, not from this error
+	case <-ctx.Done():
+		status = OutcomeCancelled
+
+		stopGroup(pid, done)
+	case <-timer.C:
+		status = OutcomeTimeout
+
+		stopGroup(pid, done)
+	case <-over:
+		status = OutcomeFailed
+
+		stopGroup(pid, done)
+	}
+
+	// The program has exited, or was stopped. What it left holding a pipe gets a short time to
+	// finish writing, and then the read ends are closed: nobody waits for a grandchild.
+	stopDrain := act.closeWhenIdle(func() { _, _ = pipes[0].Close(), pipes[1].Close() })
+
+	readers.Wait()
+	stopDrain()
+
+	_, _ = pipes[0].Close(), pipes[1].Close()
+
+	tooLarge := status == OutcomeFailed
+
+	select {
+	case <-over:
+		tooLarge = true
+	default:
+	}
+
+	return choicesResultOf(ctx, p, cmd.ProcessState, status, tooLarge, out, errs)
+}
+
+// choicesResultOf decides how a suggestions run ended; only a clean exit gives a list.
+//
+// Parameters:
+//   - ctx: context of the run
+//   - p: prepared run
+//   - ps: state of the exited process
+//   - status: what the run loop decided
+//   - tooLarge: true when a pipe carried more than its limit
+//   - out: reader of the standard output
+//   - errs: reader of the standard error
+func choicesResultOf(ctx context.Context, p Prepared, ps *os.ProcessState, status string,
+	tooLarge bool, out, errs *choiceStream,
+) ChoicesResult {
+	// What the program printed to its standard output explains a failure only when it ended by
+	// itself: after a timeout or too much output, that text is the list, not an error.
+	detail := choiceDetail(errs.tail.String(), out.tail.String())
+	if tooLarge || status == OutcomeTimeout {
+		detail = choiceDetail(errs.tail.String(), "")
+	}
+
+	switch {
+	case tooLarge:
+		return choicesFailure(p, ChoicesReasonTooLarge, "", detail, nil)
+	case status == OutcomeCancelled || (status == OutcomeOK && ctx.Err() != nil):
+		return ChoicesResult{State: ChoicesCancelled}
+	case status == OutcomeTimeout:
+		return ChoicesResult{State: ChoicesTimedOut, Reason: "timeout", Detail: detail}
+	case ps == nil:
+		return choicesFailure(p, ChoicesReasonStart, "", detail, nil)
+	}
+
+	if ws, ok := ps.Sys().(syscall.WaitStatus); ok && ws.Signaled() {
+		sig := signalName(ws.Signal())
+
+		return choicesFailure(p, ChoicesReasonSignal, sig, detail, nil)
+	}
+
+	if code := ps.ExitCode(); code != 0 {
+		return choicesFailure(p, ChoicesReasonExit, itoa(code), detail, nil)
+	}
+
+	list := ParseChoices(out.raw, p.rules, NewRedactor(p.secrets))
+	res := ChoicesResult{State: ChoicesList, Items: list.Items, Hidden: list.Hidden, More: list.More}
+
+	if len(list.Items) == 0 {
+		res.State = ChoicesEmpty
+	}
+
+	return res
 }

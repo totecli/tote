@@ -22,7 +22,7 @@ func TestReviewExitClassesOfTheSpec(t *testing.T) {
 			"hash_mismatch", "archive_bomb", "archive_traversal", "too_large",
 			"tree_hash", "platform_hash", "tree_collision", "origin_redirect",
 		},
-		ExitFailure: {"auth_required"},
+		ExitFailure: {"auth_required", "choices_failed"},
 	}
 
 	for exit, codes := range want {

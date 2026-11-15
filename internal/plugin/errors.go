@@ -323,6 +323,7 @@ const (
 	CodeUnsupported     = "unsupported"
 	CodeProcsFile       = "procs_unavailable"
 	CodeOutputLimit     = "output_limit"
+	CodeChoicesFailed   = "choices_failed"
 )
 
 // Exit codes of the command line, from section 8.3.

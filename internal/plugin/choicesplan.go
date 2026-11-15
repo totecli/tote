@@ -138,7 +138,7 @@ func (pc *prep) buildChoices() (Prepared, *Error) {
 		PluginID: pc.p.ID, Table: pc.e.Table, EntryID: pc.e.ID, FieldID: f.ID, Output: OutputChoices,
 		Name: name, Argv: append([]string{abs}, argv[1:]...), Display: shell.PrettyCommand(argv),
 		Dir: dir, Timeout: ChoicesTimeout, Mono: pc.call.Mono, tree: pc.p.Record.TreeSHA256,
-		surface: pc.p.Surface, program: id,
+		surface: pc.p.Surface, program: id, rules: ChoiceRules{MaxLen: f.MaxLen, Pattern: f.Pattern},
 	}
 
 	if pc.list != nil {
