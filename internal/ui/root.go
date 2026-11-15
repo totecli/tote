@@ -63,7 +63,9 @@ type toast struct {
 // view of the last frame and Reuse is true after a move of the pointer that changed nothing, so
 // that the view is given again instead of being drawn again. Run is the captured run of a plugin
 // that the interface is showing, RunSeq numbers the runs and Opening is true while a request to
-// open an address is waiting for the platform; at most one of them is going at a time.
+// open an address is waiting for the platform; at most one of them is going at a time. Choices is
+// the suggestions run that a form waits for, ChoicesSeq numbers them and Stopping holds the
+// channels of the runs that were stopped and may not have returned yet.
 type root struct {
 	e           *env
 	scr         screen
@@ -103,6 +105,9 @@ type root struct {
 	run         *plugRun
 	runSeq      int
 	opening     bool
+	choices     *choicesRun
+	choicesSeq  int
+	stopping    []chan struct{}
 }
 
 // Init implements tea.Model: it asks the terminal for its background when the theme is
@@ -204,6 +209,7 @@ func (r *root) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		cmd = tea.Batch(cmd, look)
 	}
 
+	r.watchChoices()
 	r.track(msg)
 	r.rehover()
 
@@ -322,6 +328,16 @@ func (r *root) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return r, r.launch(m.Start, m.Prep)
 	case openedMsg:
 		return r, r.opened(m)
+	case suggestAskMsg:
+		return r, r.suggestAsk(m)
+	case suggestPreparedMsg:
+		return r, r.suggestPrepared(m)
+	case suggestDoneMsg:
+		return r, r.suggestDone(m)
+	case suggestStopMsg:
+		r.stopChoices(false, true)
+
+		return r, nil
 	case repoMenuMsg:
 		return r, r.repoMenu(m)
 	case repoMenuReadyMsg:
@@ -410,6 +426,10 @@ func (r *root) key(k tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 	case interrupt && (r.guard.running() || r.e.Layout == layoutTiny):
 		return r, tea.Quit
 	case key.Matches(k, r.e.Keys.Suspend):
+		// The program of a listing has a session of its own and would go on while tote is
+		// stopped, so it is ended first.
+		r.stopChoices(true, false)
+
 		return r, tea.Suspend
 	case r.guard.running():
 		return r, nil
@@ -850,7 +870,7 @@ func (r *root) renderOverlay(ov overlay, withHits bool) ([]string, []hit, int) {
 		lines[f] = pad + foot
 	}
 
-	_, own := ov.(statuser)
+	own := holdsStatus(e, ov)
 	status := y + len(block) + 1
 
 	if s := status; s < len(lines) && (own || r.toast.text != "") {

@@ -19,7 +19,7 @@
   │   tab     actions                                                        │
   │   /       filter                                                         │
   │   esc     back                                                           │
-  │ ↓ 133 more                                                               │
+  │ ↓ 134 more                                                               │
   ╰──────────────────────────────────────────────────────────────────────────╯
     esc close · ↑↓ scroll
 
@@ -32,7 +32,7 @@
   │   help.                          │
   │ · Open a list with [1-5], move   │
   │   with [↑↓], press [⏎] to use a  │
-  │ ↓ 170 more                       │
+  │ ↓ 171 more                       │
   ╰──────────────────────────────────╯
    esc · ↑↓
 

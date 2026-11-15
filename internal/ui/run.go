@@ -393,6 +393,7 @@ func Run(o Options) (res Result, err error) {
 	defer func() {
 		if rec := recover(); rec != nil {
 			prog.Kill()
+			m.endChoices()
 			_ = ResetTerminal(out)
 			err = fmt.Errorf("ui: crash: %v", rec)
 		}

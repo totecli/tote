@@ -25,6 +25,7 @@ type pickItem struct {
 // chosen item into the command to run; the overlay closes when an item is chosen or on Esc.
 type pickOverlay struct {
 	title string
+	info  string
 	items []pickItem
 	cur   int
 	off   int
@@ -58,8 +59,24 @@ func (p *pickOverlay) Init(_ *env) tea.Cmd {
 // Parameters:
 //   - maxH: most lines the box may take
 func (p *pickOverlay) rows(maxH int) int {
-	return max(1, min(len(p.items), maxH-2))
+	return max(1, min(len(p.items), maxH-2-p.infoRows(maxH)))
 }
+
+// infoRows returns the lines that the muted information line takes under the items, 0 or 1.
+//
+// Parameters:
+//   - maxH: most lines the box may take
+func (p *pickOverlay) infoRows(maxH int) int {
+	if p.info != "" && maxH >= minInfoH {
+		return 1
+	}
+
+	return 0
+}
+
+// minInfoH is the fewest lines of room for which a box keeps its information line: a list, the
+// line and the borders must still leave a few items in view.
+const minInfoH = 6
 
 // Update implements overlay.
 //
@@ -195,6 +212,10 @@ func (p *pickOverlay) draw(e *env, maxW, maxH int) ([]string, []zone) {
 	}
 
 	lines, zs := win.stack(e, items, spaces(box.indent()+2), 1, inner)
+
+	if p.infoRows(maxH) > 0 {
+		lines = append(lines, " "+e.Theme.Muted.Render(e.Metric.fit(p.info, inner-2, e.Glyphs.ellipsis)))
+	}
 
 	return floating(e, e.Theme.Bold.Render(p.title), lines, w), shiftZones(zs, 1)
 }

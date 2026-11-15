@@ -22,7 +22,8 @@ const fieldLimit = 1000
 // is shorter. Placeholder is the grey text of an empty text field and Max the most characters it
 // takes. A field that is Required refuses the empty text. Check gives the translated reason a text
 // is refused and CheckList the one for a list, both "" to accept. Locked is the translated reason
-// the field cannot be changed and Note a remark shown under it while it has the keys.
+// the field cannot be changed and Note a remark shown under it while it has the keys. Suggest is
+// true for a text field whose plugin lists suggestions with Ctrl-L.
 type fieldSpec struct {
 	ID          string
 	Label       string
@@ -39,6 +40,7 @@ type fieldSpec struct {
 	CheckList   func(e *env, items []string) string
 	Locked      string
 	Note        string
+	Suggest     bool
 }
 
 // build makes the field a spec describes.
@@ -65,6 +67,7 @@ func (s fieldSpec) build() *formField {
 	}
 
 	fd.Raw, fd.Locked, fd.Note = true, s.Locked, s.Note
+	fd.Suggest = s.Suggest && fd.Type == fieldText
 
 	return fd
 }
@@ -144,6 +147,8 @@ func (v fieldValues) Changed(id string) bool {
 // must wait for, the form submits even when no field changed, a form that was changed is closed
 // by Esc without a question, and After gives the command that continues with the run once the
 // form is closed.
+//
+// Sug is the state of the suggestions, nil when no field has a choices_from.
 type fieldsForm struct {
 	fieldSet
 	title  string
@@ -154,6 +159,7 @@ type fieldsForm struct {
 	saving bool
 	runs   bool
 	after  func() tea.Cmd
+	sug    *suggestState
 }
 
 // newFieldsForm returns the overlay that edits a set of fields.
@@ -280,6 +286,12 @@ func (f *fieldsForm) Update(e *env, msg tea.Msg) (overlay, tea.Cmd, bool) {
 		return f.saved(m)
 	case listEditedMsg:
 		f.edited(e, m)
+	case suggestPickedMsg:
+		if m.Form == f && !f.saving {
+			f.picked(e, m)
+		}
+
+		return f, nil, false
 	}
 
 	if f.saving {
@@ -320,6 +332,10 @@ func (f *fieldsForm) edited(e *env, m listEditedMsg) {
 //   - e: shared environment
 //   - k: key pressed
 func (f *fieldsForm) key(e *env, k tea.KeyPressMsg) (overlay, tea.Cmd, bool) {
+	if cmd, handled := f.suggestKey(k); handled {
+		return f, cmd, false
+	}
+
 	switch f.navigate(e, k) {
 	case fkCancel:
 		return f, nil, true
@@ -327,6 +343,8 @@ func (f *fieldsForm) key(e *env, k tea.KeyPressMsg) (overlay, tea.Cmd, bool) {
 		return f.submit(e)
 	case fkOpen:
 		return f, f.open(), false
+	case fkSuggest:
+		return f, f.suggest(e), false
 	}
 
 	return f, nil, false
@@ -490,8 +508,16 @@ func (f *fieldsForm) runBindings(e *env) []key.Binding {
 			key.WithHelp("ctrl+s", e.t("ui_help_run"))))
 	}
 
-	return append(bs, key.NewBinding(key.WithKeys("esc"),
-		key.WithHelp("esc", e.t("ui_help_cancel"))))
+	if fd := f.fields[f.cur]; fd.Suggest && fd.Locked == "" && !f.sug.busy() {
+		bs = append(bs, suggestBinding(e))
+	}
+
+	word = e.t("ui_help_cancel")
+	if f.sug.busy() {
+		word = e.t("ui_help_stop")
+	}
+
+	return append(bs, key.NewBinding(key.WithKeys("esc"), key.WithHelp("esc", word)))
 }
 
 // commandSpecs describes the fields of a contribution of a plugin: a command, an item action or a
@@ -524,6 +550,8 @@ func commandSpecs(e *env, fields []plugin.Field, cat plugin.Catalog, base string
 		}
 
 		switch pf.Type {
+		case "text":
+			s.Suggest = len(pf.ChoicesFrom) > 0
 		case "bool":
 			s.Type = fieldToggle
 		case "choice":

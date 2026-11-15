@@ -73,6 +73,12 @@ func helpSections(e *env) []helpSection {
 	)
 
 	if e.pluginsOn() {
+		for i := range all {
+			if all[i].id == "form" {
+				all[i].bindings = append(slices.Clone(all[i].bindings), suggestBinding(e))
+			}
+		}
+
 		all = append(all,
 			helpSection{"plugins", "ui_help_sec_plugins", pluginsBindings(e, nil, true)},
 			helpSection{"consent", "ui_help_sec_consent", consentBindings(e)},

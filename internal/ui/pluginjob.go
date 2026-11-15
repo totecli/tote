@@ -193,6 +193,7 @@ func (r *root) closeOverlays() {
 	}
 
 	r.endRun()
+	r.endChoices()
 }
 
 // fieldsSaved hands the end of a save to the form that started it, wherever it is in the stack: the
@@ -347,6 +348,8 @@ func (r *root) toggle(p plugin.Plugin) tea.Cmd {
 
 	switch p.State {
 	case plugin.StateEnabled, plugin.StateMissingDependency:
+		r.stopChoicesOf(p.ID)
+
 		return r.startJob(pluginJob{op: jobDisable, id: p.ID, write: true},
 			func(context.Context) pluginDoneMsg {
 				res, err := host.Disable(p.ID)
@@ -431,6 +434,7 @@ func (r *root) granted(m pluginGrantMsg) tea.Cmd {
 //   - m: the plugin and whether its settings and data go too
 func (r *root) removePlugin(m pluginRemoveMsg) tea.Cmd {
 	host := r.e.Plugins
+	r.stopChoicesOf(m.ID)
 
 	return r.startJob(pluginJob{op: jobRemove, id: m.ID, write: true},
 		func(context.Context) pluginDoneMsg {

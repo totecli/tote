@@ -223,6 +223,7 @@ func (r *root) runForm(m pluginAskedMsg) *fieldsForm {
 	})
 
 	form.runs, form.wide = true, true
+	form.sug = newSuggest(st, fields)
 	form.after = func() tea.Cmd {
 		return e.handoff(pluginPreparedMsg{Start: st, Prep: prepared})
 	}

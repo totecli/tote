@@ -43,6 +43,9 @@ const (
 
 	// fkOpen asks to edit the list of the field that has the keys.
 	fkOpen
+
+	// fkSuggest asks to list the suggestions of the field that has the keys.
+	fkSuggest
 )
 
 // rescan checks the fields again with the check of the owner.
@@ -67,7 +70,8 @@ func (f *fieldSet) enter(e *env) {
 
 // navigate handles the keys every form has: Esc cancels, Ctrl-S saves, Tab and the arrows move
 // between the fields, and Enter goes to the next field, saves on the last one, or opens the editor
-// of a list. Any other key goes to the field that has the keys.
+// of a list. Ctrl-L on a field that has suggestions asks for them, and is dropped on any other
+// field. Any other key goes to the field that has the keys.
 //
 // Parameters:
 //   - e: shared environment
@@ -78,6 +82,10 @@ func (f *fieldSet) navigate(e *env, k tea.KeyPressMsg) formKey {
 		return fkCancel
 	case "ctrl+s":
 		return fkSubmit
+	case "ctrl+l":
+		if fd := f.fields[f.cur]; fd.Suggest && fd.Locked == "" {
+			return fkSuggest
+		}
 	case "tab", "down":
 		f.move(e, 1)
 	case "shift+tab", "up":
@@ -229,7 +237,7 @@ func (f *fieldSet) focusOn(e *env, i int) {
 }
 
 // notes returns the lines under a field: the reason it is refused, or the help text while it has
-// the keys.
+// the keys, and, for a field that lists suggestions, the key that asks for them.
 //
 // Parameters:
 //   - e: shared environment
@@ -261,6 +269,11 @@ func (f *fieldSet) notes(e *env, fd *formField, focused bool, indent string, w i
 		for _, l := range wrapWords(e, fd.words(e, fd.hintKey()), w, 2) {
 			out = append(out, indent+e.Theme.Muted.Render(l))
 		}
+	}
+
+	if focused && fd.Suggest && fd.Locked == "" {
+		out = append(out, indent+e.Theme.Muted.Render(e.Metric.fit(e.t("ui_choices_hint"), w,
+			e.Glyphs.ellipsis)))
 	}
 
 	return out

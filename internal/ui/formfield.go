@@ -43,6 +43,8 @@ const (
 // the words to show, already clean, not catalog keys. Items is the content of a list field and
 // Locked, when it is not empty, is the translated reason the field cannot be changed. Note is a
 // translated remark about the value, shown in the warning color while the field has the keys.
+// Suggest is true for a text field of a plugin that has a choices_from: Ctrl-L lists the values
+// that its program suggests, and the field stays free text.
 type formField struct {
 	ID      string
 	Label   string
@@ -62,6 +64,7 @@ type formField struct {
 	Items   []string
 	Locked  string
 	Note    string
+	Suggest bool
 }
 
 // newTextField returns an empty text field.

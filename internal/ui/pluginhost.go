@@ -27,7 +27,8 @@ import (
 // Offers lists the commands of the enabled plugins and RepoOffers the actions that apply to a saved
 // repository, with whether each can run. Prepare checks a call and builds the run, Guard checks
 // the state of the plugin again just before a program starts, and Run executes a prepared run that
-// is not in the terminal.
+// is not in the terminal. Choices prepares the run that lists the suggestions of one text field and
+// starts nothing; RunChoices starts the program and reads the list, once the user pressed Ctrl-L.
 type PluginHost interface {
 	Load() plugin.Snapshot
 	Available(snap plugin.Snapshot, lang string) []plugin.Available
@@ -47,6 +48,8 @@ type PluginHost interface {
 	Prepare(call plugin.Call) (plugin.Prepared, error)
 	Guard(p plugin.Prepared) *plugin.Error
 	Run(ctx context.Context, p plugin.Prepared, emit func(plugin.Event)) plugin.Outcome
+	Choices(call plugin.Call, fieldID string) (plugin.Prepared, error)
+	RunChoices(ctx context.Context, p plugin.Prepared) plugin.ChoicesResult
 }
 
 // _ checks at compile time that the registry of the plugin package is a PluginHost.

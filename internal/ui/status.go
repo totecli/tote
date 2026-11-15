@@ -25,13 +25,15 @@ const branchTTL = 5 * time.Second
 // directory of the selected repository, empty for any other record: the root looks its branch up
 // and fills Branch, Detached and Update before the line is drawn, so a screen never sets them.
 // Branch is the git branch, or the short hash when Detached is true, and Update the notice that
-// a new version is available.
+// a new version is available. Warn draws the command in the color of the errors, for a text that
+// says something went wrong.
 type statusInfo struct {
 	Command  string
 	Repo     string
 	Branch   string
 	Detached bool
 	Update   string
+	Warn     bool
 }
 
 // statuser is implemented by an overlay that has its own status line, such as the palette that
@@ -39,6 +41,30 @@ type statusInfo struct {
 // the screen below.
 type statuser interface {
 	Status(e *env) statusInfo
+}
+
+// statusHolder is implemented by an overlay that has something to say on the status line only at
+// times, such as the form that lists suggestions. It gives the status and true while it has one;
+// else the overlay is treated as if it did not implement statuser.
+type statusHolder interface {
+	statusNow(e *env) (statusInfo, bool)
+}
+
+// holdsStatus reports whether an overlay has a status line of its own right now.
+//
+// Parameters:
+//   - e: shared environment
+//   - ov: the overlay
+func holdsStatus(e *env, ov overlay) bool {
+	if h, ok := ov.(statusHolder); ok {
+		_, has := h.statusNow(e)
+
+		return has
+	}
+
+	_, own := ov.(statuser)
+
+	return own
 }
 
 // branchMsg is the answer to a branch lookup started by the status line.
@@ -120,14 +146,19 @@ func (s statusInfo) render(e *env, width int) string {
 
 	need := min(e.Metric.width(left), minStatusLeft)
 
+	style := e.Theme.Muted
+	if s.Warn {
+		style = e.Theme.Err
+	}
+
 	if uw := e.Metric.width(update); update != "" && room-uw-spareColumns-2 >= need {
 		left = e.Metric.fit(left, room-uw-spareColumns-2, e.Glyphs.ellipsis)
 		gap := room - spareColumns - e.Metric.width(left) - uw
 
-		return e.lead() + e.Theme.Muted.Render(left+spaces(gap)) + e.Theme.Key.Render(update)
+		return e.lead() + style.Render(left+spaces(gap)) + e.Theme.Key.Render(update)
 	}
 
-	return e.lead() + e.Theme.Muted.Render(e.Metric.fit(left, room, e.Glyphs.ellipsis))
+	return e.lead() + style.Render(e.Metric.fit(left, room, e.Glyphs.ellipsis))
 }
 
 // commandOf returns the exact command line that Enter would run for a connection.
@@ -237,7 +268,11 @@ func (r *root) statusOf() statusInfo {
 // branch and the update notice are added.
 func (r *root) baseStatus() statusInfo {
 	if n := len(r.overlays); n > 0 {
-		if st, ok := r.overlays[n-1].(statuser); ok {
+		if h, ok := r.overlays[n-1].(statusHolder); ok {
+			if s, has := h.statusNow(r.e); has {
+				return s
+			}
+		} else if st, ok := r.overlays[n-1].(statuser); ok {
 			return st.Status(r.e)
 		}
 	}
