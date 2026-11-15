@@ -295,8 +295,18 @@ func (v *validator) argv(ctx *entryCtx) {
 //
 // Returns the program name, or an empty string when it is refused.
 func (v *validator) program(ctx *entryCtx, t Template) string {
-	path := ctx.e.Path + ".run[0]"
+	return v.programAt(ctx.e.Path+".run[0]", t)
+}
 
+// programAt is program for an argv that is not the run of the contribution, such as the
+// choices_from of a field.
+//
+// Parameters:
+//   - path: issue path of the first element
+//   - t: parsed first element
+//
+// Returns the program name, or an empty string when it is refused.
+func (v *validator) programAt(path string, t Template) string {
 	name, literal := t.Literal()
 	if !literal || !execNameRe.MatchString(name) {
 		v.c.add(CodeArgv0Invalid, path, name)
@@ -333,6 +343,17 @@ func (v *validator) program(ctx *entryCtx, t Template) string {
 //   - parsed: parsed elements
 //   - ok: for each element, whether it parsed
 func (v *validator) lintArgv(e *Entry, prog string, parsed []Template, ok []bool) {
+	v.lintArgvAt(e.Path+".run", prog, parsed, ok)
+}
+
+// lintArgvAt is lintArgv for any argv: the issue path of element i is base[i].
+//
+// Parameters:
+//   - base: issue path of the array
+//   - prog: program at argv[0]
+//   - parsed: parsed elements
+//   - ok: for each element, whether it parsed
+func (v *validator) lintArgvAt(base, prog string, parsed []Template, ok []bool) {
 	dashdash := -1
 
 	for i := 1; i < len(parsed); i++ {
@@ -340,7 +361,7 @@ func (v *validator) lintArgv(e *Entry, prog string, parsed []Template, ok []bool
 			continue
 		}
 
-		path := e.Path + ".run[" + itoa(i) + "]"
+		path := base + "[" + itoa(i) + "]"
 
 		if lit, literal := parsed[i].Literal(); literal && lit == "--" && dashdash < 0 {
 			dashdash = i
@@ -652,6 +673,8 @@ func containsString(list []string, s string) bool {
 func (v *validator) textField(ctx *entryCtx, f *Field, set *fieldSet) {
 	re := v.pattern(f.Path+".pattern", f.Pattern)
 
+	v.choicesFrom(ctx, f, set)
+
 	if !f.HasDefault {
 		return
 	}
@@ -669,6 +692,103 @@ func (v *validator) textField(ctx *entryCtx, f *Field, set *fieldSet) {
 	if utf8.RuneCountInString(lit) > f.MaxLen || (re != nil && lit != "" && !re.MatchString(lit)) {
 		v.c.add(CodeValueInvalid, f.Path+".default", lit)
 	}
+}
+
+// choicesFrom checks the choices_from argv of a text field like a run. Its placeholders are limited
+// to the fields declared before the field, the settings, the repository, {cwd} and {home}: the
+// field itself, a later field and the row of a list give placeholder_unknown or placeholder_scope.
+//
+// Parameters:
+//   - ctx: contribution under check
+//   - f: text field
+//   - set: state of the fields of the contribution
+func (v *validator) choicesFrom(ctx *entryCtx, f *Field, set *fieldSet) {
+	if f.ChoicesFrom == nil {
+		return
+	}
+
+	path := f.Path + ".choices_from"
+
+	if len(f.ChoicesFrom) == 0 {
+		v.c.add(CodeValueInvalid, path, "empty")
+
+		return
+	}
+
+	saved := ctx.scope
+	ctx.scope = set.scope
+
+	defer func() { ctx.scope = saved }()
+
+	parsed := make([]Template, len(f.ChoicesFrom))
+	ok := make([]bool, len(f.ChoicesFrom))
+
+	for i, raw := range f.ChoicesFrom {
+		parsed[i], ok[i] = v.template(ctx, path+"["+itoa(i)+"]", raw, true)
+	}
+
+	if !ok[0] {
+		return
+	}
+
+	prog := v.programAt(path+"[0]", parsed[0])
+	if prog == "" {
+		return
+	}
+
+	v.lintArgvAt(path, prog, parsed, ok)
+	v.choicesConfirmed(ctx.e, path, prog, parsed)
+}
+
+// choicesConfirmed warns when a contribution that asks for confirmation lists suggestions with
+// the same program and the same first word as its own run: the list starts that program before
+// the question is asked, so a confirmation that guards a destructive word does not guard the
+// listing of it.
+//
+// Parameters:
+//   - e: contribution that holds the field
+//   - path: issue path of the choices_from key
+//   - prog: program at choices_from[0]
+//   - parsed: parsed elements of choices_from
+func (v *validator) choicesConfirmed(e *Entry, path, prog string, parsed []Template) {
+	if !e.Confirm.Set || len(e.Run) == 0 {
+		return
+	}
+
+	word := firstWord(parsed)
+	if word == "" {
+		return
+	}
+
+	run := make([]Template, len(e.Run))
+
+	for i, raw := range e.Run {
+		t, err := ParseTemplate(raw)
+		if err != nil {
+			return
+		}
+
+		run[i] = t
+	}
+
+	if name, literal := run[0].Literal(); literal && name == prog && firstWord(run) == word {
+		v.c.warn(CodeArgvChoicesConfirmed, path, prog, word)
+	}
+}
+
+// firstWord gives the first element after argv[0] that is a literal text and does not start with a
+// dash, which is the subcommand of a program such as git or gft; it is empty when there is none.
+//
+// Parameters:
+//   - argv: parsed elements, the program first
+func firstWord(argv []Template) string {
+	for _, t := range argv[1:] {
+		if lit, literal := t.Literal(); literal && lit != "" && !strings.HasPrefix(lit, "-") {
+			return lit
+		}
+	}
+
+	return ""
 }
 
 // defaultTemplate checks the default of a text or choice field against the scope of the fields

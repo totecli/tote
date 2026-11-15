@@ -118,6 +118,7 @@ var execFeatures = []string{"exec.list", "exec.run"}
 func announcedFeatures(exec bool) []string {
 	list := []string{
 		"command", "item_action.repo", "setting.list", "field.bool", "open.url", "output.terminal",
+		"field.choices_from",
 	}
 
 	if exec {
@@ -137,7 +138,7 @@ func announcedFeatures(exec bool) []string {
 func reservedFeatures(exec bool) []string {
 	list := []string{
 		"item_action.connection", "field.connection", "field.repo", "field.path",
-		"field.choices_from", "field.secret", "field.remember", "exec.health", "exec.terminal",
+		"field.choices_closed", "field.secret", "field.remember", "exec.health", "exec.terminal",
 		"exec.search", "open.markdown", "event.open", "event.log", "event.hello", "session.long",
 		"event.handoff", "event.clipboard", "event.exec", "widget", "provider", "decorator",
 		"hook.observe",
@@ -151,7 +152,10 @@ func reservedFeatures(exec bool) []string {
 }
 
 // AnnouncedFeatures lists the host features that tote announces in host.features and in
-// `plugin check`: the six of the declarative tier in tote 1.0.
+// `plugin check`: the six of the declarative tier in tote 1.0, and field.choices_from, which is
+// the suggestions of a text field and nothing else. A closed list built at run time would be a
+// different feature, field.choices_closed, which is reserved so that a manifest written for it can
+// never be taken for this one.
 var AnnouncedFeatures = announcedFeatures(execTierAvailable)
 
 // ReservedFeatures lists the features that are reserved and not announced: a manifest that needs

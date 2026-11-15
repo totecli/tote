@@ -57,7 +57,7 @@ func TestReservedTables(t *testing.T) {
 		}
 	}
 
-	if len(AnnouncedFeatures) != 6 {
+	if len(AnnouncedFeatures) != 7 {
 		t.Errorf("announced features changed: %v", AnnouncedFeatures)
 	}
 }

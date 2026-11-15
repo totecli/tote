@@ -72,11 +72,12 @@
                     "setting.list",
                     "field.bool",
                     "open.url",
-                    "output.terminal"
+                    "output.terminal",
+                    "field.choices_from"
                 ]
             },
             "maxItems": 32,
-            "description": "Names of host features the plugin needs. The pattern is the grammar of a feature name, not the list of the names that exist: a later tote announces more names, and a manifest that needs one must stay valid for this schema. The examples are the six that tote 1.0 announces. Any other name makes the plugin incompatible with tote 1.0 (feature_missing), the exec features exec.list and exec.run included: they come back with the exec tier."
+            "description": "Names of host features the plugin needs. The pattern is the grammar of a feature name, not the list of the names that exist: a later tote announces more names, and a manifest that needs one must stay valid for this schema. The examples are the seven that tote announces: the six of tote 1.0 and field.choices_from, the suggestions of a text field. Any other name makes the plugin incompatible (feature_missing), the exec features exec.list and exec.run included: they come back with the exec tier, and field.choices_closed is reserved for a closed list built at run time, which is not this feature."
         },
         "platforms": {
             "type": "array",
@@ -755,7 +756,36 @@
                 },
                 "secret": false,
                 "remember": false,
-                "choices_from": false
+                "choices_from": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "allOf": [
+                            {
+                                "$ref": "#/$defs/plain"
+                            },
+                            {
+                                "$ref": "#/$defs/template"
+                            }
+                        ],
+                        "minLength": 0,
+                        "maxLength": 1024
+                    },
+                    "minItems": 1,
+                    "maxItems": 64,
+                    "prefixItems": [
+                        {
+                            "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+                            "not": {
+                                "pattern": "^(?:[sS][hH]|[bB][aA][sS][hH]|[zZ][sS][hH]|[dD][aA][sS][hH]|[kK][sS][hH]|[fF][iI][sS][hH]|[cC][sS][hH]|[tT][cC][sS][hH]|[eE][nN][vV]|[xX][aA][rR][gG][sS]|[sS][uU][dD][oO]|[dD][oO][aA][sS]|[sS][uU]|[nN][oO][hH][uU][pP]|[nN][iI][cC][eE]|[iI][oO][nN][iI][cC][eE]|[tT][iI][mM][eE]|[tT][iI][mM][eE][oO][uU][tT]|[sS][eE][tT][sS][iI][dD]|[sS][tT][dD][bB][uU][fF]|[wW][aA][tT][cC][hH]|[fF][iI][nN][dD]|[aA][wW][kK]|[gG][aA][wW][kK]|[pP][eE][rR][lL]|[pP][yY][tT][hH][oO][nN]|[pP][yY][tT][hH][oO][nN]3|[rR][uU][bB][yY]|[nN][oO][dD][eE]|[lL][uU][aA]|[pP][hH][pP]|[tT][cC][lL][sS][hH]|[oO][sS][aA][sS][cC][rR][iI][pP][tT]|[eE][vV][aA][lL]|[tT][oO][tT][eE])$",
+                                "type": "string"
+                            },
+                            "description": "The program: a literal word, never a placeholder, never a shell or launcher, never tote. It also needs an exec:<program> permission, which a schema cannot check.",
+                            "type": "string"
+                        }
+                    ],
+                    "description": "Text fields only. The program that tote starts when the user asks for suggestions (Ctrl+L), then its arguments: the first element is a literal program name covered by an exec: permission. The program prints one value per line, optionally followed by a tab and a label. The value is only a suggestion: the field stays free text and every value is checked as typed text. Placeholders are limited to the fields declared before this one, settings, {repo.*}, {cwd} and {home}. The key needs the feature field.choices_from."
+                }
             },
             "allOf": [
                 {
@@ -805,6 +835,7 @@
                             "pattern": false,
                             "max_len": false,
                             "flag": false,
+                            "choices_from": false,
                             "default": {
                                 "type": "string",
                                 "allOf": [
@@ -838,6 +869,7 @@
                             "pattern": false,
                             "max_len": false,
                             "choices": false,
+                            "choices_from": false,
                             "default": {
                                 "type": "boolean"
                             }

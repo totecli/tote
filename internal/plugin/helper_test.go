@@ -3,14 +3,31 @@ package plugin
 import (
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 )
+
+// features10 is the list of features that tote 1.0 announces. NewHost gives the list of the running
+// tote whatever the version it is told, so a test that models tote 1.0 names the list.
+var features10 = []string{
+	"command", "item_action.repo", "setting.list", "field.bool", "open.url", "output.terminal",
+}
 
 // testHost is the host of every test that does not choose another: tote 1.0.3 on linux/amd64
 // with the features of 1.0.
 func testHost() Host {
 	h := NewHost("1.0.3", "tote-test")
+	h.OS, h.Arch = "linux", "amd64"
+	h.Features = slices.Clone(features10)
+
+	return h
+}
+
+// testHost11 is the host of the tests of the suggestions: tote 1.1.0 on linux/amd64 with the
+// features that this tote announces.
+func testHost11() Host {
+	h := NewHost("1.1.0", "tote-test")
 	h.OS, h.Arch = "linux", "amd64"
 
 	return h
