@@ -24,6 +24,7 @@ const (
 	OutputPager     = "pager"
 	OutputSilent    = "silent"
 	OutputTerminal  = "terminal"
+	OutputChoices   = "choices"
 	PauseAlways     = "always"
 	PauseError      = "error"
 	PauseNever      = "never"
@@ -34,6 +35,9 @@ const (
 	maxValueBytes = 4096
 	patternCache  = 512
 )
+
+// ChoicesTimeout is the time a suggestions run is given. It is fixed: no manifest key changes it.
+const ChoicesTimeout = 10 * time.Second
 
 // Call asks to run one contribution of one plugin.
 //
@@ -75,11 +79,17 @@ type Confirmation struct {
 // contribution, whose URL is OpenURL. Pause applies to terminal runs. Timeout is zero for a
 // terminal run. A Prepared is bound to the tree and the surface it was prepared from: Run and
 // Guard refuse it when either changed.
+//
+// A Prepared of Registry.Choices has Output OutputChoices and FieldID, the field it lists values
+// for. Dir is the plugin cache directory, Timeout is ChoicesTimeout, Env holds no env: variable
+// and sets NO_COLOR, Confirm is empty, and Display is the argv for the footer. Only the launcher
+// of the suggestions runs it.
 type Prepared struct {
 	PluginID  string
 	Table     string
 	EntryID   string
 	ListID    string
+	FieldID   string
 	Output    string
 	Pause     string
 	Name      string
@@ -105,6 +115,10 @@ func (p Prepared) IsOpen() bool { return p.OpenURL != "" }
 
 // IsTerminal reports whether the program owns the terminal; the host runs it.
 func (p Prepared) IsTerminal() bool { return p.Output == OutputTerminal }
+
+// IsChoices reports whether the run lists the suggestions of a field (Registry.Choices): it has
+// its own launcher and Run refuses it.
+func (p Prepared) IsChoices() bool { return p.Output == OutputChoices }
 
 // Prepare checks a call and builds everything a run needs. It reads the lock and config.toml
 // again and computes the state of the plugin from them, so that a disable made in another terminal
@@ -214,20 +228,24 @@ func pickEntry(set []Entry, id string, list *List) (*Entry, *List, *Error) {
 	return nil, nil, newError(CodeNoEntry, "entry", id)
 }
 
-// prep is the state of one Prepare.
+// prep is the state of one Prepare. For the suggestions of a field, suggest is that field and
+// before the number of fields that come before it, whose values the argv may read; both are zero
+// for every other call.
 type prep struct {
-	r     *Registry
-	p     Plugin
-	ctx   *loadContext
-	call  Call
-	e     *Entry
-	list  *List
-	vals  *Values
-	cwd   string
-	tmpl  map[string]Template
-	allow map[string]bool
-	avoid Avoid
-	dir   string
+	r       *Registry
+	p       Plugin
+	ctx     *loadContext
+	call    Call
+	e       *Entry
+	list    *List
+	vals    *Values
+	cwd     string
+	tmpl    map[string]Template
+	allow   map[string]bool
+	avoid   Avoid
+	dir     string
+	suggest *Field
+	before  int
 }
 
 // newPrep gathers the inputs of a call: the effective settings, the repository and the parsed
@@ -242,9 +260,31 @@ type prep struct {
 func (r *Registry) newPrep(p Plugin, ctx *loadContext, call Call, e *Entry,
 	list *List,
 ) (*prep, *Error) {
+	return r.newPrepAt(p, ctx, call, e, list, -1)
+}
+
+// newPrepAt is newPrep for a call that is about the suggestions of one field.
+//
+// Parameters:
+//   - p: enabled plugin
+//   - ctx: inputs of the pass
+//   - call: the call
+//   - e: contribution
+//   - list: its list, nil outside a list
+//   - at: index in e.Fields of the field whose suggestions are listed, -1 for any other call. Only
+//     the argv of that field and the defaults of the fields before it are parsed; the row of a
+//     list action is not given
+func (r *Registry) newPrepAt(p Plugin, ctx *loadContext, call Call, e *Entry, list *List,
+	at int,
+) (*prep, *Error) {
 	pc := &prep{
 		r: r, p: p, ctx: ctx, call: call, e: e, list: list, allow: map[string]bool{},
 		tmpl: map[string]Template{},
+	}
+
+	if at >= 0 {
+		pc.suggest, pc.before = &e.Fields[at], at
+		call.Item = nil
 	}
 
 	for _, n := range e.AllowDash {
@@ -281,14 +321,22 @@ func (r *Registry) newPrep(p Plugin, ctx *loadContext, call Call, e *Entry,
 func (pc *prep) parseAll() *Error {
 	e := pc.e
 
-	texts := []string{e.Open, e.Cwd, e.Confirm.Text}
-	texts = append(texts, e.Run...)
+	var texts []string
 
-	for _, v := range e.Env {
-		texts = append(texts, v)
+	fields := e.Fields
+
+	if pc.suggest != nil {
+		texts, fields = slices.Clone(pc.suggest.ChoicesFrom), fields[:pc.before]
+	} else {
+		texts = []string{e.Open, e.Cwd, e.Confirm.Text}
+		texts = append(texts, e.Run...)
+
+		for _, v := range e.Env {
+			texts = append(texts, v)
+		}
 	}
 
-	for _, f := range e.Fields {
+	for _, f := range fields {
 		if f.Type != "bool" {
 			texts = append(texts, f.Default)
 		}
@@ -333,7 +381,7 @@ func (pc *prep) chooseRepo() *Error {
 	readsRepo, needGit := pc.usage()
 	target := pc.e.Target == "repo"
 
-	if !readsRepo && !target {
+	if !readsRepo && (!target || pc.suggest != nil) {
 		return nil
 	}
 
@@ -725,25 +773,10 @@ func (pc *prep) program(out *Prepared) *Error {
 		return err
 	}
 
-	pc.dir = dir
-	pc.avoid = pc.ctx.avoid
-	pc.avoid.Exactly = append(append([]string(nil), pc.avoid.Exactly...), filepath.Clean(dir))
-
-	abs, found := LookBin(pc.ctx.pathEnv, name, pc.avoid)
-	if !found {
-		return pc.missing(name)
+	abs, id, lerr := pc.locate(name, dir)
+	if lerr != nil {
+		return lerr
 	}
-
-	info, serr := os.Stat(abs)
-	if serr != nil {
-		return pc.missing(name)
-	}
-
-	if pc.isSelfFile(info) {
-		return newError(CodeExecSelf, name)
-	}
-
-	id, _ := statIDOf(info)
 
 	out.Name, out.Dir, out.Display = name, dir, shell.PrettyCommand(argv)
 	out.Argv = append([]string{abs}, argv[1:]...)
@@ -753,6 +786,38 @@ func (pc *prep) program(out *Prepared) *Error {
 	out.Timeout = timeoutOf(e)
 
 	return nil
+}
+
+// locate resolves a program on the scrubbed PATH, which loses the working directory of the run, and
+// checks that it is not tote itself under another name.
+//
+// Parameters:
+//   - name: program name
+//   - dir: working directory of the run
+//
+// Returns the absolute path and the identity of the file, which Guard compares before the start.
+func (pc *prep) locate(name, dir string) (string, statID, *Error) {
+	pc.dir = dir
+	pc.avoid = pc.ctx.avoid
+	pc.avoid.Exactly = append(append([]string(nil), pc.avoid.Exactly...), filepath.Clean(dir))
+
+	abs, found := LookBin(pc.ctx.pathEnv, name, pc.avoid)
+	if !found {
+		return "", statID{}, pc.missing(name)
+	}
+
+	info, serr := os.Stat(abs)
+	if serr != nil {
+		return "", statID{}, pc.missing(name)
+	}
+
+	if pc.isSelfFile(info) {
+		return "", statID{}, newError(CodeExecSelf, name)
+	}
+
+	id, _ := statIDOf(info)
+
+	return abs, id, nil
 }
 
 // isSelfFile reports whether a resolved program is the tote binary under another name, a link or
@@ -779,15 +844,26 @@ func (pc *prep) isSelfFile(info fs.FileInfo) bool {
 //
 // Returns the argv with the program name first.
 func (pc *prep) expand(name string) ([]string, *Error) {
+	return pc.expandArgv(name, pc.e.Run, pc.allow)
+}
+
+// expandArgv is expand for any argv template: the run of the contribution, or the choices_from of
+// a field.
+//
+// Parameters:
+//   - name: program at element 0
+//   - run: the argv template, element 0 included
+//   - allow: names of the placeholders that allow_dash lists, none for suggestions
+func (pc *prep) expandArgv(name string, run []string, allow map[string]bool) ([]string, *Error) {
 	argv := []string{name}
 
-	for i, raw := range pc.e.Run[1:] {
-		elems, err := ExpandArgv(pc.tmpl[raw], pc.vals, pc.allow)
+	for i, raw := range run[1:] {
+		elems, err := ExpandArgv(pc.tmpl[raw], pc.vals, allow)
 		if err != nil {
 			return nil, err
 		}
 
-		if err := pc.dashdash(name, i+1, raw); err != nil {
+		if err := pc.dashdashIn(run, name, i+1, raw); err != nil {
 			return nil, err
 		}
 
@@ -804,7 +880,15 @@ func (pc *prep) expand(name string) ([]string, *Error) {
 // programName checks element 0 of the run template: a literal word, covered by an exec:
 // permission, never tote and never a shell or launcher.
 func (pc *prep) programName() (string, *Error) {
-	t := pc.tmpl[pc.e.Run[0]]
+	return pc.programOf(pc.e.Run[0])
+}
+
+// programOf checks element 0 of an argv template like programName does.
+//
+// Parameters:
+//   - raw: the template text of element 0
+func (pc *prep) programOf(raw string) (string, *Error) {
+	t := pc.tmpl[raw]
 
 	name, literal := t.Literal()
 	if !literal || !execNameRe.MatchString(name) {
@@ -833,11 +917,22 @@ func (pc *prep) programName() (string, *Error) {
 //   - index: position of the element in the run template
 //   - raw: its template text
 func (pc *prep) dashdash(name string, index int, raw string) *Error {
+	return pc.dashdashIn(pc.e.Run, name, index, raw)
+}
+
+// dashdashIn is dashdash for any argv template.
+//
+// Parameters:
+//   - run: the argv template, element 0 included
+//   - name: program
+//   - index: position of the element in the template
+//   - raw: its template text
+func (pc *prep) dashdashIn(run []string, name string, index int, raw string) *Error {
 	if !slices.Contains(sshFamily, name) || len(pc.tmpl[raw].Placeholders()) == 0 {
 		return nil
 	}
 
-	for _, prev := range pc.e.Run[1:index] {
+	for _, prev := range run[1:index] {
 		if lit, ok := pc.tmpl[prev].Literal(); ok && lit == "--" {
 			return nil
 		}

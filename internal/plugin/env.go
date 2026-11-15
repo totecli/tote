@@ -35,12 +35,16 @@ const (
 //
 // Table holds the entry's env table after substitution. Dir is the working directory of the run.
 // Captured is true for pager and silent runs, which get GIT_TERMINAL_PROMPT=0. Mono sets NO_COLOR.
-// Lang is the language of the interface.
+// Lang is the language of the interface. Suggest is true for the run that lists the suggestions of
+// a field: it goes through the same rules as any run, including the proxy variables of a plugin
+// that declares net:, but it gets none of the variables of the env: permissions (no token), and
+// NO_COLOR is set whatever the theme is.
 type envPlan struct {
 	Table    map[string]string
 	Lang     string
 	Captured bool
 	Mono     bool
+	Suggest  bool
 }
 
 // scrubPath removes from a PATH value the entries that a lookup must not use: empty entries,
@@ -148,7 +152,7 @@ func (r *Registry) buildEnv(p Plugin, pathEnv string, avoid Avoid,
 		copyVar(name)
 	}
 
-	if plan.Mono {
+	if plan.Mono || plan.Suggest {
 		put("NO_COLOR", "1")
 	}
 
@@ -157,7 +161,7 @@ func (r *Registry) buildEnv(p Plugin, pathEnv string, avoid Avoid,
 	var secrets []string
 
 	for _, name := range perms.env {
-		if BlockedEnvName(name) {
+		if plan.Suggest || BlockedEnvName(name) {
 			continue
 		}
 

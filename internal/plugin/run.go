@@ -144,7 +144,8 @@ func (r *Registry) Guard(p Prepared) *Error {
 //
 // emit receives the output as it arrives, at most 8 MiB of it. It is called from one goroutine at
 // a time and has returned when Run returns. A terminal run is refused (terminal_run): it belongs
-// to the host's exec path, after Guard.
+// to the host's exec path, after Guard. A run of the suggestions of a field (Registry.Choices) is
+// refused too (unsupported): it has its own launcher.
 //
 // Parameters:
 //   - ctx: cancelling it stops the run
@@ -174,6 +175,8 @@ func (r *Registry) run(ctx context.Context, p Prepared, emit func(Event)) Outcom
 		return r.runOpen(ctx, p)
 	case p.IsTerminal():
 		return refused(newError(CodeTerminalRun, p.PluginID, p.EntryID))
+	case p.IsChoices():
+		return refused(newError(CodeUnsupported, "choices", p.EntryID))
 	case len(p.Argv) == 0 || len(p.Env) == 0 || !utf8.ValidString(p.Dir) || p.Dir == "":
 		return refused(newError(CodeProducedInvalid, "run", "unprepared"))
 	case p.Confirm.Required && !p.Confirmed:
