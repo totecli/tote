@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+
+    ╭─ demo: Get a release ────────────────────────────────────────────────╮
+    │   Repository demo/proj                                               │
+    │ ❯ Tag                                                                │
+    │              A release tag, or nothing for the latest                │
+    │              ctrl+l: suggestions                                     │
+    │   Asset                                                              │
+    ╰──────────────────────────────────────────────────────────────────────╯
+      ⏎ next · ctrl+s run · ctrl+l suggestions · esc cancel
+      Suggestions: 7, 2 hidden, 40 more not listed
+
+
+
+
+
+
+
+== 40x12
+
+  ╭─ demo: Get a release ────────────╮
+  │   Repository demo/proj           │
+  │ ❯ Tag                            │
+  │              A release tag, or   │
+  │              nothing for the …   │
+  │              ctrl+l: suggestions │
+  │   Asset                          │
+  ╰──────────────────────────────────╯
+   ⏎ · ctrl+s · ctrl+l · esc
+   Suggestions: 7, 2 hidden, 40 more …
+
+== 24x7
+  ╭─ demo: Get a r… ─╮
+  │ ❯ Tag            │
+  │             A    │
+  │             rel… │
+  ╰──────────────────╯
+   ⏎ · ctrl+s · esc
+   Suggestions: 7, 2 …

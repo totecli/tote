@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+
+    ╭─ demo: Get a release ────────────────────────────────────────────────╮
+    │   Repository demo/proj                                               │
+    │ ❯ Tag                                                                │
+    │              A release tag, or nothing for the latest                │
+    │              ctrl+l: suggestions                                     │
+    │   Asset                                                              │
+    ╰──────────────────────────────────────────────────────────────────────╯
+      ⏎ next · ctrl+s run · ctrl+l suggestions · esc cancel
+      Suggestions need a repository with a GitHub remote.
+
+
+
+
+
+
+
+== 40x12
+
+  ╭─ demo: Get a release ────────────╮
+  │   Repository demo/proj           │
+  │ ❯ Tag                            │
+  │              A release tag, or   │
+  │              nothing for the …   │
+  │              ctrl+l: suggestions │
+  │   Asset                          │
+  ╰──────────────────────────────────╯
+   ⏎ · ctrl+s · ctrl+l · esc
+   Suggestions need a repository with…
+
+== 24x7
+  ╭─ demo: Get a r… ─╮
+  │ ❯ Tag            │
+  │             A    │
+  │             rel… │
+  ╰──────────────────╯
+   ⏎ · ctrl+s · esc
+   Suggestions need a…

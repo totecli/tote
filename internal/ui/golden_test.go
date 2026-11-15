@@ -509,7 +509,7 @@ func frameCases() []frameCase {
 	cases = append(cases, clashFrames()...)
 	cases = append(cases, pluginFrames()...)
 
-	return append(cases, pluginRunFrames()...)
+	return append(append(cases, pluginRunFrames()...), pluginSuggestFrames()...)
 }
 
 // frameMode is a combination of color profile and glyph set.
@@ -591,8 +591,9 @@ func frameSandbox(t *testing.T, d dataSet) *sandbox {
 // Parameters:
 //   - g: rig to drive
 //   - keys: key names, "type:text" for typed text, "writing" for a write in progress, "toast"
-//     for an error message and "bg:dark" or "bg:light" for the answer of the terminal to the
-//     query for its background
+//     for an error message, "pager:kind" for a canned run, "suggest:kind" for a canned form with
+//     suggestions and "bg:dark" or "bg:light" for the answer of the terminal to the query for its
+//     background
 func playFrame(g *rig, keys []string) {
 	g.t.Helper()
 
@@ -604,6 +605,8 @@ func playFrame(g *rig, keys []string) {
 			g.r.e.writing(1)
 		case strings.HasPrefix(k, "pager:"):
 			g.r.push(cannedRun(g.r.e, strings.TrimPrefix(k, "pager:")))
+		case strings.HasPrefix(k, "suggest:"):
+			playSuggest(g, k)
 		case strings.HasPrefix(k, "bg:"):
 			g.send(backgroundMsg(k == "bg:dark"))
 		case k == "toast":
