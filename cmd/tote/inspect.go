@@ -9,6 +9,7 @@ import (
 
 	"github.com/totecli/tote/internal/config"
 	"github.com/totecli/tote/internal/plugin"
+	"github.com/totecli/tote/internal/shell"
 	"github.com/totecli/tote/internal/store"
 )
 
@@ -436,6 +437,11 @@ func (a *app) contributionLines(cs []plugin.Contribution) {
 
 		if c.Dir != "" {
 			fmt.Fprintln(a.Stdout, "    "+a.t("cli_plugin_contrib_dir", sanitize(c.Dir)))
+		}
+
+		for _, sg := range c.Suggestions {
+			fmt.Fprintln(a.Stdout, "    "+a.t("cli_plugin_contrib_choices", sanitize(sg.Field),
+				sanitize(shell.PrettyCommand(sg.Run))))
 		}
 
 		if c.Why != nil {

@@ -14,15 +14,17 @@ var installOpts = []opt{
 	{long: "force"},
 }
 
-// commandDoc is the JSON form of a command a plugin runs.
+// commandDoc is the JSON form of a command a plugin runs. Suggestions is the choices_from argv of
+// each field that has one, in the order of the fields.
 type commandDoc struct {
-	Table     string   `json:"table"`
-	ID        string   `json:"id"`
-	Run       []string `json:"run,omitempty"`
-	Open      string   `json:"open,omitempty"`
-	Cwd       string   `json:"cwd,omitempty"`
-	AllowDash []string `json:"allow_dash,omitempty"`
-	Env       []string `json:"env,omitempty"`
+	Table       string              `json:"table"`
+	ID          string              `json:"id"`
+	Run         []string            `json:"run,omitempty"`
+	Open        string              `json:"open,omitempty"`
+	Cwd         string              `json:"cwd,omitempty"`
+	AllowDash   []string            `json:"allow_dash,omitempty"`
+	Env         []string            `json:"env,omitempty"`
+	Suggestions []plugin.Suggestion `json:"suggestions,omitempty"`
 }
 
 // diffDoc is the JSON form of what an install or an update will do.
@@ -89,7 +91,7 @@ func commandDocs(cmds []plugin.CommandRef) []commandDoc {
 	for _, c := range cmds {
 		out = append(out, commandDoc{
 			Table: c.Table, ID: c.ID, Run: c.Run, Open: c.Open,
-			Cwd: c.Cwd, AllowDash: c.AllowDash, Env: c.Env,
+			Cwd: c.Cwd, AllowDash: c.AllowDash, Env: c.Env, Suggestions: c.Suggestions,
 		})
 	}
 
