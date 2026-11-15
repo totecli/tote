@@ -227,22 +227,25 @@ type Entry struct {
 //
 // Type is "text", "choice" or "bool". Default is a template for text and choice and the literal
 // "true" or "false" for a bool; HasDefault tells a default from an empty one. MaxLen is the limit
-// of a text field, Choices the static values of a choice, Flag the literal flag of a bool. A field
-// whose reading already recorded an issue is marked broken.
+// of a text field, Choices the static values of a choice, Flag the literal flag of a bool.
+// ChoicesFrom is the argv of a text field that tote starts on request to list suggested values,
+// nil when the key is absent and empty only when the manifest wrote an empty array, which the
+// validator refuses. A field whose reading already recorded an issue is marked broken.
 type Field struct {
-	Path       string
-	ID         string
-	Type       string
-	Label      string
-	Hint       string
-	Default    string
-	HasDefault bool
-	Required   bool
-	Pattern    string
-	MaxLen     int
-	Choices    []string
-	Flag       string
-	broken     bool
+	Path        string
+	ID          string
+	Type        string
+	Label       string
+	Hint        string
+	Default     string
+	HasDefault  bool
+	Required    bool
+	Pattern     string
+	MaxLen      int
+	Choices     []string
+	Flag        string
+	ChoicesFrom []string
+	broken      bool
 }
 
 // List is a [[list]] of the exec tier: rows produced by the program. Actions are the

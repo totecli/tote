@@ -340,7 +340,7 @@ func (x *extractor) field(n *node) Field {
 	f.Hint, _ = n.str("hint", strOpt{runes: MaxDescRunes})
 	f.Required, _ = n.boolean("required")
 
-	n.reserve("secret", "remember", "choices_from")
+	n.reserve("secret", "remember")
 
 	x.fieldDefault(n, &f)
 	x.fieldTyped(n, &f)
@@ -405,7 +405,7 @@ func (x *extractor) fieldDefault(n *node, f *Field) {
 //   - n: table of the field
 //   - f: field being read
 func (x *extractor) fieldTyped(n *node, f *Field) {
-	x.only(n, f.Type, "text", "pattern", "max_len")
+	x.only(n, f.Type, "text", "pattern", "max_len", "choices_from")
 	x.only(n, f.Type, "choice", "choices")
 	x.only(n, f.Type, "bool", "flag")
 
@@ -416,6 +416,11 @@ func (x *extractor) fieldTyped(n *node, f *Field) {
 
 		if v, ok := n.integer("max_len", 1, maxMaxLen); ok {
 			f.MaxLen = int(v)
+		}
+
+		if argv, ok := n.strs("choices_from",
+			listOpt{limit: MaxArgvElems, item: strOpt{bytes: MaxArgvElemBytes}}); ok {
+			f.ChoicesFrom = argv
 		}
 	case "choice":
 		f.Choices, _ = n.strs("choices", listOpt{limit: MaxChoices, item: strOpt{runes: MaxChoiceRunes}})

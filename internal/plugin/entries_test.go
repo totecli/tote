@@ -465,8 +465,36 @@ func TestRulesFields(t *testing.T) {
 		},
 		{name: "remember key", src: in(field("type = \"text\"\nremember = true\n")), code: CodeReserved},
 		{
-			name: "choices_from key", src: in(field("type = \"choice\"\nchoices_from = [\"x\"]\n")),
-			code: CodeReserved,
+			name: "choices_from on a choice",
+			src:  in(field("type = \"choice\"\nchoices = [\"a\"]\nchoices_from = [\"tool\"]\n")),
+			code: CodeKeyConflict, path: "command[0].field[0].choices_from",
+		},
+		{
+			name: "choices_from on a bool",
+			src:  in(field("type = \"bool\"\nflag = \"-a\"\nchoices_from = [\"tool\"]\n")),
+			code: CodeKeyConflict, path: "command[0].field[0].choices_from",
+		},
+		{
+			name: "choices_from is not an array",
+			src:  in(field("type = \"text\"\nchoices_from = \"tool\"\n")),
+			code: CodeTypeInvalid, path: "command[0].field[0].choices_from",
+		},
+		{
+			name: "choices_from element is not a string",
+			src:  in(field("type = \"text\"\nchoices_from = [\"tool\", 1]\n")),
+			code: CodeTypeInvalid, path: "command[0].field[0].choices_from[1]",
+		},
+		{
+			name: "choices_from too many elements",
+			src: in(field("type = \"text\"\nchoices_from = [\"tool\"," + times("\"a\",", 64) +
+				"]\n")),
+			code: CodeLimitExceeded, path: "command[0].field[0].choices_from",
+		},
+		{
+			name: "choices_from element too long",
+			src: in(field("type = \"text\"\nchoices_from = [\"tool\", \"" + times("a", 1025) +
+				"\"]\n")),
+			code: CodeLimitExceeded, path: "command[0].field[0].choices_from[1]",
 		},
 		{name: "type connection", src: in(field("type = \"connection\"\n")), code: CodeReserved},
 		{name: "type connections", src: in(field("type = \"connections\"\n")), code: CodeReserved},
