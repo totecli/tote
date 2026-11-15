@@ -12,13 +12,16 @@ import (
 // Kinds of surface escalation, from decision (f) of the specification: a changed command asks for
 // a new consent only when it removes a confirmation, adds a name to allow_dash or to the env
 // table, changes the value of an env name (review of 4 November 2026: the value can start a
-// program), or changes the pinned hash of a platform build without a version bump.
+// program), changes the pinned hash of a platform build without a version bump, or adds a
+// choices_from to a field or changes its argv: the suggestions start a program before any
+// confirmation, and one exec: permission covers every word of that program.
 const (
 	EscConfirmRemoved  = "confirm_removed"
 	EscAllowDashAdded  = "allow_dash_added"
 	EscEnvAdded        = "env_added"
 	EscEnvChanged      = "env_changed"
 	EscPlatformChanged = "platform_changed"
+	EscChoices         = "choices"
 )
 
 // Table names of the surface that are not tables of the manifest, and the joiner of the id of a
@@ -72,9 +75,9 @@ func surfaceEntries(m *Manifest) map[string][]surfaceEntry {
 
 // SurfaceObjects computes the inputs of surface_sha256: one object per contribution, with the
 // keys table, id, target, run, open, env, cwd, allow_dash, output, pause, timeout, confirm and
-// fields (id, type, flag, pattern, choices, required), plus for the exec tier one object for
-// [exec] (bin, args, modes) and one for each [[platform]] (os, arch, bin, sha256). A [[list]]
-// contributes its id and timeout, and a [[list.action]] has the id <list>.<action>.
+// fields (id, type, flag, pattern, choices, choices_from, required), plus for the exec tier one
+// object for [exec] (bin, args, modes) and one for each [[platform]] (os, arch, bin, sha256). A
+// [[list]] contributes its id and timeout, and a [[list.action]] has the id <list>.<action>.
 //
 // Labels, descriptions, keywords, hints and locales are not part of it: it answers "does this
 // version run the same commands". The result is ordered by table then id.
@@ -187,6 +190,10 @@ func fieldObject(f Field) map[string]any {
 		obj["choices"] = f.Choices
 	}
 
+	if len(f.ChoicesFrom) > 0 {
+		obj["choices_from"] = f.ChoicesFrom
+	}
+
 	if f.Required {
 		obj["required"] = true
 	}
@@ -293,6 +300,9 @@ type SurfaceChange struct {
 // pinned sha256 of a platform build changes while the version stays the same. Any other change of
 // the surface is shown in the diff of commands but never asked.
 //
+// A field that gains a choices_from, or whose choices_from argv changes, asks too (EscChoices),
+// for an entry that kept its id and for a new entry alike. Removing a choices_from asks nothing.
+//
 // Parameters:
 //   - old: manifest of the installed version
 //   - next: manifest of the new version
@@ -365,7 +375,41 @@ func entryChanges(table string, se surfaceEntry, prev *Entry) []SurfaceChange {
 		add(EscEnvAdded)
 	}
 
+	if choicesAdded(se.e, prev) {
+		add(EscChoices)
+	}
+
 	return out
+}
+
+// choicesAdded reports whether a contribution has a field with a choices_from that the installed
+// version of the contribution did not have with the same argv.
+//
+// Parameters:
+//   - e: contribution of the new version
+//   - prev: same contribution in the installed version, nil when the id is new
+func choicesAdded(e, prev *Entry) bool {
+	for _, f := range e.Fields {
+		if len(f.ChoicesFrom) == 0 {
+			continue
+		}
+
+		same := false
+
+		if prev != nil {
+			for _, o := range prev.Fields {
+				if o.ID == f.ID && slices.Equal(o.ChoicesFrom, f.ChoicesFrom) {
+					same = true
+				}
+			}
+		}
+
+		if !same {
+			return true
+		}
+	}
+
+	return false
 }
 
 // envValueChanged reports whether a name of the env table kept its name and changed its value:
@@ -425,18 +469,28 @@ func platformChanges(old, next *Manifest) []SurfaceChange {
 	return out
 }
 
+// Suggestion is the choices_from of one field of a command: Field is the id of the field, Run the
+// argv template as written. It is the JSON shape of the commands of a diff and of the
+// contributions of a check.
+type Suggestion struct {
+	Field string   `json:"field"`
+	Run   []string `json:"run"`
+}
+
 // CommandRef is a command of a plugin as the consent view lists it: the template that tote runs
 // or the URL template that it opens, the working directory template, the allow_dash names and
 // the env table as sorted NAME=template lines. The env table is part of what a command runs: a
-// value can make the declared program start another one, so it is shown with the command.
+// value can make the declared program start another one, so it is shown with the command. So are
+// the suggestions: the choices_from of each field that has one, in the order of the fields.
 type CommandRef struct {
-	Table     string
-	ID        string
-	Run       []string
-	Open      string
-	Cwd       string
-	AllowDash []string
-	Env       []string
+	Table       string
+	ID          string
+	Run         []string
+	Open        string
+	Cwd         string
+	AllowDash   []string
+	Env         []string
+	Suggestions []Suggestion
 }
 
 // Commands lists the commands of a plugin, which are its code when it is declarative: every run
@@ -477,7 +531,27 @@ func commandRef(table string, se surfaceEntry) CommandRef {
 	allow := slices.Clone(se.e.AllowDash)
 	slices.Sort(allow)
 
-	return CommandRef{table, se.id, se.e.Run, se.e.Open, se.e.Cwd, allow, envTableLines(se.e.Env)}
+	return CommandRef{
+		Table: table, ID: se.id, Run: se.e.Run, Open: se.e.Open, Cwd: se.e.Cwd, AllowDash: allow,
+		Env: envTableLines(se.e.Env), Suggestions: suggestionsOf(se.e),
+	}
+}
+
+// suggestionsOf lists the choices_from argv of the fields of a contribution, in the order of the
+// fields; nil when no field has one.
+//
+// Parameters:
+//   - e: contribution
+func suggestionsOf(e *Entry) []Suggestion {
+	var out []Suggestion
+
+	for _, f := range e.Fields {
+		if len(f.ChoicesFrom) > 0 {
+			out = append(out, Suggestion{Field: f.ID, Run: f.ChoicesFrom})
+		}
+	}
+
+	return out
 }
 
 // sameCommand reports whether two commands run the same thing.
@@ -487,7 +561,10 @@ func commandRef(table string, se surfaceEntry) CommandRef {
 //   - b: second command
 func sameCommand(a, b CommandRef) bool {
 	return a.Open == b.Open && a.Cwd == b.Cwd && slices.Equal(a.Run, b.Run) &&
-		slices.Equal(a.AllowDash, b.AllowDash) && slices.Equal(a.Env, b.Env)
+		slices.Equal(a.AllowDash, b.AllowDash) && slices.Equal(a.Env, b.Env) &&
+		slices.EqualFunc(a.Suggestions, b.Suggestions, func(x, y Suggestion) bool {
+			return x.Field == y.Field && slices.Equal(x.Run, y.Run)
+		})
 }
 
 // CommandChange is one difference between the commands of two versions: Kind is "added",

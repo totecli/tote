@@ -157,7 +157,7 @@ func TestSurfaceZeroValuesAbsent(t *testing.T) {
 		Confirm: Confirm{Set: true},
 		Fields: []Field{{
 			ID: "x", Type: "choice", Flag: "-x", Pattern: "^a$", Choices: []string{"a"},
-			Required: true,
+			ChoicesFrom: []string{"tool"}, Required: true,
 		}},
 	}
 	want := []string{
@@ -170,7 +170,7 @@ func TestSurfaceZeroValuesAbsent(t *testing.T) {
 	}
 
 	fields := entryObject("command", "x", full)["fields"].([]map[string]any)
-	wantField := []string{"choices", "flag", "id", "pattern", "required", "type"}
+	wantField := []string{"choices", "choices_from", "flag", "id", "pattern", "required", "type"}
 
 	if got := objectKeys(fields[0]); !slices.Equal(got, wantField) {
 		t.Errorf("a full Field writes %v, want %v", got, wantField)

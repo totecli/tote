@@ -461,6 +461,28 @@ func commandExtras(c CommandRef) []ViewLine {
 		})
 	}
 
+	return append(out, suggestionLines(LevelNote, c)...)
+}
+
+// suggestionLines lists the programs a command starts to suggest the values of its fields, which
+// the user triggers from the form before any confirmation.
+//
+// Parameters:
+//   - level: level of the lines
+//   - c: command
+func suggestionLines(level string, c CommandRef) []ViewLine {
+	var out []ViewLine
+
+	for _, sg := range c.Suggestions {
+		out = append(out, ViewLine{
+			Level: level, Key: "consent_cmd_choices",
+			Args: []ViewArg{
+				{Text: CleanLine(sg.Field, viewTextRunes)},
+				{Text: CleanLine(shell.PrettyCommand(sg.Run), viewCommandRune)},
+			},
+		})
+	}
+
 	return out
 }
 
@@ -526,10 +548,18 @@ func (v *ConsentView) commandDiff(changes []CommandChange) {
 	for _, c := range changes {
 		if c.Kind != "added" {
 			v.add(commandLine(LevelDrop, c.Old))
+
+			for _, l := range suggestionLines(LevelDrop, c.Old) {
+				v.add(l)
+			}
 		}
 
 		if c.Kind != "removed" {
 			v.add(commandLine(LevelAdd, c.New))
+
+			for _, l := range suggestionLines(LevelAdd, c.New) {
+				v.add(l)
+			}
 		}
 	}
 }

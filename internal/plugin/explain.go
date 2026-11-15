@@ -21,24 +21,27 @@ import (
 // Available is false when the contribution cannot be built; Why then holds the reason, and it also
 // holds dependency_missing for one whose program is not installed, because its argv is still
 // exact. Confirm is the question the confirmation would ask, empty for the generic one.
+// Suggestions lists the choices_from argv of the fields that have one, as written: check shows
+// them and starts nothing.
 type Contribution struct {
-	Table           string   `json:"table"`
-	ID              string   `json:"id"`
-	List            string   `json:"list,omitempty"`
-	Label           string   `json:"label"`
-	Output          string   `json:"output,omitempty"`
-	Run             []string `json:"run,omitempty"`
-	Open            string   `json:"open,omitempty"`
-	Env             []string `json:"env,omitempty"`
-	Argv            []string `json:"argv,omitempty"`
-	Display         string   `json:"display"`
-	Dir             string   `json:"dir,omitempty"`
-	URL             string   `json:"url,omitempty"`
-	Program         string   `json:"program,omitempty"`
-	ConfirmRequired bool     `json:"confirm_required,omitempty"`
-	Confirm         string   `json:"confirm,omitempty"`
-	Available       bool     `json:"available"`
-	Why             *Reason  `json:"why,omitempty"`
+	Table           string       `json:"table"`
+	ID              string       `json:"id"`
+	List            string       `json:"list,omitempty"`
+	Label           string       `json:"label"`
+	Output          string       `json:"output,omitempty"`
+	Run             []string     `json:"run,omitempty"`
+	Open            string       `json:"open,omitempty"`
+	Env             []string     `json:"env,omitempty"`
+	Suggestions     []Suggestion `json:"suggestions,omitempty"`
+	Argv            []string     `json:"argv,omitempty"`
+	Display         string       `json:"display"`
+	Dir             string       `json:"dir,omitempty"`
+	URL             string       `json:"url,omitempty"`
+	Program         string       `json:"program,omitempty"`
+	ConfirmRequired bool         `json:"confirm_required,omitempty"`
+	Confirm         string       `json:"confirm,omitempty"`
+	Available       bool         `json:"available"`
+	Why             *Reason      `json:"why,omitempty"`
 }
 
 // slot is a contribution of a manifest with the list it belongs to.
@@ -147,6 +150,8 @@ func (r *Registry) explain(p Plugin, lc *loadContext, req CheckRequest, used map
 		Env:   envTableLines(e.Env),
 		Label: p.Catalog.Text(req.lang(), entryKeyBase(e, s.list)+".label", e.Label),
 	}
+
+	c.Suggestions = suggestionsOf(e)
 
 	if e.Open != "" {
 		c.Display = e.Open
