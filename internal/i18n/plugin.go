@@ -6,6 +6,9 @@ import "strings"
 const (
 	// PrefixError is the prefix of the message of an error code, such as plugin_err_hash_mismatch.
 	PrefixError = "plugin_err_"
+	// PrefixChoices is the prefix of the message of a reason a suggestions run failed, such as
+	// plugin_choices_exit.
+	PrefixChoices = "plugin_choices_"
 	// PrefixReason is the prefix of the message of a state reason, such as plugin_reason_lock_off.
 	PrefixReason = "plugin_reason_"
 	// PrefixState is the prefix of the name of a plugin state, such as plugin_state_enabled.
@@ -35,7 +38,7 @@ func (p *Printer) Has(key string) bool {
 // Printf error.
 //
 // Parameters:
-//   - prefix: one of PrefixError, PrefixReason and PrefixState
+//   - prefix: one of PrefixChoices, PrefixError, PrefixReason and PrefixState
 //   - code: stable code, such as "hash_mismatch" or "needs-consent"
 //   - args: values of the code, all texts
 //
