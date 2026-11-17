@@ -15,7 +15,7 @@
     |   Asset                                                              |
     +----------------------------------------------------------------------+
       enter suivant - ctrl+s lancer - esc arreter
-      Liste en cours : gft --releases --plain -- demo/proj
+      | Liste en cours : gft --releases --plain -- demo/proj
 
 
 
@@ -34,7 +34,7 @@
   |   Asset                          |
   +----------------------------------+
    enter - ctrl+s - esc
-   Liste en cours : gft --re...mo/proj
+   | Liste en cours : gft --r...o/proj
 
 == 24x7
   +- demo: Get a... -+
@@ -43,4 +43,4 @@
   |             r... |
   +------------------+
    enter - ctrl+s
-   Liste en cours :...
+   | Liste en cours...

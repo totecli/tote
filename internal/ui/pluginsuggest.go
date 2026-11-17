@@ -50,10 +50,9 @@ type suggestPickedMsg struct {
 
 // choicesRun is the suggestions run that the interface waits for. There is at most one at a time.
 //
-// Gen tells the messages of this run from those of an older one, Form is the form that asked, and
-// Plugin and Field name what runs. Ctx ends when Cancel is called, which stops the program, and
-// Finished is closed once the
-// registry has returned, which is nil while the run is only being prepared.
+// Gen tells the messages of this run from those of an older one. Ctx ends when Cancel is called,
+// which stops the program, and Finished is closed once the registry has returned, which is nil
+// while the run is only being prepared. Wait is the loading box, nil when the form was not on top.
 type choicesRun struct {
 	gen      int
 	form     *fieldsForm
@@ -62,6 +61,8 @@ type choicesRun struct {
 	ctx      context.Context
 	cancel   context.CancelFunc
 	finished chan struct{}
+	started  time.Time
+	wait     *suggestWait
 }
 
 // suggestAsk starts the listing of the suggestions of a field. It asks the registry to prepare the
@@ -117,8 +118,8 @@ func (r *root) current(gen int, f *fieldsForm) *choicesRun {
 	return nil
 }
 
-// suggestPrepared handles the answer of the registry: a list that the form already holds opens at
-// once, a run that cannot start tells why, and any other starts the program.
+// suggestPrepared handles the answer of the registry: it opens a list that the form already holds,
+// says why a run cannot start, or starts the program.
 //
 // Parameters:
 //   - m: the run, or the reason there is none
@@ -162,8 +163,40 @@ func (r *root) suggestPrepared(m suggestPreparedMsg) tea.Cmd {
 
 	s.starts[m.Field]++
 	s.phase, s.argv = sugRunning, shownArgv(m.Prep)
+	s.spin, s.secs = 0, 0
+	c.started = e.Now()
 
-	return r.suggestRun(c, m.Prep, key)
+	cmds := []tea.Cmd{
+		r.suggestRun(c, m.Prep, key),
+		tick(spinDelay, func(time.Time) tea.Msg { return suggestTickMsg{Gen: c.gen} }),
+	}
+
+	// Another box over the form (the help) keeps the loading box away; the status line of the
+	// form says what runs.
+	if n := len(r.overlays); n > 0 && r.overlays[n-1] == overlay(f) {
+		c.wait = newSuggestWait(e, f, m.Field)
+		cmds = append(cmds, r.push(c.wait))
+	}
+
+	return tea.Batch(cmds...)
+}
+
+// suggestTick moves the spinner of the suggestions run that goes and starts the next tick. The
+// tick of a run that is over asks for no other, so that nothing is redrawn while the form is idle.
+//
+// Parameters:
+//   - m: the tick
+func (r *root) suggestTick(m suggestTickMsg) tea.Cmd {
+	c := r.choices
+	if c == nil || c.gen != m.Gen || c.form.sug == nil || c.form.sug.phase != sugRunning {
+		return nil
+	}
+
+	s := c.form.sug
+	s.spin++
+	s.secs = int(r.e.Now().Sub(c.started) / time.Second)
+
+	return tick(spinDelay, func(time.Time) tea.Msg { return suggestTickMsg{Gen: m.Gen} })
 }
 
 // suggestRun starts the program of a run and returns the command that waits for its end. The
@@ -266,6 +299,19 @@ func (r *root) clearChoices() {
 	if c := r.choices; c != nil {
 		c.cancel()
 		r.choices = nil
+
+		r.dropWait(c)
+	}
+}
+
+// dropWait takes the loading box of a run off the stack, when it shows.
+//
+// Parameters:
+//   - c: the run
+func (r *root) dropWait(c *choicesRun) {
+	if c.wait != nil {
+		r.dropOverlay(c.wait)
+		c.wait = nil
 	}
 }
 
@@ -284,6 +330,7 @@ func (r *root) stopChoices(wait, said bool) {
 	r.choices = nil
 
 	c.cancel()
+	r.dropWait(c)
 
 	if s := c.form.sug; s != nil && s.busy() {
 		s.phase = sugIdle

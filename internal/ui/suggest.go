@@ -55,12 +55,10 @@ const (
 // suggestState is what a form that asks the arguments of a run knows about the suggestions of its
 // fields.
 //
-// Start and Fields name the contribution, so that the call of a listing is built from the values
-// of the form. Memo holds the lists that were loaded, by the exact argv that gave them, and it is
-// never written anywhere; Starts counts the listings started by field. Phase is what the
-// suggestions do now, Field the field it is about, Argv the argv of the run that goes, cleaned and
-// redacted for the status line, and Text the translated reason of a wait or a failure. Shown,
-// Hidden and More are the counts of the last list.
+// Memo holds the lists that were loaded, by the exact argv that gave them, and it is never written
+// anywhere; Starts counts the listings started by field. Argv is the argv of the run that goes,
+// cleaned and redacted for the status line, and Text the translated reason of a wait or a failure.
+// Spin and Secs are moved on by the tick of the run.
 type suggestState struct {
 	start  pluginStart
 	fields []plugin.Field
@@ -73,6 +71,8 @@ type suggestState struct {
 	shown  int
 	hidden int
 	more   int
+	spin   int
+	secs   int
 }
 
 // newSuggest returns the suggestions of a form, or nil when no field of the contribution has any.
@@ -111,6 +111,7 @@ func (s *suggestState) settle() {
 //   - field: id of the field
 func (s *suggestState) begin(field string) {
 	s.phase, s.field, s.text, s.argv = sugPreparing, field, "", ""
+	s.spin, s.secs = 0, 0
 }
 
 // argvKey is the key of the memory of a form: the field and the exact argv of the run, program
@@ -240,9 +241,7 @@ func (f *fieldsForm) statusNow(e *env) (statusInfo, bool) {
 	case sugPreparing:
 		return statusInfo{Command: e.t("ui_choices_preparing")}, true
 	case sugRunning:
-		room := e.statusRoom() - e.Metric.width(e.t("ui_choices_loading", ""))
-
-		return statusInfo{Command: e.t("ui_choices_loading", e.midFit(s.argv, max(8, room)))}, true
+		return statusInfo{Command: e.listingLine(s, e.statusRoom())}, true
 	case sugReady:
 		return statusInfo{Command: e.countsText(s.shown, s.hidden, s.more)}, true
 	case sugNoMatch:
@@ -267,6 +266,19 @@ func (f *fieldsForm) statusNow(e *env) (statusInfo, bool) {
 	}
 
 	return statusInfo{Command: s.text}, true
+}
+
+// listingLine words a listing that runs for the status line: the spinner, then the argv that goes,
+// cut in the middle to fit.
+//
+// Parameters:
+//   - s: the suggestions of the form
+//   - room: cells that the line has
+func (e *env) listingLine(s *suggestState, room int) string {
+	lead := e.spinner(s.spin) + " "
+	room -= e.Metric.width(lead) + e.Metric.width(e.t("ui_choices_loading", ""))
+
+	return lead + e.t("ui_choices_loading", e.midFit(s.argv, max(8, room)))
 }
 
 // waitText words a listing that waits for another field or for a value.
@@ -365,6 +377,24 @@ func (f *fieldsForm) picked(e *env, m suggestPickedMsg) {
 	}
 }
 
+// fieldWords gives the text typed in a field and its label, which is the id of the field when the
+// form has no such field.
+//
+// Parameters:
+//   - e: shared environment
+//   - field: id of the field
+func (f *fieldsForm) fieldWords(e *env, field string) (typed, label string) {
+	label = field
+
+	for _, fd := range f.fields {
+		if fd.ID == field {
+			typed, label = fd.text(), fd.words(e, fd.Label)
+		}
+	}
+
+	return typed, label
+}
+
 // pickList builds the picker of a list of suggestions: the values, each with its label as a note,
 // narrowed to the ones that hold what is typed in the field, ignoring the case.
 //
@@ -376,14 +406,7 @@ func (f *fieldsForm) picked(e *env, m suggestPickedMsg) {
 // Returns the picker, and false when the typed text matches no value, in which case the picker
 // shows the whole list.
 func (f *fieldsForm) pickList(e *env, field string, res plugin.ChoicesResult) (overlay, bool) {
-	typed, label := "", field
-
-	for _, fd := range f.fields {
-		if fd.ID == field {
-			typed, label = fd.text(), fd.words(e, fd.Label)
-		}
-	}
-
+	typed, label := f.fieldWords(e, field)
 	items := make([]pickItem, 0, len(res.Items))
 	cur := 0
 	low := strings.ToLower(typed)

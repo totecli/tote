@@ -43,13 +43,19 @@ func TestSuggestRunDiesOnEveryWayOut(t *testing.T) {
 				t.Errorf("Ctrl+C closed the form: %T", s.top())
 			}
 		}, false},
-		{"submit", func(_ *testing.T, s *suggestRig) { s.press("ctrl+s") }, false},
-		{"enter on the last field", func(_ *testing.T, s *suggestRig) { s.press("enter") }, false},
+		{"submit", func(_ *testing.T, s *suggestRig) {
+			s.r.dropOverlay(s.r.choices.wait)
+			s.press("ctrl+s")
+		}, false},
+		{"enter on the last field", func(_ *testing.T, s *suggestRig) {
+			s.r.dropOverlay(s.r.choices.wait)
+			s.press("enter")
+		}, false},
 		{"close", func(_ *testing.T, s *suggestRig) { s.send(dismissMsg{}) }, false},
 		{"esc twice", func(_ *testing.T, s *suggestRig) { s.press("esc", "esc") }, false},
 		{"ctrl+c twice", func(_ *testing.T, s *suggestRig) { s.press("ctrl+c", "ctrl+c") }, false},
 		{"form removed from the stack", func(_ *testing.T, s *suggestRig) {
-			s.r.overlays = s.r.overlays[:len(s.r.overlays)-1]
+			s.r.overlays = s.r.overlays[:len(s.r.overlays)-2]
 			s.press("ctrl+k")
 		}, false},
 		{"disable from inside", func(t *testing.T, s *suggestRig) {
@@ -120,6 +126,14 @@ func TestSuggestRunDiesOnEveryWayOut(t *testing.T) {
 
 			s.r.closeOverlays()
 		}, false},
+		{"keys typed in the loading box keep the run", func(t *testing.T, s *suggestRig) {
+			s.typeText("x")
+			s.press("enter", "tab", "ctrl+s", "ctrl+l")
+
+			if _, ok := s.top().(*suggestWait); !ok {
+				t.Errorf("the loading box was left: %T", s.top())
+			}
+		}, true},
 		{"another key keeps the run", func(_ *testing.T, s *suggestRig) {
 			s.press("left", "right", "home", "end")
 		}, true},

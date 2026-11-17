@@ -58,17 +58,18 @@ type = "text"
 label = "X"
 `
 
-// fakeLister is the program that stands for the lister of the suggestions. It appends its argv to
-// the log, one line per start, and its process id to the file of the pids, then answers by the
-// value of the repository that comes after --tags: ok prints three values, empty prints none, fail
-// writes an option error to its standard output, hang waits, mix prints values the field refuses
-// and many prints more values than a list keeps. Anything else prints one value.
+// fakeLister stands for the lister of the suggestions. It logs its argv and its process id, then
+// answers by the value of the repository that comes after --tags. A value that starts with slow
+// waits for the file GATE first, then answers as the rest of the value does.
 const fakeLister = `echo "$@" >> "LOG"
 case "$1" in
 --tags) ;;
 *) exit 0;;
 esac
 echo $$ >> "PIDS"
+case "$2" in
+slow*) while [ ! -e "GATE" ]; do sleep 0.02; done; set -- "$1" "${2#slow}";;
+esac
 case "$2" in
 ok) printf 'v1.0\tfirst\nV2.0\nv3.0\trecommended\n';;
 empty) exit 0;;
@@ -82,15 +83,13 @@ exit 0
 `
 
 // suggestRig is a rig over a sandbox where the plugin taglist is installed and enabled, with the
-// fake lister first on the PATH.
-//
-// Log is the file that records the argv of every start of the lister and Pids the one that records
-// its process ids.
+// fake lister first on the PATH. The lister of a slow value waits until gate exists, see release.
 type suggestRig struct {
 	*rig
 	lab  *plugLab
 	log  string
 	pids string
+	gate string
 }
 
 // newSuggestRig builds the sandbox, the plugin and the rig, and opens the form of the command
@@ -125,9 +124,10 @@ func newSuggestRigOf(t *testing.T, repo, manifest string) *suggestRig {
 
 	s := &suggestRig{
 		lab: l, log: filepath.Join(sb.Dir, "lister.log"), pids: filepath.Join(sb.Dir, "lister.pids"),
+		gate: filepath.Join(sb.Dir, "lister.gate"),
 	}
 
-	body := strings.NewReplacer("LOG", s.log, "PIDS", s.pids).Replace(fakeLister)
+	body := strings.NewReplacer("LOG", s.log, "PIDS", s.pids, "GATE", s.gate).Replace(fakeLister)
 	script := filepath.Join(bin, "lister")
 	if err := os.WriteFile(script, []byte("#!/bin/sh\n"+body), 0o700); err != nil {
 		t.Fatal(err)
@@ -306,7 +306,9 @@ func TestSuggestRunningShowsTheArgv(t *testing.T) {
 
 	s.press("ctrl+l")
 
-	if s.r.choices == nil || s.form().sug.phase != sugRunning {
+	_, boxed := s.top().(*suggestWait)
+
+	if !boxed || s.r.choices == nil || s.r.choices.form.sug.phase != sugRunning {
 		t.Fatalf("no run goes:\n%s", s.text())
 	}
 

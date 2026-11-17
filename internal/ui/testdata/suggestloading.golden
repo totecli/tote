@@ -15,7 +15,7 @@
     │   Asset                                                              │
     ╰──────────────────────────────────────────────────────────────────────╯
       ⏎ next · ctrl+s run · esc stop
-      Listing: gft --releases --plain -- demo/proj
+      ⠋ Listing: gft --releases --plain -- demo/proj
 
 
 
@@ -34,7 +34,7 @@
   │   Asset                          │
   ╰──────────────────────────────────╯
    ⏎ · ctrl+s · esc
-   Listing: gft --release…-- demo/proj
+   ⠋ Listing: gft --releas…- demo/proj
 
 == 24x7
   ╭─ demo: Get a r… ─╮
@@ -43,4 +43,4 @@
   │             rel… │
   ╰──────────────────╯
    ⏎ · ctrl+s · esc
-   Listing: gft -…proj
+   ⠋ Listing: gft …roj

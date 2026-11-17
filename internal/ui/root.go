@@ -334,6 +334,8 @@ func (r *root) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return r, r.suggestPrepared(m)
 	case suggestDoneMsg:
 		return r, r.suggestDone(m)
+	case suggestTickMsg:
+		return r, r.suggestTick(m)
 	case suggestStopMsg:
 		r.stopChoices(false, true)
 

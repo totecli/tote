@@ -15,7 +15,7 @@
     │   Asset                                                              │
     ╰──────────────────────────────────────────────────────────────────────╯
       ⏎ suivant · ctrl+s lancer · esc arrêter
-      Liste en cours : gft --releases --plain -- demo/proj
+      ⠋ Liste en cours : gft --releases --plain -- demo/proj
 
 
 
@@ -34,7 +34,7 @@
   │   Asset                          │
   ╰──────────────────────────────────╯
    ⏎ · ctrl+s · esc
-   Liste en cours : gft --rel…emo/proj
+   ⠋ Liste en cours : gft --re…mo/proj
 
 == 24x7
   ╭─ demo: Get a r… ─╮
@@ -43,4 +43,4 @@
   │             rel… │
   ╰──────────────────╯
    ⏎ · ctrl+s · esc
-   Liste en cours : g…
+   ⠋ Liste en cours :…
