@@ -6,7 +6,8 @@ tote is a terminal launcher for SSH connections, Git repositories, shell aliases
 functions, with a full-screen interface built on Bubble Tea. It is the Go successor of
 [mn](https://github.com/20syldev/mn).
 
-**Status:** version 1.0.0 is the first release. What comes later is marked as planned.
+**Status:** version 1.1.0. Version 1.0.0 was the first release. What comes later is marked as
+planned.
 
 ## What it is
 
@@ -28,8 +29,8 @@ How it differs from mn:
 - Data in TOML files with a schema, written atomically, instead of `:::` separated lines.
 - A new interface: lists with a detail panel, a palette, settings, mouse, themes, English and
   French.
-- Plugins are rewritten, not ported. In 1.0 they are declarative only (a manifest, no code of their
-  own) and nothing runs before you have read the exact commands and agreed.
+- Plugins are rewritten, not ported. In tote 1.x they are declarative only (a manifest, no code of
+  their own) and nothing runs before you have read the exact commands and agreed.
 - There is no migration inside the program: a separate script moves your data from mn, see
   [Moving your data from mn](#moving-your-data-from-mn).
 
@@ -93,11 +94,12 @@ columns or 20 rows the welcome box is replaced by a one-line header; the page wi
 
 ## Install
 
-tote 1.0.0 is the first release. The channels:
+tote 1.1.0 is the current release, 1.0.0 was the first. The channels (State is the first version
+that had the channel):
 
 | Channel            | State                    | Notes                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | ------------------ | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Install script     | 1.0.0                    | Downloads the archive for your system from GitHub Releases, checks its SHA-256 against the signed checksums file, verifies the minisign signature when a verifier is available, installs to `~/.local/bin` and writes an install receipt. Never uses `sudo`, never edits your startup files. Run `curl -fsSL https://dropr.sylvain.sh/bash/tote@latest/install.sh \| sh`, or `... \| sh -s -- 1.0.0` for a given version. |
+| Install script     | 1.0.0                    | Downloads the archive for your system from GitHub Releases, checks its SHA-256 against the signed checksums file, verifies the minisign signature when a verifier is available, installs to `~/.local/bin` and writes an install receipt. Never uses `sudo`, never edits your startup files. Run `curl -fsSL https://dropr.sylvain.sh/bash/tote@latest/install.sh \| sh`, or `... \| sh -s -- 1.1.0` for a given version. |
 | Release archives   | 1.0.0                    | `tote_<version>_<os>_<arch>.tar.gz` for Linux and macOS, amd64 and arm64, with `tote_<version>_checksums.txt` and its minisign signature.                                                                                                                                                                                                                                                                                 |
 | `.deb`             | 1.0.0                    | `tote_<version>_linux_<arch>.deb` on GitHub Releases, not tied to an apt source: to update, download the new file and run `sudo apt install ./tote_<version>_linux_<arch>.deb`. tote never updates itself.                                                                                                                                                                                                                |
 | Ubuntu PPA         | 1.0.0                    | `sudo add-apt-repository ppa:totecli/tote && sudo apt install tote`. Ubuntu 22.04, 24.04 and 26.04 on amd64 and arm64 (Linux Mint 22 uses the 24.04 packages). Update with `sudo apt update && sudo apt upgrade tote`. Stable releases only. There is no apt repository for Debian: use the `.deb`.                                                                                                                       |
@@ -114,7 +116,7 @@ Or from a clone of the repository:
 
 ```sh
 git clone https://github.com/totecli/tote.git && cd tote
-make build VERSION=1.0.0-local        # writes bin/tote
+make build VERSION=1.1.0-local        # writes bin/tote
 ```
 
 A build from source or `go install` has no release key: `tote update` refuses to install anything
@@ -124,8 +126,8 @@ releases:
 
 ```sh
 # current: RWTTj50yYWk72oCPtVJZ8hrpENxKKpQHDtQl3l1JkOxauemhwepIFON3    next (kept offline): RWS7eI0zAwZGD3nDouKjNMVgt3opeJ9Lf3K3RNRKeNYIV1Hm9L0UirQT
-sha256sum -c tote_1.0.0_checksums.txt --ignore-missing      # macOS: shasum -a 256 -c, on your line
-minisign -V -H -P <public key> -m tote_1.0.0_checksums.txt  # reads the .minisig next to it
+sha256sum -c tote_1.1.0_checksums.txt --ignore-missing      # macOS: shasum -a 256 -c, on your line
+minisign -V -H -P <public key> -m tote_1.1.0_checksums.txt  # reads the .minisig next to it
 ```
 
 ## Shell integration
@@ -256,7 +258,7 @@ is not an existing directory and about a `source` function whose script is missi
 may contain `-` (`fn-x`); bash in POSIX mode (`bash --posix`, `sh` linked to bash,
 `POSIXLY_CORRECT=1`) refuses such a name, so use letters, digits and `_` only if your startup file
 is read in that mode. `--managed` records that the script belongs to tote; the flag is stored and
-shown, and nothing in 1.0 deletes or moves the file. A later release may act only on scripts under
+shown, and nothing so far deletes or moves the file. A later release may act only on scripts under
 the `bin` folder of the data directory (see [docs/compat.md](docs/compat.md)).
 
 ```sh
@@ -378,12 +380,12 @@ mouse = true
 
 ## Plugins
 
-A plugin adds commands to the palette and actions to the rows of a list. In tote 1.0 a plugin is
+A plugin adds commands to the palette and actions to the rows of a list. In tote 1.x a plugin is
 **declarative**: a folder with a `plugin.toml` and optional translations, with no code of its own.
 The manifest lists the programs to run (`git`, `curl`, `gft`), their arguments and the form to ask
 first. tote builds each command line itself, one argument per element, and never runs a shell. The
 **exec tier**, where a plugin ships its own program, is reserved for a later version: a manifest
-that asks for it is refused, and `tote plugin run` does not exist in 1.0.
+that asks for it is refused, and `tote plugin run` does not exist in 1.x.
 
 Consent comes first. Before a plugin is installed, or when an update asks for more, tote shows every
 command in full and what the plugin declares (programs, files, network, environment variables, the
@@ -429,7 +431,7 @@ which fails if the plugin asks for anything else. A release is a `github.com` re
 `owner/repo@tag` and needs the SHA-256 its author published; a folder on your machine
 (`./my-plugin`) is not verified at all. The states are `enabled`, `disabled`, `needs-consent`,
 `missing-dependency`, `incompatible`, `broken`, `quarantined` and `available`. Quarantine turns a
-plugin off after failures; a declarative run never counts as one, so it does not occur in 1.0, and
+plugin off after failures; a declarative run never counts as one, so it does not occur yet, and
 `tote plugin enable` clears it.
 
 - [docs/plugins/AUTHORING.md](docs/plugins/AUTHORING.md): write, check, install and release a
@@ -499,7 +501,7 @@ files are.
 - **Inserted bash lines.** The line that tote puts on your prompt runs inside the `tote` function,
   so a `declare` or `typeset` at its start is local to that function. Assignments, `export`, `cd`
   and the rest work as usual. Fixing it needs the line to run at the top level of the shell; that is
-  planned for 1.1.
+  planned for a later release.
 - **Function names with a dash** are valid, but bash in POSIX mode refuses to define them.
 - **Names are checked, not locked.** The rule that a name is unique across aliases, repositories and
   functions is checked before each `add`, not under one lock: two `tote` processes adding the same
@@ -511,14 +513,14 @@ files are.
 - **Translations.** Most refusals are translated, but a few messages stay in English: the free text
   of a syntax error in a TOML file, an I/O error of the system and some details of `tote doctor`.
 - **Exec plugins.** A manifest that asks for the exec tier is refused and `tote plugin run` does not
-  exist: both are planned for 1.1, with the `ghrel` and `ghsec` plugins.
+  exist: both are planned for a later release, with the `ghrel` and `ghsec` plugins.
 
 ## Moving your data from mn
 
 The program has no import command. A separate Bash script (bash 4 or later), `scripts/import.sh`,
 does the move. It is in the repository only, not in the release archives or the packages: clone
 `https://github.com/totecli/tote.git`, or download `scripts/import.sh` from the tag of your version
-(`https://raw.githubusercontent.com/totecli/tote/v1.0.0/scripts/import.sh`). It is a dry run unless
+(`https://raw.githubusercontent.com/totecli/tote/v1.1.0/scripts/import.sh`). It is a dry run unless
 you pass `--apply`:
 
 ```sh
