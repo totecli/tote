@@ -102,7 +102,7 @@ var reservedTables = []string{
 // it is false, a manifest of tier exec is refused with reserved_not_available (probeTier), and
 // the features exec.list and exec.run are neither announced in host.features nor in `plugin check`.
 // The exec implementation (the runner, the protocol, the [exec] and [[list]] reading) stays in
-// place, so that turning the switch on is all it takes to bring the tier back in 1.1.
+// place, so that turning the switch on is all it takes to bring the tier back in a later release.
 var execTierAvailable = false
 
 // execFeatures lists the host features that only exist with the exec tier.

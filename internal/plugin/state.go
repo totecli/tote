@@ -2,7 +2,7 @@ package plugin
 
 // State is the state of an installed plugin, section 4 of the specification. Only StateEnabled
 // contributes to menus, the palette and the command line. A seventh state, revoked, is reserved
-// for 1.1 and will rank before all of these.
+// for a later release and will rank before all of these.
 type State string
 
 // The states, in rank order: the first one whose condition holds is the state.
