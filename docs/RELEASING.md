@@ -17,9 +17,9 @@ reviews and publishes.
     file holds `install_method=apt` and `package=deb`, and with `package=deb` (the file of a GitHub
     release, which no apt repository follows) tote tells the user to download the new file and run
     `sudo apt install ./tote_<version>_linux_<arch>.deb`; `package=ppa` and `package=apt` get
-    `sudo apt update && sudo apt upgrade tote`. Once the apt repository ships those `.deb` files,
-    they must carry `package=apt` in `packaging/deb/install-method`, or they keep the GitHub hint
-    (see step 7 of "Each release");
+    `sudo apt update && sudo apt upgrade tote`. The PPA package ships the same file with
+    `package=ppa` (step 7 of "Each release"); `package=apt` is still recognised and means a package
+    that apt updates;
   - `tote_<version>_checksums.txt` (SHA-256) and its minisign signature `.minisig`, whose trusted
     comment holds `project`, `version`, `tag`, `channel` (`stable` or `beta`), `timestamp` and
     `file`, separated by tabs.
@@ -66,13 +66,14 @@ The binary then carries the placeholder keys, so `tote update` refuses and `tote
 To test signing as well, create throwaway keys with `minisign -G`, export `TOTE_RELEASE_KEYS` (their
 public keys), `MINISIGN_KEY_FILE`, `MINISIGN_PASSWORD`, a dummy `GITHUB_TOKEN` and
 `TOTE_MAINTAINER`, then build as a real release without publishing, on a fake tag, and verify the
-result. While the `README.md` still holds its placeholders, the preflight refuses the run unless
-`TOTE_ALLOW_PLACEHOLDER_README=1` is set (for such a test run only, never for a real release):
+result. The preflight refuses a `README.md` that still holds a placeholder, which only a checkout
+from before the keys were written has; `TOTE_ALLOW_PLACEHOLDER_README=1` lifts that for such a test
+run only, never for a real release:
 
 ```sh
-TOTE_ALLOW_PLACEHOLDER_README=1 GORELEASER_CURRENT_TAG=v1.0.0 \
+GORELEASER_CURRENT_TAG=v<version> \
     goreleaser release --clean --skip=publish,validate,announce
-GITHUB_REF_NAME=v1.0.0 packaging/verify.sh dist
+GITHUB_REF_NAME=v<version> packaging/verify.sh dist
 ```
 
 A snapshot is not suitable for this: its version has a pre-release part but GoReleaser reports no
@@ -90,25 +91,25 @@ and about five minutes (the build is most of it).
 SIM=$(mktemp -d) && cd "$SIM"
 # 1. two throwaway keys, never the real ones (the password is read from the pipe)
 for k in a b; do printf 'simpass\nsimpass\n' | minisign -G -p $k.pub -s $k.key; done
-# 2. build and sign a v1.0.0 from a clean clone: only committed files are released
+# 2. build and sign a v<version> from a clean clone: only committed files are released
 git clone --local <path of your checkout> src && cd src
 export TOTE_RELEASE_KEYS="$(sed -n 2p ../a.pub) $(sed -n 2p ../b.pub)" \
        MINISIGN_KEY_FILE=$SIM/a.key MINISIGN_PASSWORD=simpass GITHUB_TOKEN=dummy \
-       TOTE_MAINTAINER="Name <address>" GORELEASER_CURRENT_TAG=v1.0.0
+       TOTE_MAINTAINER="Name <address>" GORELEASER_CURRENT_TAG=v<version>
 goreleaser release --clean --skip=publish,validate,announce
-GITHUB_REF_NAME=v1.0.0 packaging/verify.sh dist        # must end with "binary ok"
+GITHUB_REF_NAME=v<version> packaging/verify.sh dist  # must end with "binary ok"
 # 3. the folder that stands for the release page: <base>/download/v<version>/<asset>
-mkdir -p "$SIM/root/download/v1.0.0" && cp dist/tote_1.0.0_* "$SIM/root/download/v1.0.0/"
+mkdir -p "$SIM/root/download/v<version>" && cp dist/tote_<version>_* "$SIM/root/download/v<version>/"
 # 4. install into a throwaway HOME with the key of the simulation
 mkdir -p "$SIM/home/.local/bin"
 env -i PATH=/usr/bin:/bin HOME="$SIM/home" TOTE_INSTALL_BASE="file://$SIM/root" \
     TOTE_INSTALL_PUBKEY="$(sed -n 2p $SIM/a.pub)" TOTE_INSTALL_YES=1 \
-    sh <path of install.sh> 1.0.0
+    sh <path of install.sh> <version>
 # 5. use it
 HOME="$SIM/home" PATH="$SIM/home/.local/bin:/usr/bin:/bin" tote doctor
 ```
 
-The version must be given (`1.0.0`): a `file://` base has no `latest` redirect to follow. The
+The version must be given (`<version>`): a `file://` base has no `latest` redirect to follow. The
 installer must say "Signature verified with minisign", and `tote doctor` must show the receipt
 (`installed with script`) and no FAIL; the only warning is the missing shell integration, which a
 throwaway HOME does not have. Delete `$SIM` by hand when you are done.
@@ -134,8 +135,8 @@ throwaway HOME does not have. Delete `$SIM` by hand when you are done.
      `RW_NEXT_RELEASE_KEY_PLACEHOLDER` of `TOTE_MINISIGN_KEYS` in the copy of `install.sh` that is
      published (the installer refuses to run with placeholders);
    - the `README.md` of the repository, see step 7;
-   - for a local release build only: `make build VERSION=1.0.0 KEYS="<current> <next>"`. The source
-     default of `internal/update/key.go` stays a placeholder on purpose.
+   - for a local release build only: `make build VERSION=<version> KEYS="<current> <next>"`. The
+     source default of `internal/update/key.go` stays a placeholder on purpose.
 4. **Create the GitHub environment `release`** in `totecli/tote` (Settings, Environments):
    - required reviewers: the maintainer;
    - deployment branches and tags: tags matching `v*` only;
@@ -181,19 +182,19 @@ throwaway HOME does not have. Delete `$SIM` by hand when you are done.
    `internal/ui`, whose frame tests take over 30 minutes with it (the target sets `-timeout 30m`).
 2. Create the signed tag and push it. Nothing else is pushed by the pipeline:
    ```sh
-   git tag -s v1.0.0 -m v1.0.0
-   git push <remote> v1.0.0     # the name of your remote for totecli/tote
+   git tag -s v<version> -m v<version>
+   git push <remote> v<version>     # the name of your remote for totecli/tote
    ```
 3. Approve the run of the workflow `release` in the Actions tab. It must end green, including the
    step "Verify the signature and the checksums".
-4. Open the draft release `v1.0.0`: it holds the six archives and packages, the checksums file and
-   its `.minisig`. Write the notes (French), empty the title field, and publish. Do not re-run the
-   workflow for that tag after emptying the title: the draft is found by its name, so a second draft
-   would be created.
+4. Open the draft release `v<version>`: it holds the six archives and packages, the checksums file
+   and its `.minisig`. Write the notes (English, no header, narrative bullets that end with a
+   period), empty the title field, and publish. Do not re-run the workflow for that tag after
+   emptying the title: the draft is found by its name, so a second draft would be created.
 5. Check the published files from outside, with the public key file:
    ```sh
-   minisign -V -H -p tote.pub -m tote_1.0.0_checksums.txt
-   sha256sum -c tote_1.0.0_checksums.txt
+   minisign -V -H -p tote.pub -m tote_<version>_checksums.txt
+   sha256sum -c tote_<version>_checksums.txt
    ```
 6. Stable versions only: publish `install.sh` (with the real keys, see step 3 above) in the place it
    is served from, under the version, and test `curl ... | sh` in a clean container.
@@ -210,9 +211,9 @@ throwaway HOME does not have. Delete `$SIM` by hand when you are done.
 
 `install.sh` stays out of the repository on purpose: it is a self-contained POSIX script published
 on the maintainer's file host, and its two key lines are filled in at publication. The draft is kept
-with the maintainer's other private distribution drafts (together with `keys.sh`, `publish-apt.sh`
-and the PPA scripts). Keep its behaviour in step with `internal/update` (archive and checksums
-names, trusted comment fields, key format).
+with the maintainer's other private distribution drafts (together with `keys.sh` and the PPA
+scripts). Keep its behaviour in step with `internal/update` (archive and checksums names, trusted
+comment fields, key format).
 
 ## Rotating the key
 
