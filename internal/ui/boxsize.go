@@ -29,6 +29,10 @@ const (
 	// infoMargins is the number of cells around the information line of a list, the borders
 	// included: a space on each side.
 	infoMargins = 4
+
+	// infoIndent is the number of cells of the information line that a box keeps blank at each
+	// end.
+	infoIndent = infoMargins / 2
 )
 
 // boxWidth returns the width of a box that adapts to the terminal: as wide as its content needs,

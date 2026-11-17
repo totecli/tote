@@ -248,7 +248,8 @@ func (p *pickOverlay) draw(e *env, maxW, maxH int) ([]string, []zone) {
 	lines, zs := win.stack(e, items, spaces(box.indent()+2), 1, inner)
 
 	if p.infoRows(maxH) > 0 {
-		lines = append(lines, " "+e.Theme.Muted.Render(e.Metric.fit(p.info, inner-2, e.Glyphs.ellipsis)))
+		info := e.Metric.fit(p.info, inner-infoIndent, e.Glyphs.ellipsis)
+		lines = append(lines, " "+e.Theme.Muted.Render(info))
 	}
 
 	return floating(e, e.Theme.Bold.Render(p.title), lines, w), shiftZones(zs, 1)

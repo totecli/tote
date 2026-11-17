@@ -9,7 +9,7 @@
 
 
                 ╭─ Suggestions: Tag ───────────────────────────╮
-                │   ⠼ Loading                             7 s  │
+                │   ⠼ Loading                              7 s │
                 │ gft --releases --plain -- demo/proj          │
                 ╰──────────────────────────────────────────────╯
                   esc cancel
@@ -28,7 +28,7 @@
 
 
   ╭─ Suggestions: Tag ───────────────╮
-  │   ⠼ Loading                 7 s  │
+  │   ⠼ Loading                  7 s │
   │ gft --releases -…in -- demo/proj │
   ╰──────────────────────────────────╯
    esc
@@ -39,7 +39,7 @@
 == 24x7
 
   ╭─ Suggestions: … ─╮
-  │   ⠼ Loadi…  7 s  │
+  │   ⠼ Loadi…   7 s │
   ╰──────────────────╯
    esc
    ⠼ Listing: gft …roj

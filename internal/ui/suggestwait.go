@@ -63,8 +63,8 @@ func (w *suggestWait) Update(e *env, msg tea.Msg) (overlay, tea.Cmd, bool) {
 	return w, nil, false
 }
 
-// width returns the width of the box: the one of a list of choices that is as wide as the title and
-// the argv ask for.
+// width returns the width of the box, which grows like a list of choices with the title and the
+// argv.
 //
 // Parameters:
 //   - e: shared environment
@@ -110,13 +110,13 @@ func (w *suggestWait) View(e *env, maxW, maxH int) []string {
 
 	if noteW := min(secsW, inner-rowMargins-columnGap-minNote); noteW >= minNote {
 		cells[0].w = max(1, inner-rowMargins-noteW-columnGap)
-		cells = append(cells, cell{text: secs, w: noteW, muted: true})
+		cells = append(cells, cell{text: secs, w: noteW, muted: true, right: true})
 	}
 
 	lines := []string{box.renderBoxRow(false, false, cells, inner)}
 
 	if maxH >= minInfoH {
-		info := e.midFit(s.argv, inner-2)
+		info := e.midFit(s.argv, inner-infoIndent)
 		lines = append(lines, " "+e.Theme.Muted.Render(info))
 	}
 
