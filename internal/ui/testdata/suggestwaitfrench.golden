@@ -13,7 +13,7 @@
                 │ gft --releases --plain -- demo/proj          │
                 ╰──────────────────────────────────────────────╯
                   esc annuler
-                  ⠋ Liste en cours : gft --release… -- demo/proj
+                  ⠋ Liste en cours : gft --releases --plain -- demo/proj
 
 
 
@@ -32,7 +32,7 @@
   │ gft --releases -…in -- demo/proj │
   ╰──────────────────────────────────╯
    esc
-   ⠋ Liste en cours : gft --re…mo/proj
+   ⠋ Liste en cours : gft --rel…emo/proj
 
 
 
@@ -42,5 +42,5 @@
   │   ⠋ Charg…       │
   ╰──────────────────╯
    esc
-   ⠋ Liste en cours :…
+   ⠋ Liste en cours : g…
 

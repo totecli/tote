@@ -161,14 +161,15 @@ func (e *env) midFit(s string, w int) string {
 	return e.Metric.cut(s, head) + mark + e.Metric.slice(s, total-(keep-head), total)
 }
 
-// statusRoom gives the cells that the status line has under the box of a form.
+// statusRoom gives the cells that the status line has under the box of a form, which reach the
+// right edge of the terminal.
 //
 // Parameters:
 //   - e: shared environment
 func (e *env) statusRoom() int {
-	w := max(4, min(max(1, e.Cols-4), formWidth))
+	w := max(4, min(max(1, e.Cols-screenMargins), formWidth))
 
-	return max(1, w-e.indent())
+	return max(1, e.statusReach(w)-e.indent())
 }
 
 // minDetailCells is the fewest cells that the line of the program keeps on the status line when the

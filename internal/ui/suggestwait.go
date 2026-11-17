@@ -129,7 +129,7 @@ func (w *suggestWait) View(e *env, maxW, maxH int) []string {
 // Parameters:
 //   - e: shared environment
 func (w *suggestWait) Status(e *env) statusInfo {
-	room := w.width(e, max(1, e.Cols-4)) - e.indent()
+	room := e.statusReach(w.width(e, max(1, e.Cols-screenMargins))) - e.indent()
 
 	return statusInfo{Command: e.listingLine(w.form.sug, room)}
 }

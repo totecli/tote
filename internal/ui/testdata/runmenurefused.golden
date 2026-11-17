@@ -35,7 +35,7 @@
   │      Delete all stashes…         │
   ╰──────────────────────────────────╯
    ⏎ · esc · ↑↓
-   gft: this repository has no GitHub…
+   gft: this repository has no GitHub r…
 == 24x7
   ╭─ Actions: proj ──╮
   │ ❯    Show the l… │
@@ -43,4 +43,4 @@
   │ !    Show the r… │
   ╰──────────────────╯
    ⏎ · esc · ↑↓
-   gft: this reposito…
+   gft: this repository…

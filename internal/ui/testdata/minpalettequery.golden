@@ -5,7 +5,7 @@
   │   Repos › proj   │
   ╰──────────────────╯
    ↑↓ · ⏎ · esc · tab
-   → ssh -l deploy --…
+   → ssh -l deploy -- p…
 == 26x8
   ╭─ Palette ──────────╮
   │ ❯ pro▏             │
@@ -14,7 +14,7 @@
   │   Repos › proj     │
   ╰────────────────────╯
    ↑↓ · ⏎ · esc · tab
-   → ssh -l deploy -- p…
+   → ssh -l deploy -- pro…
 == 36x10
   ╭─ Palette ────────────────────╮
   │ ❯ pro▏                       │
@@ -25,4 +25,4 @@
   │                              │
   ╰──────────────────────────────╯
    ↑↓ · ⏎ · esc · tab · ctrl+e
-   → ssh -l deploy -- prod.exampl…
+   → ssh -l deploy -- prod.example.…

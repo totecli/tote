@@ -415,3 +415,27 @@ func TestActionMenuWideLabels(t *testing.T) {
 		}
 	}
 }
+
+// TestStatusReach checks the room of the status line under a centered box: from its left edge to
+// the right edge of the terminal, and never less than the box.
+//
+// Parameters:
+//   - t: test to report to
+func TestStatusReach(t *testing.T) {
+	tests := []struct{ cols, bw, want int }{
+		{200, 48, 124},
+		{80, 48, 64},
+		{60, 48, 54},
+		{49, 48, 49},
+		{40, 48, 48},
+		{0, 48, 48},
+	}
+
+	for _, tt := range tests {
+		e := &env{Cols: tt.cols}
+
+		if got := e.statusReach(tt.bw); got != tt.want {
+			t.Errorf("statusReach(%d) on %d columns = %d, want %d", tt.bw, tt.cols, got, tt.want)
+		}
+	}
+}

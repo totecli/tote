@@ -21,7 +21,7 @@
   │ same, see connect.keepalive.                                             │
   ╰──────────────────────────────────────────────────────────────────────────╯
     esc close · ↑↓ scroll
-    Copied 651 characters (fake) · Shift+drag selects with the terminal inste…
+    Copied 651 characters (fake) · Shift+drag selects with the terminal instead
 -- copied --
 Mouse
 · Pointing at a row, an entry or a key of the footer only highlights it.

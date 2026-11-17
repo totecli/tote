@@ -32,7 +32,7 @@
   │ gft --releases -…in -- demo/proj │
   ╰──────────────────────────────────╯
    esc
-   ⠼ Listing: gft --releas…- demo/proj
+   ⠼ Listing: gft --release…-- demo/proj
 
 
 
@@ -42,5 +42,5 @@
   │   ⠼ Loadi…   7 s │
   ╰──────────────────╯
    esc
-   ⠼ Listing: gft …roj
+   ⠼ Listing: gft -…proj
 

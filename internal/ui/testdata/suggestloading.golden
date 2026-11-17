@@ -34,7 +34,7 @@
   │   Asset                          │
   ╰──────────────────────────────────╯
    ⏎ · ctrl+s · esc
-   ⠋ Listing: gft --releas…- demo/proj
+   ⠋ Listing: gft --release…-- demo/proj
 
 == 24x7
   ╭─ demo: Get a r… ─╮
@@ -43,4 +43,4 @@
   │             rel… │
   ╰──────────────────╯
    ⏎ · ctrl+s · esc
-   ⠋ Listing: gft …roj
+   ⠋ Listing: gft -…proj

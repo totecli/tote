@@ -35,7 +35,7 @@
   │      Supprimer tous les stashes… │
   ╰──────────────────────────────────╯
    ⏎ · esc · ↑↓
-   gft : ce dépôt n’a pas de remote G…
+   gft : ce dépôt n’a pas de remote Git…
 == 24x7
   ╭─ Actions : proj ─╮
   │ ❯    Afficher l… │
@@ -43,4 +43,4 @@
   │ !    Afficher l… │
   ╰──────────────────╯
    ⏎ · esc · ↑↓
-   gft : ce dépôt n’a…
+   gft : ce dépôt n’a p…

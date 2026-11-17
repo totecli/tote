@@ -848,7 +848,7 @@ func (r *root) renderOverlay(ov overlay, withHits bool) ([]string, []hit, int) {
 	e := r.e
 	lines := make([]string, e.Height)
 
-	maxW, maxH := max(1, e.Cols-4), max(1, e.Height-2)
+	maxW, maxH := max(1, e.Cols-screenMargins), max(1, e.Height-2)
 	block := ov.View(e, maxW, maxH)
 
 	if len(block) == 0 {
@@ -858,6 +858,7 @@ func (r *root) renderOverlay(ov overlay, withHits bool) ([]string, []hit, int) {
 	bw := e.Metric.width(block[0])
 	x := max(0, (e.Cols-bw)/2)
 	y := max(0, (e.Height-len(block)-1)/2)
+	reach := e.statusReach(bw)
 	pad := spaces(x)
 
 	for i, l := range block {
@@ -876,7 +877,7 @@ func (r *root) renderOverlay(ov overlay, withHits bool) ([]string, []hit, int) {
 	status := y + len(block) + 1
 
 	if s := status; s < len(lines) && (own || r.toast.text != "") {
-		if text := r.statusLine(bw); text != "" {
+		if text := r.statusLine(reach); text != "" {
 			lines[s] = pad + text
 		}
 	}
@@ -891,6 +892,15 @@ func (r *root) renderOverlay(ov overlay, withHits bool) ([]string, []hit, int) {
 	}
 
 	return lines, placeHits(zs, spans, x, y, y+len(block), x), status
+}
+
+// statusReach gives the cells that the status line has under a centered box of the width bw: from
+// its left edge to the right edge of the terminal, so that a long reason is not cut.
+//
+// Parameters:
+//   - bw: width of the box
+func (e *env) statusReach(bw int) int {
+	return max(bw, e.Cols-max(0, (e.Cols-bw)/2))
 }
 
 // statusLine draws the line above the footer: the toast while there is one, else the status of

@@ -15,7 +15,7 @@
     │   Asset                                                              │
     ╰──────────────────────────────────────────────────────────────────────╯
       ⏎ next · ctrl+s run · esc stop
-      ⠋ Listing: gft --releases --plain --dir=…a-repository-with-a-long-name
+      ⠋ Listing: gft --releases --plain --dir=/h…o/a-repository-with-a-long-name
 
 
 
@@ -34,7 +34,7 @@
   │   Asset                          │
   ╰──────────────────────────────────╯
    ⏎ · ctrl+s · esc
-   ⠋ Listing: gft --releas…a-long-name
+   ⠋ Listing: gft --release…-a-long-name
 
 == 24x7
   ╭─ demo: Get a r… ─╮
@@ -43,4 +43,4 @@
   │             rel… │
   ╰──────────────────╯
    ⏎ · ctrl+s · esc
-   ⠋ Listing: gft …ame
+   ⠋ Listing: gft -…name

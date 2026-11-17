@@ -13,7 +13,7 @@
                 │ gft --releases --plain…tory-with-a-long-name │
                 ╰──────────────────────────────────────────────╯
                   esc cancel
-                  ⠋ Listing: gft --releases --…-with-a-long-name
+                  ⠋ Listing: gft --releases --plain --…pository-with-a-long-name
 
 
 
@@ -32,7 +32,7 @@
   │ gft --releases -…ith-a-long-name │
   ╰──────────────────────────────────╯
    esc
-   ⠋ Listing: gft --releas…a-long-name
+   ⠋ Listing: gft --release…-a-long-name
 
 
 
@@ -42,5 +42,5 @@
   │   ⠋ Loadi…       │
   ╰──────────────────╯
    esc
-   ⠋ Listing: gft …ame
+   ⠋ Listing: gft -…name
 

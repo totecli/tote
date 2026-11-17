@@ -35,7 +35,7 @@
   | rk work work work                |
   +----------------------------------+
    esc - up/down
-   plugin gft : echec, code de sort...
+   plugin gft : echec, code de sortie 3
 == 24x7
   +- gft : Lis... ---+
   | on main: work wo |
@@ -43,4 +43,4 @@
   | k                |
   +------------------+
    esc - up/down
-   plugin gft : ech...
+   plugin gft : echec...

@@ -35,7 +35,7 @@
   |      Supprimer tous les stash... |
   +----------------------------------+
    enter - esc - up/down
-   gft : ce depot n'a pas de remote...
+   gft : ce depot n'a pas de remote G...
 == 24x7
   +- Actions : proj -+
   | >    Afficher... |
@@ -43,4 +43,4 @@
   | !    Afficher... |
   +------------------+
    enter - esc
-   gft : ce depot n...
+   gft : ce depot n'a...

@@ -22,6 +22,10 @@ const (
 	// borderCells is the number of cells that the two sides of a box take.
 	borderCells = 2
 
+	// screenMargins is the number of cells that a box leaves free on the two sides of the
+	// terminal.
+	screenMargins = 4
+
 	// titleMargins is the number of cells that a box keeps around a title set in its top border,
 	// the borders included, so that the title is not cut: see boxWith.
 	titleMargins = 6
