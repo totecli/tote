@@ -19,7 +19,8 @@ type typist interface {
 }
 
 // helpAllowed reports whether a key may open the help. F1 may open it anywhere but over the help
-// itself; "?" only where it is not a character of some text.
+// itself and over the loading box of the suggestions, which holds the form until its list comes;
+// "?" only where it is not a character of some text.
 //
 // Parameters:
 //   - k: key pressed
@@ -30,7 +31,8 @@ func (r *root) helpAllowed(k tea.KeyPressMsg) bool {
 	}
 
 	top := r.overlays[n-1]
-	if _, isHelp := top.(*helpOverlay); isHelp {
+	switch top.(type) {
+	case *helpOverlay, *suggestWait:
 		return false
 	}
 

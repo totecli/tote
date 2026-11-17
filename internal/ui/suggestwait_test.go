@@ -396,3 +396,28 @@ func TestSuggestNoBoxOverHelp(t *testing.T) {
 		t.Errorf("the list did not open: %T", s.top())
 	}
 }
+
+// TestSuggestLoadingHoldsHelp checks that the help does not open over the loading box: the form
+// would not be on top when the list arrives, and the list would be lost.
+//
+// Parameters:
+//   - t: test to report to
+func TestSuggestLoadingHoldsHelp(t *testing.T) {
+	s, _, _ := loading(t, "slowok")
+	n := len(s.r.overlays)
+
+	for _, k := range []tea.KeyPressMsg{keyMsg("?"), {Code: tea.KeyF1}} {
+		s.send(k)
+
+		if _, ok := s.top().(*suggestWait); !ok || len(s.r.overlays) != n {
+			t.Fatalf("%q opened the help over the loading box, the top is %T", k.String(), s.top())
+		}
+	}
+
+	s.release()
+	s.listed()
+
+	if _, ok := s.top().(*pickOverlay); !ok {
+		t.Errorf("the list did not open: %T", s.top())
+	}
+}
