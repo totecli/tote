@@ -6,21 +6,18 @@ import (
 	"github.com/totecli/tote/internal/plugin"
 )
 
+// midArgv is an argv a little wider than the loading box of a terminal of 60 to 80 columns, so that
+// the box cuts it in the middle, and shorter than the room that the status line has to the edge
+// of the terminal.
+const midArgv = "gft --releases --plain --prerelease=false -- demo/dropr"
+
 // longArgv is an argv too long for the status line of the form and for the box that loads.
 const longArgv = "gft --releases --plain --dir=/home/tester/Downloads/" +
 	"a-very-long-directory-name/with/many/parts -- demo/a-repository-with-a-long-name"
 
-// cannedSuggest returns the form of a command with suggestions in the state a frame shows,
-// without starting a program. The form has three fields, Repository, Tag and Asset; the keys are on
-// Tag, which lists its suggestions, and Repository holds a value. The kinds are idle (the hint of
-// the key), preparing, loading (the program runs), long (the same with an argv too long for the
-// line), waiting (an earlier field is not valid), waitingrepo (no repository), failed (a program
-// that exits with a status and a line), signal, timeout, toolarge, empty, ready (a list was
-// shown), nomatch (a list that holds nothing that is typed), limit and stopped; the picker kinds
-// are picker, pickerhidden (a list with dropped and uncounted entries), pickerfiltered,
-// pickernone and pickerlong (long values and labels, which a wide terminal shows whole). The
-// loading box over the form is wait (the program just started), waitsecs (it has run for seven
-// seconds, the spinner on its third frame) and waitlong (an argv too long for the box).
+// cannedSuggest returns the form of a command with suggestions in the state a frame shows, without
+// starting a program, or the picker or the loading box that the kind stands for. The form has the
+// fields Repository, Tag and Asset, with the keys on Tag, which lists its suggestions.
 //
 // Parameters:
 //   - e: shared environment
@@ -63,14 +60,17 @@ func cannedSuggest(e *env, kind string) (overlay, *fieldsForm) {
 		s.phase, s.argv = sugRunning, argv
 	case "long":
 		s.phase, s.argv = sugRunning, longArgv
-	case "wait", "waitsecs", "waitlong":
+	case "wait", "waitsecs", "waitmid", "waitlong":
 		s.phase, s.argv = sugRunning, argv
 
 		if kind == "waitsecs" {
 			s.spin, s.secs = 2, 7
 		}
 
-		if kind == "waitlong" {
+		switch kind {
+		case "waitmid":
+			s.argv = midArgv
+		case "waitlong":
 			s.argv = longArgv
 		}
 
@@ -179,6 +179,25 @@ func pluginSuggestFrames() []frameCase {
 				check: checkedBesides(pluginSizes), setup: look.setup,
 			})
 		}
+	}
+
+	return append(out, suggestWaitNarrowFrames()...)
+}
+
+// narrowWaitSizes are the sizes of the frames of the loading box on a terminal a little wider than
+// the box: the compact layout, where the footer shows only the key, and the full one.
+var narrowWaitSizes = [][2]int{{60, 24}, {80, 24}}
+
+// suggestWaitNarrowFrames lists the frames of the loading box with an argv that it cuts. Nothing
+// must show under the footer of the box, see TestSuggestWaitNoStatusLine.
+func suggestWaitNarrowFrames() []frameCase {
+	var out []frameCase
+
+	for _, look := range pluginLooks {
+		out = append(out, frameCase{
+			name: "suggestwaitmid" + look.suffix, data: dataPlugRun, start: StartHome,
+			keys: []string{"suggest:waitmid"}, sizes: narrowWaitSizes, setup: look.setup,
+		})
 	}
 
 	return out

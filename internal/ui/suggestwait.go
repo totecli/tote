@@ -14,6 +14,11 @@ type suggestTickMsg struct {
 // right of the row, so that it does not move when the count goes from one digit to two.
 const secsMax = 99
 
+// waitInfoH is the fewest lines of room for which the loading box keeps the line of the argv: the
+// two borders, the row of the spinner and the argv. The shortest terminal (7 lines) leaves 5 to
+// the box, so the argv always shows.
+const waitInfoH = 4
+
 // suggestWait is the box that stands for the list of suggestions while its program runs: the title
 // of the list, one muted row with the spinner and a word, the argv under it and, once a second has
 // passed, the seconds the run has taken. The root takes it away when the run ends, whatever the
@@ -115,23 +120,12 @@ func (w *suggestWait) View(e *env, maxW, maxH int) []string {
 
 	lines := []string{box.renderBoxRow(false, false, cells, inner)}
 
-	if maxH >= minInfoH {
+	if maxH >= waitInfoH {
 		info := e.midFit(s.argv, inner-infoIndent)
 		lines = append(lines, " "+e.Theme.Muted.Render(info))
 	}
 
 	return floating(e, e.Theme.Bold.Render(w.title), lines, bw)
-}
-
-// Status implements statuser: the status line keeps the "Listing" text of the form, with the
-// spinner in front.
-//
-// Parameters:
-//   - e: shared environment
-func (w *suggestWait) Status(e *env) statusInfo {
-	room := e.statusReach(w.width(e, max(1, e.Cols-screenMargins))) - e.indent()
-
-	return statusInfo{Command: e.listingLine(w.form.sug, room)}
 }
 
 // Keys implements overlay.

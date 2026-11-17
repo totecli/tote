@@ -13,7 +13,7 @@
                 │ gft --releases --plain -- demo/proj          │
                 ╰──────────────────────────────────────────────╯
                   esc cancel
-                  ⠋ Listing: gft --releases --plain -- demo/proj
+
 
 
 
@@ -32,7 +32,7 @@
   │ gft --releases -…in -- demo/proj │
   ╰──────────────────────────────────╯
    esc
-   ⠋ Listing: gft --release…-- demo/proj
+
 
 
 
@@ -40,7 +40,7 @@
 
   ╭─ Suggestions: … ─╮
   │   ⠋ Loadi…       │
+  │ gft --re…mo/proj │
   ╰──────────────────╯
    esc
-   ⠋ Listing: gft -…proj
 

@@ -254,7 +254,7 @@ func TestSuggestionsFailureBinary(t *testing.T) {
 }
 
 // TestSuggestionsCancelBinary checks that Esc stops the program of the suggestions and keeps the
-// form, that the status line shows the exact command while it runs, and that the end of tote
+// form, that the box shows the exact command while it runs, and that the end of tote
 // leaves no program of the plugin behind.
 //
 // Parameters:
@@ -268,7 +268,7 @@ func TestSuggestionsCancelBinary(t *testing.T) {
 
 	tm.openPick("hang")
 	tm.key("C-l")
-	tm.waitText("Listing:")
+	tm.waitText("Loading")
 	tm.waitText("lister --tags hang")
 
 	pid := listerPid(tm)
@@ -284,7 +284,7 @@ func TestSuggestionsCancelBinary(t *testing.T) {
 
 	// The same, ended by the end of tote itself.
 	tm.key("C-l")
-	tm.waitText("Listing:")
+	tm.waitText("Loading")
 
 	pid = listerPid(tm)
 
@@ -310,9 +310,8 @@ func TestSuggestionsCancelBinary(t *testing.T) {
 	}
 }
 
-// TestSuggestionsLoadingBinary checks what the person sees while a slow program lists: the box of
-// the list opens at once with its title and a loading row, the argv that runs, no value of the
-// list and the seconds once one has passed; then the list takes its place when the program answers.
+// TestSuggestionsLoadingBinary checks the box of a slow listing: it opens at once with a loading
+// row and the argv once (not repeated on the status line), then gives way to the list on answer.
 //
 // Parameters:
 //   - t: test to report to
@@ -331,7 +330,8 @@ func TestSuggestionsLoadingBinary(t *testing.T) {
 
 	pid := listerPid(tm)
 
-	if s := tm.look(); s.has("v1.0") || !s.has("Listing:") || !s.has("cancel") {
+	if s := tm.look(); s.has("v1.0") || !s.has("Loading") || !s.has("cancel") ||
+		strings.Count(s.Text, "lister --tags slow") != 1 {
 		t.Errorf("the loading box is not what is expected:\n%s", s.Text)
 	}
 

@@ -1,10 +1,13 @@
 package ui
 
 import (
+	"cmp"
 	"os"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
+	"unicode/utf8"
 
 	tea "charm.land/bubbletea/v2"
 
@@ -52,7 +55,7 @@ func TestSuggestLoadingBox(t *testing.T) {
 	s, _, _ := loading(t, "slowok")
 
 	for _, want := range []string{
-		"Suggestions: Tag", "\u280b Loading", "lister --tags slowok", "Listing: lister --tags slowok",
+		"Suggestions: Tag", "\u280b Loading", "lister --tags slowok",
 	} {
 		if !strings.Contains(s.text(), want) {
 			t.Errorf("the loading box lacks %q:\n%s", want, s.text())
@@ -61,6 +64,14 @@ func TestSuggestLoadingBox(t *testing.T) {
 
 	if got := s.footerText(); !strings.Contains(got, "esc") || !strings.Contains(got, "cancel") {
 		t.Errorf("the footer does not offer to cancel: %q", got)
+	}
+
+	if n := strings.Count(s.text(), "lister --tags slowok"); n != 1 {
+		t.Errorf("the argv shows %d times, want once, in the box:\n%s", n, s.text())
+	}
+
+	if strings.Contains(s.text(), "Listing") {
+		t.Errorf("a status line repeats what the box says:\n%s", s.text())
 	}
 
 	if strings.Contains(s.text(), "v1.0") {
@@ -284,8 +295,8 @@ func TestSuggestSpinnerTicksWhileTheRunGoes(t *testing.T) {
 		t.Errorf("frame %d, %d seconds:\n%s", sug.spin, sug.secs, s.text())
 	}
 
-	if !strings.Contains(s.text(), frame+" Listing:") {
-		t.Errorf("the status line has no spinner:\n%s", s.text())
+	if n := strings.Count(s.text(), frame); n != 1 {
+		t.Errorf("the spinner shows %d times, want once, in the box:\n%s", n, s.text())
 	}
 }
 
@@ -419,5 +430,122 @@ func TestSuggestLoadingHoldsHelp(t *testing.T) {
 
 	if _, ok := s.top().(*pickOverlay); !ok {
 		t.Errorf("the list did not open: %T", s.top())
+	}
+}
+
+// loadingRows finds the rows of a loading box in a frame of the plain mode.
+//
+// Parameters:
+//   - t: running test
+//   - frame: the rendered screen
+//
+// Returns the right edge of the box, counted in cells from the left edge of the terminal, the
+// footer under it and the line under the footer, empty when there is none, both without their
+// trailing spaces.
+func loadingRows(t *testing.T, frame string) (int, string, string) {
+	t.Helper()
+
+	lines := strings.Split(trimFrame(frame), "\n")
+
+	for i, l := range lines {
+		if !strings.Contains(l, "Suggestions") {
+			continue
+		}
+
+		// The footer and the status line follow the bottom border, the next line with a corner.
+		for j := i + 1; j+1 < len(lines); j++ {
+			if edge := strings.TrimLeft(lines[j], " "); strings.HasPrefix(edge, "\u2570") ||
+				strings.HasPrefix(edge, "+") {
+				status := ""
+				if j+2 < len(lines) {
+					status = lines[j+2]
+				}
+
+				return utf8.RuneCountInString(l), lines[j+1], status
+			}
+		}
+	}
+
+	t.Fatalf("no loading box in the frame:\n%s", frame)
+
+	return 0, "", ""
+}
+
+// TestSuggestWaitNoStatusLine checks that nothing is under the footer of the loading box, which
+// already has the spinner and the argv, and that the hint is the key alone below fullWidth and
+// gains what the key does from there.
+//
+// Parameters:
+//   - t: test to report to
+func TestSuggestWaitNoStatusLine(t *testing.T) {
+	sb := frameSandbox(t, dataPlugRun)
+
+	for _, look := range pluginLooks {
+		cancel := "cancel"
+		if look.suffix != "" {
+			cancel = "annuler"
+		}
+
+		for _, size := range narrowWaitSizes {
+			name := cmp.Or(look.suffix, "english") + "/" + strconv.Itoa(size[0])
+			c := frameCase{
+				start: StartHome, keys: []string{"suggest:waitmid"}, setup: look.setup,
+			}
+
+			t.Run(name, func(t *testing.T) {
+				frame := renderFrame(t, sb, c, frameModes()[0], size)
+				_, foot, status := loadingRows(t, frame)
+
+				if strings.TrimSpace(status) != "" {
+					t.Errorf("there is a status line under the footer: %q", status)
+				}
+
+				if !strings.Contains(foot, "esc") {
+					t.Errorf("the footer lacks the key to cancel: %q", foot)
+				}
+
+				if full := size[0] >= fullWidth; strings.Contains(foot, cancel) != full {
+					t.Errorf("the hint is %q at %d columns, the description of the key is "+
+						"expected only from %d", foot, size[0], fullWidth)
+				}
+			})
+		}
+	}
+}
+
+// TestSuggestWaitShowsTheArgvAtLeastHeight checks that the loading box shows the command on the
+// shortest terminal that the interface supports: a person reads it to decide whether to wait.
+//
+// Parameters:
+//   - t: test to report to
+func TestSuggestWaitShowsTheArgvAtLeastHeight(t *testing.T) {
+	sb := frameSandbox(t, dataPlugRun)
+	c := frameCase{start: StartHome, keys: []string{"suggest:waitmid"}}
+
+	for _, w := range []int{60, 80} {
+		t.Run(strconv.Itoa(w), func(t *testing.T) {
+			frame := renderFrame(t, sb, c, frameModes()[0], [2]int{w, minHeight})
+
+			if !strings.Contains(frame, "gft --releases") {
+				t.Errorf("no command in the box at %d x %d:\n%s", w, minHeight, trimFrame(frame))
+			}
+		})
+	}
+}
+
+// TestSuggestWaitToastKeepsItsRoom checks that a toast over the loading box is not cut at the
+// border of the box: unlike the status of the box it carries a message that nothing else shows.
+//
+// Parameters:
+//   - t: test to report to
+func TestSuggestWaitToastKeepsItsRoom(t *testing.T) {
+	sb := frameSandbox(t, dataPlugRun)
+	c := frameCase{start: StartHome, keys: []string{"suggest:waitmid", "toast"}}
+
+	frame := renderFrame(t, sb, c, frameModes()[0], [2]int{80, 24})
+	edge, _, status := loadingRows(t, frame)
+
+	if utf8.RuneCountInString(status) <= edge {
+		t.Errorf("the toast is cut at the box (%d cells):\n%s", edge, trimFrame(frame))
 	}
 }

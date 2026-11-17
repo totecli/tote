@@ -299,8 +299,8 @@ func TestSuggestCtrlLOnAnotherField(t *testing.T) {
 	}
 }
 
-// TestSuggestRunningShowsTheArgv checks the status line while the program runs: the exact argv,
-// and Esc, which stops it and keeps the form.
+// TestSuggestRunningShowsTheArgv checks what shows while the program runs: the exact argv, once, in
+// the box, with no status line under it, and Esc, which stops it and keeps the form.
 func TestSuggestRunningShowsTheArgv(t *testing.T) {
 	s := newSuggestRig(t, "hang")
 
@@ -312,10 +312,12 @@ func TestSuggestRunningShowsTheArgv(t *testing.T) {
 		t.Fatalf("no run goes:\n%s", s.text())
 	}
 
-	for _, want := range []string{"Listing:", "lister --tags hang"} {
-		if !strings.Contains(s.text(), want) {
-			t.Errorf("the status line lacks %q:\n%s", want, s.text())
-		}
+	if !strings.Contains(s.text(), "lister --tags hang") || strings.Contains(s.text(), "Listing") {
+		t.Errorf("the screen shows the argv once and no status line:\n%s", s.text())
+	}
+
+	if n := strings.Count(s.text(), "lister --tags hang"); n != 1 {
+		t.Errorf("the argv shows %d times, want once, in the box:\n%s", n, s.text())
 	}
 
 	if got := s.footerText(); !strings.Contains(got, "esc") {

@@ -21,7 +21,7 @@
                                              │ gft --releases --plain --dir=/home/tester/Downloads/a…ith/many/parts -- demo/a-repository-with-a-long-name │
                                              ╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
                                                esc annuler
-                                               ⠋ Liste en cours : gft --releases --plain --dir=/home/tester/Downloads/a-very-long-directory-name/with/many/parts -- demo/a-repository-with-a-long-name
+
 
 
 
