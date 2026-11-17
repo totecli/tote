@@ -104,8 +104,8 @@ signs:
       output: true
 
 nfpms:
-    # The .deb served by the apt repository (Debian bookworm/trixie, every Ubuntu): the same
-    # static binary as the archives, covered by the signed checksums file.
+    # The .deb attached to the GitHub release (package=deb): the same static binary as the
+    # archives, covered by the signed checksums file. The PPA source package is built apart.
     - id: tote
       ids: [tote]
       package_name: tote
