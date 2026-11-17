@@ -45,9 +45,6 @@
 
 
 
-
-
-
             ╭─ Palette ────────────────────────────────────────────────────────────────╮
             │ ❯ search all - c, r, a, d or > to narrow                                 │
             ├──────────────────────────────────────────────────────────────────────────┤
@@ -62,13 +59,16 @@
             │   New alias                                                              │
             │   New function                                                           │
             │   Go to… Connections                                                     │
-            │   ↓ 9 more                                                               │
+            │   Go to… Repos                                                           │
+            │   Go to… Aliases                                                         │
+            │   Go to… Functions                                                       │
+            │   Go to… Home                                                            │
+            │   Settings                                                               │
+            │   Help                                                                   │
+            │   ↓ 3 more                                                               │
             ╰──────────────────────────────────────────────────────────────────────────╯
               ↑↓ choose · ⏎ open · esc close · tab complete · ctrl+e edit
               /srv/work/proj
-
-
-
 
 
 

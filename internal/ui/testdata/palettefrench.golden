@@ -45,9 +45,6 @@
 
 
 
-
-
-
             ╭─ Palette ────────────────────────────────────────────────────────────────╮
             │ ❯ staging▏                                                               │
             ├──────────────────────────────────────────────────────────────────────────┤
@@ -62,13 +59,16 @@
             │   Alias › ll                                                      ls -la │
             │   Alias › gs                                                  git status │
             │   Fonctions › hello                                               source │
-            │   ↓ 15 de plus                                                           │
+            │   Fonctions › tool                                                A tool │
+            │   Nouvelle connexion                                                     │
+            │   Nouveau dépôt                                                          │
+            │   Nouvel alias                                                           │
+            │   Nouvelle fonction                                                      │
+            │   Aller à… Connexions                                                    │
+            │   ↓ 9 de plus                                                            │
             ╰──────────────────────────────────────────────────────────────────────────╯
               ↑↓ choisir · ⏎ ouvrir · esc restaurer · tab compléter · ctrl+e modifier
               → ssh -l deploy -- staging.example.com
-
-
-
 
 
 

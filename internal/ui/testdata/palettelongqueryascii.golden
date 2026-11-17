@@ -1,0 +1,41 @@
+== 200x40
+
+
+
+
+
+
+
+
+                                        +- Palette ------------------------------------------------------------------------------------------------------------+
+                                        | > ba_                                                                                                                |
+                                        +----------------------------------------------------------------------------------------------------------------------+
+                                        | > Alias > backup  rsync -az --delete --exclude=node_modules --exclude=.cache /srv/work/proj/ backup.example.com:/... |
+                                        |   Connexions > bastion                                                                           bastion.example.com |
+                                        |                                                                                                                      |
+                                        |                                                                                                                      |
+                                        |                                                                                                                      |
+                                        |                                                                                                                      |
+                                        |                                                                                                                      |
+                                        |                                                                                                                      |
+                                        |                                                                                                                      |
+                                        |                                                                                                                      |
+                                        |                                                                                                                      |
+                                        |                                                                                                                      |
+                                        |                                                                                                                      |
+                                        |                                                                                                                      |
+                                        |                                                                                                                      |
+                                        |                                                                                                                      |
+                                        |                                                                                                                      |
+                                        |                                                                                                                      |
+                                        +----------------------------------------------------------------------------------------------------------------------+
+                                          up/down choisir - enter ouvrir - esc fermer - tab completer - ctrl+e modifier
+                                          rsync -az --delete --exclude=node_modules --exclude=.cache /srv/work/proj/ backup.example.com:/srv/backups/proj/
+
+
+
+
+
+
+
+

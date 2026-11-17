@@ -376,8 +376,8 @@ func TestPaletteEditing(t *testing.T) {
 		t.Errorf("scope %d top %q", p.sc, top(p))
 	}
 
-	if n := len(p.View(g.r.e, 80, 40)); n != paletteHeight {
-		t.Errorf("the box is %d lines with one result, want %d", n, paletteHeight)
+	if n := len(p.View(g.r.e, 80, 40)); n != paletteBoxHeight(40) {
+		t.Errorf("the box is %d lines with one result, want %d", n, paletteBoxHeight(40))
 	}
 
 	g.press("ctrl+w")
@@ -630,7 +630,7 @@ func TestPaletteTinyBox(t *testing.T) {
 	for _, size := range [][2]int{{1, 1}, {4, 4}, {10, 4}, {20, 6}, {36, 8}, {80, 40}} {
 		lines := p.View(g.r.e, size[0], size[1])
 
-		if want := min(size[1], paletteHeight); len(lines) != want && size[1] > 4 {
+		if want := paletteBoxHeight(size[1]); len(lines) != want && size[1] > 4 {
 			t.Errorf("%v: %d lines, want %d", size, len(lines), want)
 		}
 

@@ -5,7 +5,8 @@ import (
 	tea "charm.land/bubbletea/v2"
 )
 
-// pickWidth is the widest the box of a list of choices gets, in cells.
+// pickWidth is the width of the box of a list of choices on a small screen, in cells, and the
+// least it gets: a wide terminal and long labels make it grow, see boxWidth.
 const pickWidth = 48
 
 // pickItem is one line of a list of choices.
@@ -167,6 +168,43 @@ func (p *pickOverlay) Zones(e *env, maxW, maxH int) []zone {
 // labels alone.
 const minNote = 3
 
+// columns returns the width of the widest label and of the widest note of the choices.
+//
+// Parameters:
+//   - e: shared environment, for the metric
+func (p *pickOverlay) columns(e *env) (labelW, noteW int) {
+	for _, it := range p.items {
+		labelW = max(labelW, e.Metric.width(it.label))
+		noteW = max(noteW, e.Metric.width(it.note))
+	}
+
+	return labelW, noteW
+}
+
+// wanted returns the width of the box that shows the labels, the notes, the title and the
+// information line whole, borders included. The box is never that wide on a small terminal, see
+// boxWidth.
+//
+// Parameters:
+//   - e: shared environment, for the metric
+//   - labelW: width of the widest label
+//   - noteW: width of the widest note, 0 for none
+func (p *pickOverlay) wanted(e *env, labelW, noteW int) int {
+	rowW := labelW + rowMargins + borderCells
+	if noteW > 0 {
+		rowW += columnGap + noteW
+	}
+
+	titleW := e.Metric.width(p.title) + titleMargins
+	infoW := 0
+
+	if p.info != "" {
+		infoW = e.Metric.width(p.info) + infoMargins
+	}
+
+	return max(rowW, titleW, infoW)
+}
+
 // draw lays out the box of the choices.
 //
 // Parameters:
@@ -177,20 +215,15 @@ const minNote = 3
 // Returns the lines of the box and the zones of the items, counted from its top left corner. A
 // list longer than the box has a muted "N more" line on its first or last row.
 func (p *pickOverlay) draw(e *env, maxW, maxH int) ([]string, []zone) {
-	w := max(4, min(maxW, pickWidth))
+	labelW, noteW := p.columns(e)
+	w := boxWidth(pickWidth, p.wanted(e, labelW, noteW), pickMaxWidth, e.Cols, maxW)
 	inner := w - 2
 	rows := p.rows(maxH)
 	win := windowOf(scrollTo(p.cur, p.off, rows, len(p.items)), rows, len(p.items))
 	p.off = win.off
 
-	noteW, labelW := 0, 0
-	for _, it := range p.items {
-		noteW = max(noteW, e.Metric.width(it.note))
-		labelW = max(labelW, e.Metric.width(it.label))
-	}
-
 	// The notes give way to the labels: a note that cannot keep minNote cells is left out.
-	if noteW = min(noteW, inner-4-columnGap-labelW); noteW < minNote {
+	if noteW = min(noteW, inner-rowMargins-columnGap-labelW); noteW < minNote {
 		noteW = 0
 	}
 
@@ -201,10 +234,10 @@ func (p *pickOverlay) draw(e *env, maxW, maxH int) ([]string, []zone) {
 
 	for i := win.off; i < win.off+win.count; i++ {
 		it := p.items[i]
-		cells := []cell{{text: it.label, w: max(1, inner-4), muted: it.off}}
+		cells := []cell{{text: it.label, w: max(1, inner-rowMargins), muted: it.off}}
 
 		if noteW > 0 {
-			cells[0].w = max(1, inner-4-noteW-columnGap)
+			cells[0].w = max(1, inner-rowMargins-noteW-columnGap)
 			cells = append(cells, cell{text: it.note, w: noteW, muted: true})
 		}
 

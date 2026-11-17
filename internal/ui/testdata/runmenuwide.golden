@@ -1,0 +1,41 @@
+== 200x40
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                            ╭─ Actions: proj ──────────────────────────────╮
+                                                                            │      Show the latest release             gft │
+                                                                            │ ❯    List the release assets             gft │
+                                                                            │      Show the release notes              gft │
+                                                                            │   s  List stashes                        gft │
+                                                                            │      Show a stash…                       gft │
+                                                                            │      Drop a stash…                       gft │
+                                                                            │      Delete all stashes…                 gft │
+                                                                            ╰──────────────────────────────────────────────╯
+                                                                              ⏎ choose · esc close · ↑↓ navigate
+                                                                              this repository has no GitHub remote
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -13,8 +13,8 @@ import (
 // line), waiting (an earlier field is not valid), waitingrepo (no repository), failed (a program
 // that exits with a status and a line), signal, timeout, toolarge, empty, ready (a list was
 // shown), nomatch (a list that holds nothing that is typed), limit and stopped; the picker kinds
-// are picker, pickerhidden (a list with dropped and uncounted entries), pickerfiltered and
-// pickernone.
+// are picker, pickerhidden (a list with dropped and uncounted entries), pickerfiltered,
+// pickernone and pickerlong (long values and labels, which a wide terminal shows whole).
 //
 // Parameters:
 //   - e: shared environment
@@ -88,12 +88,16 @@ func cannedSuggest(e *env, kind string) (overlay, *fieldsForm) {
 		s.phase = sugLimit
 	case "stopped":
 		s.phase = sugStopped
-	case "picker", "pickerhidden", "pickerfiltered", "pickernone":
-		if kind == "pickerhidden" {
+	case "picker", "pickerhidden", "pickerfiltered", "pickernone", "pickerlong":
+		if kind == "pickerhidden" || kind == "pickerlong" {
 			res.More = 40
 		}
 
-		if kind != "pickerhidden" {
+		if kind == "pickerlong" {
+			res.Items = longChoices()
+		}
+
+		if kind != "pickerhidden" && kind != "pickerlong" {
 			res.Hidden = 0
 		}
 

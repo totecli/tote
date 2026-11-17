@@ -8,10 +8,12 @@ import (
 )
 
 const (
-	// paletteWidth is the widest the palette box is drawn.
+	// paletteWidth is the width of the palette box on a small screen, and the least it gets: a
+	// wide terminal and long rows make it grow, see boxWidth.
 	paletteWidth = 76
 
-	// paletteHeight is the height of the palette box when the screen is tall enough.
+	// paletteHeight is the height of the palette box on a small screen, and the least it gets
+	// when the screen is tall enough: a tall terminal makes it grow, see paletteBoxHeight.
 	paletteHeight = 16
 
 	// minSubWidth is the fewest cells of the target, path or command that a row of the palette
@@ -49,6 +51,7 @@ type paletteOverlay struct {
 	sel     int
 	off     int
 	preview bool
+	need    int
 }
 
 // newPalette returns the overlay of the command palette, opened with Ctrl-K from any screen.
@@ -83,6 +86,7 @@ func (p *paletteOverlay) ensure(e *env) {
 
 	p.built = true
 	p.entries = buildEntries(e)
+	p.need = p.wanted(e)
 	p.refilter()
 }
 
@@ -101,7 +105,7 @@ func (p *paletteOverlay) refilter() {
 // Parameters:
 //   - maxH: most lines the box may take
 func paletteTight(maxH int) bool {
-	return min(maxH, paletteHeight) < paletteChrome+2
+	return paletteBoxHeight(maxH) < paletteChrome+2
 }
 
 // rowsFor returns the number of result rows of a box.
@@ -115,7 +119,7 @@ func rowsFor(maxH int) int {
 		chrome--
 	}
 
-	return max(1, min(maxH, paletteHeight)-chrome)
+	return max(1, paletteBoxHeight(maxH)-chrome)
 }
 
 // selected returns the entry under the cursor, nil when nothing matches.
@@ -406,7 +410,7 @@ func (p *paletteOverlay) Zones(e *env, maxW, maxH int) []zone {
 func (p *paletteOverlay) draw(e *env, maxW, maxH int) ([]string, []zone) {
 	p.ensure(e)
 
-	w := max(4, min(maxW, paletteWidth))
+	w := boxWidth(paletteWidth, p.need, paletteMaxWidth, e.Cols, maxW)
 	inner := w - 2
 	rows := rowsFor(maxH)
 
@@ -521,6 +525,43 @@ func isPath(s string) bool {
 	return strings.HasPrefix(s, "/") || strings.HasPrefix(s, "~")
 }
 
+// entryLabel returns the text of the first cell of a row: "Category > name" for a record, the
+// name alone for an action.
+//
+// Parameters:
+//   - e: shared environment, for the glyph between the category and the name
+//   - en: entry to draw
+func entryLabel(e *env, en *entry) string {
+	if en.Cat == "" {
+		return en.Name
+	}
+
+	return en.Cat + " " + e.Glyphs.crumb + " " + en.Name
+}
+
+// wanted returns the width of the box that shows the longest row of the palette whole, borders
+// included. It looks at every entry and not at the hits, so that the box keeps its size while the
+// query changes the list.
+//
+// Parameters:
+//   - e: shared environment, for the metric and the glyphs
+func (p *paletteOverlay) wanted(e *env) int {
+	longest := 0
+
+	for i := range p.entries {
+		en := &p.entries[i]
+		n := e.Metric.width(entryLabel(e, en))
+
+		if sw := e.Metric.width(en.Sub); sw > 0 {
+			n += columnGap + sw
+		}
+
+		longest = max(longest, n)
+	}
+
+	return longest + rowMargins + borderCells
+}
+
 // rowCells lays out the cells of a row of the palette: the label, which reads "Category > name"
 // for a record, and the target, path or command of the record muted and aligned at the right.
 //
@@ -532,11 +573,7 @@ func isPath(s string) bool {
 // Returns one cell, or two when the label leaves room for at least minSubWidth cells of the
 // detail. The label is never cut while it fits.
 func rowCells(e *env, en *entry, avail int) []cell {
-	label := en.Name
-	if en.Cat != "" {
-		label = en.Cat + " " + e.Glyphs.crumb + " " + en.Name
-	}
-
+	label := entryLabel(e, en)
 	lw, sw := e.Metric.width(label), e.Metric.width(en.Sub)
 	room := avail - lw - columnGap
 

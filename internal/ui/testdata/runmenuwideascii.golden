@@ -1,0 +1,41 @@
+== 200x40
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                            +- Actions : proj -----------------------------+
+                                                                            |      Afficher la derniere release        gft |
+                                                                            | >    Lister les assets de la release     gft |
+                                                                            |      Afficher les notes de release       gft |
+                                                                            |   s  Lister les stashes                  gft |
+                                                                            |      Afficher un stash...                gft |
+                                                                            |      Supprimer un stash...               gft |
+                                                                            |      Supprimer tous les stashes...       gft |
+                                                                            +----------------------------------------------+
+                                                                              enter choisir - esc fermer - up/down naviguer
+                                                                              ce depot n'a pas de remote GitHub
+
+
+
+
+
+
+
+
+
+
+
+
+
+

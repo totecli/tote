@@ -45,9 +45,6 @@
 
 
 
-
-
-
             ╭─ Palette ────────────────────────────────────────────────────────────────╮
             │ ❯ search all - c, r, a, d or > to narrow                                 │
             ├──────────────────────────────────────────────────────────────────────────┤
@@ -62,13 +59,16 @@
             │   Aliases › ll                                                    ls -la │
             │   Aliases › gs                                                git status │
             │   Functions › hello                                               source │
-            │   ↓ 15 more                                                              │
+            │   Functions › tool                                                A tool │
+            │   New connection                                                         │
+            │   New repository                                                         │
+            │   New alias                                                              │
+            │   New function                                                           │
+            │   Go to… Connections                                                     │
+            │   ↓ 9 more                                                               │
             ╰──────────────────────────────────────────────────────────────────────────╯
               ↑↓ choose · ⏎ open · esc close · tab complete · ctrl+e edit
               → ssh -l deploy -- prod.example.com
-
-
-
 
 
 

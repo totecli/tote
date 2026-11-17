@@ -1,0 +1,51 @@
+== 200x50
+
+
+
+
+
+
+
+
+
+
+                                        +- Palette ------------------------------------------------------------------------------------------------------------+
+                                        | > tout chercher - c, r, a, d ou > pour restreindre                                                                   |
+                                        +----------------------------------------------------------------------------------------------------------------------+
+                                        | > Connexions > prod                                                                                 prod.example.com |
+                                        |   Connexions > staging                                                                           staging.example.com |
+                                        |   Connexions > bastion                                                                           bastion.example.com |
+                                        | ! Connexions > legacy                                                                                old.example.com |
+                                        |   Depots > proj                                                        /srv/work/team-platform/services/billing/proj |
+                                        |   Alias > ll                                                                                                  ls -la |
+                                        |   Alias > backup  rsync -az --delete --exclude=node_modules --exclude=.cache /srv/work/proj/ backup.example.com:/... |
+                                        |   Fonctions > hello                                                                                           source |
+                                        |   Fonctions > tool                                                                                            A tool |
+                                        |   Nouvelle connexion                                                                                                 |
+                                        |   Nouveau depot                                                                                                      |
+                                        |   Nouvel alias                                                                                                       |
+                                        |   Nouvelle fonction                                                                                                  |
+                                        |   Aller a... Connexions                                                                                              |
+                                        |   Aller a... Depots                                                                                                  |
+                                        |   Aller a... Alias                                                                                                   |
+                                        |   Aller a... Fonctions                                                                                               |
+                                        |   Aller a... Accueil                                                                                                 |
+                                        |   Reglages                                                                                                           |
+                                        |   Aide                                                                                                               |
+                                        |   Chercher une mise a jour                                                                                           |
+                                        |   Recharger les donnees                                                                                              |
+                                        |   Quitter tote                                                                                                       |
+                                        |                                                                                                                      |
+                                        +----------------------------------------------------------------------------------------------------------------------+
+                                          up/down choisir - enter ouvrir - esc fermer - tab completer - ctrl+e modifier
+                                          -> ssh -l deploy -- prod.example.com
+
+
+
+
+
+
+
+
+
+

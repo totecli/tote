@@ -1,0 +1,51 @@
+== 200x50
+
+
+
+
+
+
+
+
+
+
+                                        ╭─ Palette ────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+                                        │ ❯ search all - c, r, a, d or > to narrow                                                                             │
+                                        ├──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+                                        │ ❯ Connections › prod                                                                                prod.example.com │
+                                        │   Connections › staging                                                                          staging.example.com │
+                                        │   Connections › bastion                                                                          bastion.example.com │
+                                        │ ! Connections › legacy                                                                               old.example.com │
+                                        │   Repos › proj                                                         /srv/work/team-platform/services/billing/proj │
+                                        │   Aliases › ll                                                                                                ls -la │
+                                        │   Aliases › backup  rsync -az --delete --exclude=node_modules --exclude=.cache /srv/work/proj/ backup.example.com:/… │
+                                        │   Functions › hello                                                                                           source │
+                                        │   Functions › tool                                                                                            A tool │
+                                        │   New connection                                                                                                     │
+                                        │   New repository                                                                                                     │
+                                        │   New alias                                                                                                          │
+                                        │   New function                                                                                                       │
+                                        │   Go to… Connections                                                                                                 │
+                                        │   Go to… Repos                                                                                                       │
+                                        │   Go to… Aliases                                                                                                     │
+                                        │   Go to… Functions                                                                                                   │
+                                        │   Go to… Home                                                                                                        │
+                                        │   Settings                                                                                                           │
+                                        │   Help                                                                                                               │
+                                        │   Check for an update                                                                                                │
+                                        │   Reload the data                                                                                                    │
+                                        │   Quit tote                                                                                                          │
+                                        │                                                                                                                      │
+                                        ╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+                                          ↑↓ choose · ⏎ open · esc close · tab complete · ctrl+e edit
+                                          → ssh -l deploy -- prod.example.com
+
+
+
+
+
+
+
+
+
+

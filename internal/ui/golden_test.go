@@ -509,7 +509,9 @@ func frameCases() []frameCase {
 	cases = append(cases, clashFrames()...)
 	cases = append(cases, pluginFrames()...)
 
-	return append(append(cases, pluginRunFrames()...), pluginSuggestFrames()...)
+	cases = append(append(cases, pluginRunFrames()...), pluginSuggestFrames()...)
+
+	return append(cases, wideBoxFrames()...)
 }
 
 // frameMode is a combination of color profile and glyph set.
@@ -573,6 +575,8 @@ func frameSandbox(t *testing.T, d dataSet) *sandbox {
 		writeFile(t, s.Opts.Paths.ConnectionsFile(), fixtureViaConns)
 	case dataPlugins:
 		newPlugLab(t, s).fixtures()
+	case dataWide:
+		writeWideData(t, s)
 	case dataPlugRun:
 		l := newPlugLab(t, s)
 		l.runTools()
@@ -592,8 +596,8 @@ func frameSandbox(t *testing.T, d dataSet) *sandbox {
 //   - g: rig to drive
 //   - keys: key names, "type:text" for typed text, "writing" for a write in progress, "toast"
 //     for an error message, "pager:kind" for a canned run, "suggest:kind" for a canned form with
-//     suggestions and "bg:dark" or "bg:light" for the answer of the terminal to the query for its
-//     background
+//     suggestions, "menu:long" for a canned menu of actions with long labels and "bg:dark" or
+//     "bg:light" for the answer of the terminal to the query for its background
 func playFrame(g *rig, keys []string) {
 	g.t.Helper()
 
@@ -607,6 +611,8 @@ func playFrame(g *rig, keys []string) {
 			g.r.push(cannedRun(g.r.e, strings.TrimPrefix(k, "pager:")))
 		case strings.HasPrefix(k, "suggest:"):
 			playSuggest(g, k)
+		case k == "menu:long":
+			g.r.push(cannedMenu(g.r.e))
 		case strings.HasPrefix(k, "bg:"):
 			g.send(backgroundMsg(k == "bg:dark"))
 		case k == "toast":
@@ -718,7 +724,7 @@ func TestFrames(t *testing.T) {
 
 	for _, d := range []dataSet{
 		dataFull, dataPlain, dataEmpty, dataBroken, dataConfig,
-		dataBadConfig, dataVia, dataPlugins, dataPlugRun,
+		dataBadConfig, dataVia, dataPlugins, dataPlugRun, dataWide,
 	} {
 		sets[d] = frameSandbox(t, d)
 	}

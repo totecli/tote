@@ -15,10 +15,8 @@ type hoverFrameCase struct {
 	size [2]int
 }
 
-// hoverFrameCases lists the reference frames of the hover: a row of a list, an entry of the
-// welcome page, a row of the palette, a hint of the footer, a button, a row of the settings and a
-// row of a picker, and the row of a list on a compact terminal, on one wider than a page capped at
-// 120 cells and on one whose page is as wide as itself.
+// hoverFrameCases lists the reference frames of the hover, one per kind of element hovered, and the
+// list on a compact terminal and on wide ones, with the page capped at 120 cells or auto-sized.
 func hoverFrameCases() []hoverFrameCase {
 	return []hoverFrameCase{
 		{
@@ -44,6 +42,10 @@ func hoverFrameCases() []hoverFrameCase {
 			start: StartConnections, keys: []string{"ctrl+k"},
 			target: "staging",
 		}, [2]int{80, 24}},
+		{"hoverpalettewide", hoverCase{
+			start: StartConnections, keys: []string{"ctrl+k"},
+			target: "staging",
+		}, [2]int{200, 50}},
 		{
 			"hoverfooter",
 			hoverCase{start: StartConnections, target: "ctrl+k", footer: true},
