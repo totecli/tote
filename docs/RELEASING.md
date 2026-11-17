@@ -197,11 +197,11 @@ throwaway HOME does not have. Delete `$SIM` by hand when you are done.
    ```
 6. Stable versions only: publish `install.sh` (with the real keys, see step 3 above) in the place it
    is served from, under the version, and test `curl ... | sh` in a clean container.
-7. Stable versions the maintainer judges important: add the two `.deb` files to the signed apt
-   repository and build the PPA source package, both with the maintainer's own scripts and keys. The
-   `.deb` files for the repository must have `package=apt` in `packaging/deb/install-method` (the
-   PPA package says `package=ppa`); the files attached to the GitHub release keep `deb`. Betas are
-   never published to apt or to the PPA; they ship as GitHub pre-releases, installed with
+7. Stable versions the maintainer judges important: build the PPA source packages for each Ubuntu
+   series and upload them to `ppa:totecli/tote`, with the maintainer's own script and signing key.
+   The PPA package says `package=ppa` in its `install-method` file; the `.deb` files attached to the
+   GitHub release keep `package=deb`. Betas are never published to the PPA; they ship as GitHub
+   pre-releases, installed with
    `install.sh <version>` or, from a tote that is already installed, with `tote update --beta`. A
    tote on the stable channel stays on it unless `--beta` is given, its install receipt says beta or
    the running build is itself a pre-release.
