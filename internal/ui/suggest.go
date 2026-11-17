@@ -156,9 +156,18 @@ func (e *env) midFit(s string, w int) string {
 	}
 
 	keep := w - e.Metric.width(mark)
-	head := (keep + 1) / 2
+	head := e.Metric.cut(s, (keep+1)/2)
+	from := total - (keep - (keep+1)/2)
+	tail := e.Metric.slice(s, from, total)
 
-	return e.Metric.cut(s, head) + mark + e.Metric.slice(s, total-(keep-head), total)
+	// A wide character at the cut keeps the whole of it in the tail, so the tail can be one cell
+	// too wide: take the next cell until the line fits.
+	for from < total && e.Metric.width(head)+e.Metric.width(mark)+e.Metric.width(tail) > w {
+		from++
+		tail = e.Metric.slice(s, from, total)
+	}
+
+	return head + mark + tail
 }
 
 // statusRoom gives the cells that the status line has under the box of a form, which reach the

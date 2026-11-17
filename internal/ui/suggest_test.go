@@ -750,6 +750,15 @@ func TestSuggestArgvIsShownClean(t *testing.T) {
 	if e.midFit(long, 200) != long {
 		t.Error("an argv that fits was cut")
 	}
+
+	wide := "gft --releases --dir=/home/\u6d4b\u8bd5\u6587\u4ef6/\u4e0b\u8f7d\u76ee\u5f55 " +
+		"-- \u4ed3\u5e93/\u9879\u76ee"
+
+	for w := 5; w < e.Metric.width(wide); w++ {
+		if cut := e.midFit(wide, w); e.Metric.width(cut) > w {
+			t.Errorf("width %d: %q is %d cells", w, cut, e.Metric.width(cut))
+		}
+	}
 }
 
 // TestSuggestPickerIsClean checks that what a program says reaches the picker cleaned: a value or
