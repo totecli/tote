@@ -1,7 +1,7 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "title": "tote plugin manifest, API 1",
-    "description": "Structure of plugin.toml as parsed from TOML into JSON, for plugin API 1 as read by tote 1.0. Length limits given in bytes by tote are checked here in characters. Rules that need several values at once or the machine (coverage of exec: and env: permissions by the commands, placeholder scopes, anchored patterns, defaults that fit their field, duplicate ids, the 64 contributions in all, the base name of the running binary) are checked by tote plugin check and are not expressible here. Patterns are ECMA-262 in unicode mode (they use \\p{...} classes). The lists of reserved ids, shells and blocked environment names are copied from internal/plugin/reserved.go.",
+    "description": "Structure of plugin.toml as parsed from TOML into JSON, for plugin API 1 as read by tote 1.1. Length limits given in bytes by tote are checked here in characters. Rules that need several values at once or the machine (coverage of exec: and env: permissions by the commands, placeholder scopes, anchored patterns, defaults that fit their field, duplicate ids, the 64 contributions in all, the base name of the running binary) are checked by tote plugin check and are not expressible here. Patterns are ECMA-262 in unicode mode (they use \\p{...} classes). The lists of reserved ids, shells and blocked environment names are copied from internal/plugin/reserved.go.",
     "type": "object",
     "required": ["api", "id", "version", "tote", "tier", "description", "license"],
     "additionalProperties": false,
@@ -784,7 +784,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "Text fields only. The program that tote starts when the user asks for suggestions (Ctrl+L), then its arguments: the first element is a literal program name covered by an exec: permission. The program prints one value per line, optionally followed by a tab and a label. The value is only a suggestion: the field stays free text and every value is checked as typed text. Placeholders are limited to the fields declared before this one, settings, {repo.*}, {cwd} and {home}. The key needs the feature field.choices_from."
+                    "description": "Text fields only. The program that tote starts when the user asks for suggestions (Ctrl+L), then its arguments: the first element is a literal program name covered by an exec: permission. The program prints one value per line, optionally followed by a tab and a label. The value is only a suggestion: the field stays free text and every value is checked as typed text. Placeholders are limited to the fields declared before this one, settings, {repo.*}, {cwd} and {home}. A manifest that uses it should declare requires_features = [\"field.choices_from\"] and tote = \">=1.1.0, <2\", so that tote 1.0 reports it as incompatible."
                 }
             },
             "allOf": [

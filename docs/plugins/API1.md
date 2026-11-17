@@ -1,7 +1,9 @@
 # tote plugin API 1: reference
 
-This is the reference for plugin API 1, as tote 1.0 implements it. It lists every key of
-`plugin.toml`, every limit, every verb of `tote plugin`, every exit code and every JSON shape.
+This is the reference for plugin API 1, as tote 1.0 implements it, plus one optional key that tote
+1.1 adds: the suggestions of a text field, `choices_from` (sections 3.8.1 and 4.4, marked "since
+tote 1.1"). It lists every key of `plugin.toml`, every limit, every verb of `tote plugin`, every
+exit code and every JSON shape.
 
 It is a reference, not a tutorial. To write a plugin step by step, read
 [AUTHORING.md](AUTHORING.md). For what a plugin can and cannot do to you, and how tote defends
@@ -80,11 +82,11 @@ root, with no folder around it. tote enforces these limits on a directory and on
 
 tote computes three hashes. They are written in lower case hexadecimal.
 
-| Hash             | What it covers                                                                                                                                                                                                                                                                                     |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `tree_sha256`    | The files of the package. For each regular file in byte order of its path: path, size, content hash and whether it has the execute bit. Folders, times and owners do not count.                                                                                                                    |
-| `surface_sha256` | What the plugin runs: for each contribution, its table, id, target, `run`, `open`, `env`, `cwd`, `allow_dash`, `output`, `pause`, `timeout`, `confirm` and the id, type, flag, pattern, choices and `required` of its fields. Labels, descriptions, keywords, hints and translations do not count. |
-| `archive_sha256` | The bytes of a release or archive file. It is the value of `--sha256`.                                                                                                                                                                                                                             |
+| Hash             | What it covers                                                                                                                                                                                                                                                                                                     |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `tree_sha256`    | The files of the package. For each regular file in byte order of its path: path, size, content hash and whether it has the execute bit. Folders, times and owners do not count.                                                                                                                                    |
+| `surface_sha256` | What the plugin runs: for each contribution, its table, id, target, `run`, `open`, `env`, `cwd`, `allow_dash`, `output`, `pause`, `timeout`, `confirm` and the id, type, flag, pattern, choices, `choices_from` and `required` of its fields. Labels, descriptions, keywords, hints and translations do not count. |
+| `archive_sha256` | The bytes of a release or archive file. It is the value of `--sha256`.                                                                                                                                                                                                                                             |
 
 **A key of the surface counts only when it is set.** Each contribution is hashed as an object with
 its `table` and `id`, and every other key is left out of it at its zero value (an empty string, an
@@ -195,7 +197,7 @@ Limits of the manifest:
 | `permissions`                                                                | 64                                                       |
 | `[[requires]]`                                                               | 16                                                       |
 | `requires_features`                                                          | 32                                                       |
-| Arguments of a `run`                                                         | 64, of 1024 bytes each, checked again after substitution |
+| Arguments of a `run` or of a `choices_from`                                  | 64, of 1024 bytes each, checked again after substitution |
 | `label`                                                                      | 60 runes                                                 |
 | `title`                                                                      | 40 runes                                                 |
 | `description`, `hint`, `confirm` text                                        | 200 runes                                                |
@@ -287,6 +289,11 @@ any name. `tote plugin check --official` lets a check accept an official id.
   ```text
   command item_action.repo setting.list field.bool open.url output.terminal
   ```
+
+  tote 1.1 announces one more, `field.choices_from`: the suggestions of a `text` field (section
+  3.8.1), and nothing else. A closed list that a program builds for a `choice` field would be
+  another feature with its own name, `field.choices_closed`, which is reserved: it is not
+  announced, and a manifest written for it can never be taken for this one.
 
   Any other name makes the plugin incompatible (`feature_missing`). A feature name is
   `^[a-z][a-z0-9_.]{0,63}$`, and a later tote announces more of them: that is how a manifest uses a
@@ -426,6 +433,9 @@ character, and stay within 1024 bytes. The rules for an empty value:
 **The dash rule.** An argument that starts with `-` after substitution, when its template does not,
 is refused (`dash_refused`). Three things are exempt: a placeholder named in the contribution's
 `allow_dash`, the value of a `choice` field with static `choices`, and the `flag` of a `bool` field.
+A `text` field is never exempt, whatever fills it: a value that the user typed, or picked from the
+suggestions of a `choices_from` (section 3.8.1), is refused when it starts with `-` and the
+template does not. The argv of a `choices_from` has no `allow_dash` at all.
 
 The first word of a `run` is a literal program name. A placeholder there, or a `/`, is an error,
 `argv0_invalid`.
@@ -435,18 +445,19 @@ The first word of a `run` is a literal program name. A placeholder there, or a `
 `[[command.field]]` and `[[item_action.field]]` ask for values before a command runs. They share one
 grammar and are asked in file order. Cancelling the form cancels the whole call.
 
-| Key        | Type              | Required | Rule                                                                                                                                                                                               |
-| ---------- | ----------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`       | string            | yes      | Section 3.3. Unique within its contribution.                                                                                                                                                       |
-| `type`     | string            | yes      | `text`, `choice` or `bool`.                                                                                                                                                                        |
-| `label`    | string            | yes      | English text, up to 60 runes.                                                                                                                                                                      |
-| `hint`     | string            | no       | Up to 200 runes.                                                                                                                                                                                   |
-| `required` | boolean           | no       | `false`.                                                                                                                                                                                           |
-| `default`  | string or boolean | no       | A template for `text` and `choice`, using earlier fields, `{repo.*}`, `{setting.*}`, `{cwd}` and `{home}`. A boolean for `bool`. An unresolved placeholder gives an empty default, never an error. |
-| `pattern`  | string            | no       | `text` only. An RE2 expression of at most 256 bytes.                                                                                                                                               |
-| `max_len`  | integer           | no       | `text` only. 1 to 1024. Default 256.                                                                                                                                                               |
-| `choices`  | array of strings  | `choice` | `choice` only. 1 to 64 values of at most 64 runes, no duplicate. An empty value is allowed.                                                                                                        |
-| `flag`     | string            | `bool`   | `bool` only. A literal that starts with `-`, 1 to 64 bytes, without space or tab.                                                                                                                  |
+| Key            | Type              | Required | Rule                                                                                                                                                                                               |
+| -------------- | ----------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`           | string            | yes      | Section 3.3. Unique within its contribution.                                                                                                                                                       |
+| `type`         | string            | yes      | `text`, `choice` or `bool`.                                                                                                                                                                        |
+| `label`        | string            | yes      | English text, up to 60 runes.                                                                                                                                                                      |
+| `hint`         | string            | no       | Up to 200 runes.                                                                                                                                                                                   |
+| `required`     | boolean           | no       | `false`.                                                                                                                                                                                           |
+| `default`      | string or boolean | no       | A template for `text` and `choice`, using earlier fields, `{repo.*}`, `{setting.*}`, `{cwd}` and `{home}`. A boolean for `bool`. An unresolved placeholder gives an empty default, never an error. |
+| `pattern`      | string            | no       | `text` only. An RE2 expression of at most 256 bytes.                                                                                                                                               |
+| `max_len`      | integer           | no       | `text` only. 1 to 1024. Default 256.                                                                                                                                                               |
+| `choices_from` | array of strings  | no       | `text` only, since tote 1.1. The program that lists suggestions for the field, and its arguments: section 3.8.1. On a `choice` or a `bool` field it is `key_conflict`.                             |
+| `choices`      | array of strings  | `choice` | `choice` only. 1 to 64 values of at most 64 runes, no duplicate. An empty value is allowed.                                                                                                        |
+| `flag`         | string            | `bool`   | `bool` only. A literal that starts with `-`, 1 to 64 bytes, without space or tab.                                                                                                                  |
 
 A submitted value is checked in this order: `required`, `max_len` (in runes), `pattern`, then the
 dash rule at substitution. A value over 4096 bytes is refused. A failure is `input_invalid` with the
@@ -469,8 +480,79 @@ fit `max_len` and `pattern`. A default that does not is `value_invalid`.
 The labels of a `choice` value have no English text in the manifest. Give them in `locales/en.toml`
 (section 3.12).
 
-Reserved: the keys `secret`, `remember` and `choices_from`, and the field types `connection`,
-`connections`, `repo` and `path`. They give `reserved_not_available`.
+Reserved: the keys `secret` and `remember`, and the field types `connection`, `connections`,
+`repo` and `path`. They give `reserved_not_available`. A closed list that a program builds (a
+`choice` that gets its values at run time) is reserved under the feature name
+`field.choices_closed`, not under a key (section 3.13).
+
+#### 3.8.1 Suggestions of a text field: `choices_from`
+
+Since tote 1.1, feature `field.choices_from`. A `text` field may carry `choices_from`, the argv of a
+program that lists values the user may pick. The user asks for the list with a key press on the
+field (section 4.4), the program prints candidate values, the user picks one, and it fills the
+field. **The field stays free text**: the user can always type a value, and a value that is not in
+the list is as valid as one that is. The list is help and never a decision: when the form is
+submitted, a picked value is checked exactly like a typed one (section 3.8), and the list is not
+part of the call.
+
+This is not a closed list. A `choice` field has its values in `choices` and nowhere else, and
+`choices_from` on a `choice` or a `bool` field is `key_conflict`. A closed list that a program
+builds when the form opens is not in API 1. It would be another feature with another name,
+`field.choices_closed`, which is reserved so that a manifest written for it can never be taken for
+this one (sections 3.13 and 10).
+
+| Key            | Type             | Required | Rule                                                                                                                                                                      |
+| -------------- | ---------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `choices_from` | array of strings | no       | `text` only. The program, then its arguments: 1 to 64 elements of at most 1024 bytes, which is also the limit after substitution. The first element is a literal program. |
+
+**The argv.** It is checked like a `run`, and only the places where it differs are listed here.
+
+- The first element is a literal word, never a placeholder, never a path (`argv0_invalid`). An
+  `exec:` permission must cover it (`exec_uncovered`), and it is never tote (`exec_self`) or a shell
+  or a launcher (`argv.shell`). The program counts as used, so it never earns `exec_unused`.
+- `argv.risky_flag` and `argv.ssh_no_dashdash` apply to it as they do to a `run`.
+- An empty array is `value_invalid`, a value that is not an array of strings is `type_invalid`, and
+  more than 64 elements or an element over 1024 bytes is `limit_exceeded`.
+- The placeholders are `{<field>}` of the fields **declared before this one**, `{setting.*}`,
+  `{repo.*}`, `{cwd}` and `{home}`. The field itself and a later field are `placeholder_unknown`:
+  the value is not known yet. `{item.*}` is `placeholder_scope`. `{repo.*}` needs
+  `host:read:repos` (`perm_missing`). Syntax, optional `{x?}` and list placeholders follow section
+  3.7 (`placeholder_syntax`, `placeholder_list`).
+- Substitution is the strict one of section 3.7: the produced-text rules and the dash rule apply,
+  and `allow_dash` does not apply to a `choices_from`. A `text` field is never exempt from the dash
+  rule, so a value of an earlier field that starts with `-` makes the list refuse to start
+  (`dash_refused`).
+- The warning `argv.choices_confirmed`: the contribution has `confirm`, and the `choices_from`
+  runs the same program with the same first word that does not start with `-` as its own `run`
+  (`git stash list` for the suggestions of a command that runs `git stash drop`). The list starts
+  that program before the question is asked, so the confirmation does not guard it.
+
+Other keys of the field work as before. Set a `pattern` and a `max_len`: a suggestion that the field
+would refuse is not listed (section 4.4). A pattern that starts with an alphanumeric character
+keeps a value such as `--upgrade` out of the list, and refuses it at submit if it is typed.
+
+**Compatibility.** A manifest that uses the key declares both
+`requires_features = ["field.choices_from"]` and `tote = ">=1.1.0, <2"`. tote 1.0 then reports
+the plugin as `incompatible` (`feature_missing`, `tote_range`) and not as invalid, because the
+probe of section 3.1 stops before the strict read. Written without either, the key is
+`reserved_not_available` on tote 1.0. A manifest that requires `field.choices_closed` is
+incompatible (`feature_missing`) for as long as no tote announces that name.
+
+**Surface.** `choices_from` is counted in `surface_sha256` only when it is set (section 2.2): a
+plugin that does not use it keeps its hash, its consent and its grant token. Adding it, or
+changing its argv, asks for consent again (section 6), and the consent screen lists the argv
+(section 8.7).
+
+**Errors of this key**, besides the ones of `run` that section 8.9 lists:
+
+| Code                                                                         | When                                                                      |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `key_conflict`                                                               | `choices_from` on a `choice` or a `bool` field.                           |
+| `type_invalid`, `value_invalid`, `limit_exceeded`                            | Not an array of strings, empty, more than 64 elements or over 1024 bytes. |
+| `argv0_invalid`, `exec_self`, `exec_uncovered`, `argv.shell`, `perm_missing` | The program and the permissions, as for `run`.                            |
+| `placeholder_unknown`, `placeholder_scope`                                   | Its own field, a later field, an unknown name; `{item.*}`.                |
+| `argv.choices_confirmed`                                                     | Warning, section above.                                                   |
+| `reserved_not_available`                                                     | On tote 1.0, the key without the feature and the range.                   |
 
 ### 3.9 Contributions: `[[command]]` and `[[item_action]]`
 
@@ -623,8 +705,13 @@ never accepts a feature that does nothing.
 
 - **Tables:** `[[widget]]`, `[[panel]]`, `[[decorator]]`, `[[provider]]`, `[[connector]]`,
   `[[hook]]`, `[[job]]`, `[[screen]]`, `[[import]]`, `[[badge]]`, `[[search]]`.
-- **Field keys and types:** `secret`, `remember`, `choices_from`; `connection`, `connections`,
-  `repo`, `path`.
+- **Field keys and types:** `secret`, `remember`; `connection`, `connections`, `repo`, `path`.
+  `choices_from` was reserved in 1.0 and is available since tote 1.1, on a `text` field only
+  (section 3.8.1).
+- **Feature names:** `field.choices_closed`, for a closed list that a program builds at run time,
+  and the other names that section 10 and tote's `reservedFeatures` hold: a manifest that requires
+  one is incompatible (`feature_missing`), never invalid. `field.choices_from` is the name of the
+  suggestions of a text field and of nothing else.
 - **Setting types and ids:** `dir`, `secret_ref`; `token_env`, `token_cmd`.
 - **Permissions:** section 3.5.
 
@@ -637,8 +724,11 @@ looks once TOML is converted to JSON. Use it in an editor to catch mistakes earl
   syntax, the permission grammar and the blocked environment names. A feature name of
   `requires_features` is checked by its grammar, not against a list, so that a manifest of a later
   tote stays valid; whether this tote announces it is for `plugin check` (`feature_missing`).
+- It allows `choices_from` on a `text` field only, as an array of 1 to 64 strings of at most 1024
+  bytes whose first element is a program name by the grammar of `run[0]`.
 - It does not check what needs the whole manifest or the machine: that a placeholder names a field
-  or setting that exists (and that a list setting is a whole argument, `placeholder_list`), that
+  or setting that exists (and that a list setting is a whole argument, `placeholder_list`), that a
+  `choices_from` names only fields declared before its own, that
   every `run` is covered by an `exec:` permission, that an `env` table is covered by `env:`
   permissions (`env_uncovered`), that `host:read:repos` and `host:open-url` are declared where a
   feature needs them (`perm_missing`), that a pattern is anchored and compiles, that `allow_dash`
@@ -680,6 +770,10 @@ A `disable` or `remove` in another terminal therefore stops the next start in a 
 stops a running process (section 7). A declarative plugin cannot quit tote, change its directory or
 type into the shell.
 
+A form field with a `choices_from` adds a side path at step 3: the suggestions of the field, which
+the user asks for with a key press and which tote runs on its own, outside this sequence and with
+no confirmation (section 4.4).
+
 `tote plugin check <id> --argv --set <field>=<value> --repo <name>` runs steps 1 to 6 and prints the
 command each contribution would run. No program that the plugin names starts. With `--repo`, tote
 itself runs a read-only `git` to read the remote and the branch of that repository (SECURITY.md,
@@ -709,6 +803,9 @@ The **scrubbed `PATH`** is the `PATH` of tote without empty entries, relative en
 inside the plugin tree. The first word of `run` is resolved on it to an absolute path. A result
 inside the plugin tree or the working directory is refused.
 
+The program of a `choices_from` gets this environment too, without the `env:` variables and the
+`env` table, and with `NO_COLOR=1` (section 4.4).
+
 This list says what tote hands over. It is not a boundary for a program that runs with your rights.
 [SECURITY.md](SECURITY.md) explains the limit.
 
@@ -724,6 +821,9 @@ This list says what tote hands over. It is not a boundary for a program that run
   program that launches a browser can leave it running. Timeout, cancel, `disable` and `remove` do
   kill the group.
 - Captured runs use their own session, so they have no controlling terminal.
+- A run of suggestions (section 4.4) takes one of the same 4 slots. It has a fixed limit of 10
+  seconds, 64 KiB of standard output and 1 MiB of standard error, and it ends when the program
+  exits, with the same drain of the pipes.
 - The pager shows at most 8 MiB, then a notice in the language of the interface ("output cut here,
   it was too long to keep"), which also covers a line longer than 32 KiB and more than 200000 lines.
   A run that writes more than 64 MiB is stopped (`output_limit`). The registry's own marker
@@ -738,6 +838,167 @@ This list says what tote hands over. It is not a boundary for a program that run
 - A `terminal` run uses the terminal of tote, flushes pending keys before the pause line, and then
   pauses according to `pause`.
 - A declarative run never counts toward quarantine.
+
+### 4.4 The run of the suggestions
+
+Since tote 1.1. This section is what tote does for a field that has a `choices_from` (section
+3.8.1). It is a run of its own: it is not one of the outputs of a contribution, it has no
+confirmation, and no verb of the command line starts it.
+
+**When it starts.**
+
+- Only when the user asks, with an explicit key press on the field (Ctrl+L in the terminal
+  interface). Opening the form, moving to the field, typing, Enter, Tab and Esc never start it.
+  `install`, `update`, `enable`, `check`, `info` and `--dry-run` never start it either: `check`
+  prints the argv as a template and starts nothing (section 8.9), and a consent screen lists it.
+  No program that a plugin names starts before the key press.
+- tote's own read-only `git` helper may start earlier, as it may for any call that reads
+  `{repo.*}` (section 4.1, and SECURITY.md, section 9): when the form is prepared, and again when
+  the suggestions are prepared. It is `git`, with the 1.5 seconds and the hardening of SECURITY.md,
+  section 6.3, and it is not the program of the plugin.
+- Only for a plugin in the state `enabled`. The state is computed again from the files, and then
+  checked again right before the program starts and once more after its process is recorded in
+  `plugin-procs`, as for any run (section 4.1, steps 5 and 9). A plugin that is not enabled gives
+  `not_runnable`, and one whose files or program changed gives `stale`.
+- It takes one of the 4 process slots (section 4.3). A fifth start fails with the reason `busy`.
+- There is one suggestions run per form at a time, and at most 5 starts per field per form.
+
+**What it waits for.** The values of the fields **before** the field are read: the ones that the
+argv names must be valid (`required`, `max_len`, `pattern`), the others never stop it. What the user
+has typed in the field itself and in the fields after it is ignored, and the value of a name that
+is no field of the contribution is `input_invalid` too, as a failure and not as a wait. Two
+failures of the preparation only mean that the form is not ready, and the interface says on its
+status line that the suggestions wait for the field or for the placeholder, and starts nothing:
+
+- `input_invalid`, with the id of an earlier field that holds an invalid value;
+- `unavailable`, with a placeholder that is empty and not optional (`{x}`), such as `repo.slug`
+  for a command used outside a saved repository. An empty value for `{x?}` is fine: the whole
+  argument is dropped.
+
+Every other refusal of the preparation is a failure that is shown, with the code of a run:
+`not_runnable`, `no_entry` (no such contribution, or no such field with a `choices_from`),
+`dependency_missing`, `dash_refused`, `produced_invalid`, `placeholder_syntax`, `cwd_invalid` and
+the codes of the program rules (`argv0_invalid`, `exec_self`, `exec_uncovered`, `argv.shell`,
+`argv.ssh_no_dashdash`). An item action that has no repository is `unavailable` with `repo` and
+`unknown`, which is not a wait.
+
+**The process.**
+
+- No shell. The standard input is `/dev/null`. The program runs in a session of its own, so it has
+  no terminal, and on its own process group.
+- The working directory is the **cache directory of the plugin** (`TOTE_PLUGIN_CACHE`). tote creates
+  it with mode 0700 when it is missing, and refuses it when it is a link (`cwd_invalid`). It is
+  never the `cwd` of the contribution, never `{repo.path}` and never the directory tote was started
+  in. A program that reads a repository takes it as an argument, as `git -C {repo.path}` does.
+- The environment is built by the same code as the environment of a run (section 4.2), with three
+  differences. The variables of the `env:` permissions are **not** passed, so a plugin that holds
+  `env:GITHUB_TOKEN` does not hand the token to its list. The `env` table of the contribution is not
+  applied. `NO_COLOR=1` is always set. The proxy variables still reach a plugin that declares a
+  `net:` permission, and `GIT_TERMINAL_PROMPT=0` is set as for any captured run.
+- The time limit is **10 seconds**. It is fixed: no manifest key changes it, and the `timeout` of
+  the contribution does not apply.
+- The standard output and the standard error are two separate pipes. The standard output may hold
+  64 KiB (65536 bytes): one byte more stops the program and fails the whole list. The standard error
+  may hold 1 MiB, with the same result. A list is never cut short.
+- The run ends when the program exits. The pipes are then drained as for a captured run (section
+  4.3): until they have been silent for 250 ms, 5 seconds at most, and then closed. A grandchild
+  that holds a pipe therefore never holds the form. Unlike a captured run, a suggestions run then
+  sends SIGKILL to what is left of its process group (only while the recorded session is still the
+  one that was started): a list is a bounded lookup and nothing it started may outlive it. A
+  descendant that called `setsid` again has left the group and is not reached.
+- tote stops the process group (SIGTERM, then SIGKILL 2 seconds later) when the time limit is
+  reached, when a pipe is over its limit, and when the user cancels. The interface cancels when the
+  user presses Esc, when the form is submitted or closed, when the plugin is disabled or removed
+  (in this tote or in another one, through `plugin-procs`), when tote quits, when tote is
+  interrupted (Ctrl+C) and when tote is suspended (Ctrl+Z). If tote itself is killed with SIGKILL it
+  cannot stop the group, and the program ends on its own account: `plugin disable` and
+  `plugin remove` still reach it through `plugin-procs`.
+
+**What the program prints.** UTF-8 text in lines that end with a line feed; a last line without one
+counts, and an empty line is ignored. tote reads the raw bytes: a value is never cleaned,
+converted or redacted, only accepted or dropped. A line is
+
+```text
+value
+value<TAB>label
+```
+
+and it is cut at its first TAB. A second TAB drops the entry. An entry is **dropped, never
+rewritten**, when its value:
+
+- is empty, is over 128 bytes, or is over the `max_len` of the field in runes;
+- is not valid UTF-8, or holds a space of any kind (a no-break space and U+3000 included), or a
+  character that draws nothing without being a space: the braille blank, the Hangul and Khmer
+  fillers, the combining grapheme joiner and the variation selectors, so that two values cannot look
+  alike in the picker. Look-alike letters (a Cyrillic `a`) are not stopped by tote: a `pattern`
+  anchored to an ASCII class does;
+- holds a control character, an escape, a bidirectional control, a zero-width or another format
+  character (a tag character, a byte order mark). A carriage return is a control character, so a
+  program that ends its lines with CR LF lists nothing, and every line counts as hidden;
+- does not match the `pattern` of the field.
+
+A value that starts with `-` is not dropped by the grammar: the pattern decides, and the dash rule
+refuses it at submit. A repeated value keeps its first entry and is not counted. After the first
+**200** entries the valid ones are only counted. The entries that the rules dropped are counted too,
+and the interface says how many ("3 hidden"). A suggestion is therefore a value that the field
+would accept as typed text: picking one never fails a rule that typing it would not fail.
+
+The **label** is the text after the TAB. It is only shown. It is redacted like any displayed text,
+its escape sequences are removed, every other unsafe character becomes `?`, and it is cut at 60
+runes. tote shows it as the program wrote it, in whatever language it is: there is no mapping of
+words in tote and no translation. A label is never matched and never reaches an argv.
+
+**How it ends.** A list is kept only when the program exits with status 0. A status other than 0,
+a signal, too much output and a timeout discard the whole list, even when lines were printed.
+
+| State       | When                                                                        |
+| ----------- | --------------------------------------------------------------------------- |
+| `list`      | Status 0 and at least one suggestion is left.                               |
+| `empty`     | Status 0 and none is left. The number of dropped entries is still reported. |
+| `failed`    | The program did not run or did not succeed. A reason says why (below).      |
+| `timeout`   | It ran for more than 10 seconds and was stopped.                            |
+| `cancelled` | The user, a disable or a quit stopped it. This is not a failure.            |
+
+A failure is the error `choices_failed` with three arguments: the id of the field, a reason, and a
+detail line. The reason is one of:
+
+| Reason      | Meaning                                                                           |
+| ----------- | --------------------------------------------------------------------------------- |
+| `exit`      | The program exited with a status other than 0 (the status is its argument).       |
+| `signal`    | A signal ended it (the name of the signal, such as `KILL`).                       |
+| `too_large` | It wrote more than 64 KiB to its standard output or more than 1 MiB to its error. |
+| `start`     | It could not be started, or tote could not record it.                             |
+| `state`     | The plugin cannot run any more (`not_runnable` or `stale` is its argument).       |
+| `busy`      | Four plugin programs are already running.                                         |
+| `refused`   | The run is not one that tote prepared for suggestions.                            |
+
+The **detail** tells what went wrong in the program's own words. tote keeps a cleaned tail of 4 KiB
+of each pipe. On a failure the detail is the last non-empty line of the standard error or, when
+the standard error holds none, the first non-empty line of the tail of the standard output: gft
+1.2 writes `Unknown option` there, in colour, and nothing on the standard error. It is cleaned, so
+no escape sequence ever reaches the screen, redacted like any displayed text, and cut at 200 runes.
+After a timeout or `too_large` the standard output is the list and not an error, so only the
+standard error counts. The reason has a message of its own in both languages
+(`plugin_choices_<reason>`), and nothing the user typed is lost in any state.
+
+`choices_failed` is a run-time code. No verb of the command line returns it, so it is never an exit
+code of `tote plugin`: it would be 1 (section 8.10).
+
+**What the interface does with the list.** It keeps a list in memory for the life of the form, keyed
+by the field and the exact argv after substitution (the list was filtered by the rules of that
+field, so another field with the same argv gets its own), and never writes it to disk. An empty
+answer is not kept, so the next key press asks again; a field has at most 5 starts per form. The
+first Esc during a run stops the run and keeps the form; a second Esc closes the form. While the
+program runs, the interface shows a loading box as soon as the command is prepared, with the
+spinner, the word "Loading", the argv that runs and, after a second, the seconds taken; the other
+keys do nothing, so a second Ctrl+L starts no second program. When the list arrives it replaces the
+box, with the cursor on the value already typed in the field, or on the first one; when there is
+none, because of a failure, an empty answer or the time limit, the box closes and the form says why
+on its status line. A value that the argv names and that changed gives
+a new argv, so a new list is fetched at the next key press. The key press on a list that is loaded
+opens it again without starting anything. The picker shows the value and the label, narrowed to the
+values that contain what the user already typed in the field, without regard to case. Esc closes it
+and keeps the typed text. Picking a value fills the field and does not submit the form.
 
 ## 5. Plugin states
 
@@ -817,7 +1078,11 @@ copied from an older review fails (`grant_mismatch`, exit 4).
   `false`;
 - a name is added to `allow_dash`, on a contribution that keeps its id or on a new one;
 - a name is added to the `env` table, or the value of a name changes, on a contribution that keeps
-  its id; a new contribution that carries an `env` table asks too.
+  its id; a new contribution that carries an `env` table asks too;
+- a field gains a `choices_from`, or the argv of its `choices_from` changes, on a contribution that
+  keeps its id or on a new one (since tote 1.1). The suggestions start a program before any
+  `confirm` is asked, and one `exec:` permission covers every word of that program, so a new list
+  is new code for the user. Removing a `choices_from` asks nothing.
 
 **What never asks.** A change of label, description, keywords, hints or translations. A change of
 commands that does not escalate: it is shown in the screen as
@@ -868,6 +1133,16 @@ Consent code exec:date,exec:echo,exec:git,fs:read:repo,host:read:repos@058feb973
 
 dry run: nothing was changed
 to accept it without a terminal, run the command again without --dry-run and with --grant exec:date,exec:echo,exec:git,fs:read:repo,host:read:repos@058feb973609
+```
+
+A field with a `choices_from` adds one line under its command, with the argv as a template. The
+update that adds it says why it asks, from a real run of the `branches` plugin of section 8.9:
+
+```text
+  $ item action log: git log --oneline -n 5 '{branch}' --
+    suggests values for the field branch with: git -C '{repo.path}' branch '--format=%(refname:short)'
+...
+  ! item_action log now suggests values with a program that starts before any confirmation
 ```
 
 The **origin class** in the screen is `official` (only a release of `totecli/<id>` for the plugin of
@@ -1068,6 +1343,8 @@ directory or an archive is written as a path (`./demo`).
 
 `check` exits 1 when it fails, and 5 when one of its errors is an integrity error. There is no
 `plugin run` in 1.0, so a plugin program's own status never becomes the exit code of a plugin verb.
+The run of the suggestions of a field (section 4.4) is not a verb either: its error `choices_failed`
+is shown by the interface and never returned as an exit code.
 
 The codes 0 to 5, 10, 127 and 130 are tote's, here and in the rest of the command line, and they
 keep their meaning in every 1.x release. A later release gives new conditions the codes 6 to 9 and
@@ -1359,11 +1636,40 @@ The real output indents arrays one item per line. Next to `plugin` the object ha
 | `update`                                           | `true` when a plugin with this id is installed.                                                                                                                                |
 | `caps`                                             | The effective capabilities of the new version.                                                                                                                                 |
 | `added`, `removed`, `unchanged`                    | Against the consent on record: capabilities to confirm, capabilities that are gone, and a count of the others.                                                                 |
-| `commands`                                         | Each command in full: `table`, `id`, and `run` or `open`, plus `cwd`, `allow_dash` and `env` when set.                                                                         |
+| `commands`                                         | Each command in full: `table`, `id`, and `run` or `open`, plus `cwd`, `allow_dash`, `env` and `suggestions` when set.                                                          |
 | `missing`                                          | Required programs that `PATH` does not have.                                                                                                                                   |
 | `warnings`                                         | `{"code", "args", "message"}`: missing programs, same version, downgrade, pre-release, changed source. The `args` of `source_changed` are the recorded source and the new one. |
 | `needs_consent`, `why`                             | Section 6.                                                                                                                                                                     |
 | `grant`                                            | The token to pass to `--grant`.                                                                                                                                                |
+
+`suggestions` is an array with one element for each field of the command that has a
+`choices_from`, in the order of the fields: `{"field": "<field id>", "run": ["<element>", ...]}`.
+`run` holds the elements of the argv as templates, exactly as written in the manifest. The key is
+absent when no field of the command has a `choices_from`, and `tote plugin check --json` has the
+same key in each of its `contributions` (section 8.9). From a real dry run of an update that adds
+a `choices_from`:
+
+```text
+$ tote plugin update branches ./branches --dry-run --json
+...
+    "commands": [
+      {
+        "table": "item_action",
+        "id": "log",
+        "run": ["git", "log", "--oneline", "-n", "5", "{branch}", "--"],
+        "suggestions": [
+          {
+            "field": "branch",
+            "run": ["git", "-C", "{repo.path}", "branch", "--format=%(refname:short)"]
+          }
+        ]
+      }
+    ],
+...
+    "needs_consent": true,
+    "why": ["surface"],
+...
+```
 
 A dry run of an update that asks for one more capability, from a real run:
 
@@ -1502,6 +1808,22 @@ The second command shows that the validation of a field runs before the command 
 names a field of any contribution. When none has it, `check` adds the warning `set_unknown` (scope
 `request`), which does not fail the check.
 
+A field with a `choices_from` shows its argv under its command, as a template. `check` never starts
+that program, with `--argv` and `--repo` too, so the argv is not expanded:
+
+```text
+$ tote plugin check ./branches --argv --set branch=main-2 --repo proj
+...
+what it runs:
+  - item action log: git log --oneline -n 5 main-2 --
+    in /home/u/work/proj
+    suggestions for the field branch: git -C '{repo.path}' branch '--format=%(refname:short)'
+...
+```
+
+The value of `branch` is still checked as typed text: `--set branch=--all` says that the value of
+`branch` is not valid, and a value that is not among the branches of the repository is accepted.
+
 A manifest with errors, with the findings in file order:
 
 ```text
@@ -1532,7 +1854,8 @@ hashes:
 | `request`     | Your command line (`set_unknown`).                                                                            |
 
 A finding has a severity, `error` or `warning`. The warnings of the manifest are `exec_unused`,
-`argv.risky_flag`, `key_clash`, `key_reserved` and `deprecated_key`, and those of the translations
+`argv.risky_flag`, `argv.choices_confirmed`, `key_clash`, `key_reserved` and `deprecated_key`, and
+those of the translations
 are `locale_missing_key` and `locale_extra_key`. Every other code of the table below is an error.
 
 **Codes of the manifest, the package and the translations.** The text of each is in the catalog key
@@ -1548,7 +1871,7 @@ are `locale_missing_key` and `locale_extra_key`. Every other code of the table b
 | `value_invalid`                                                                                              | A value of the right type that is not allowed: an enum value, a duration, an empty text or a text of spaces where one is required (title, description, labels, choices), an enum with no choice, an empty `column` array, a default that does not fit its field, `min` above `max`. |
 | `text_invalid`                                                                                               | A text holds a control, bidirectional or zero-width character.                                                                                                                                                                                                                      |
 | `limit_exceeded`                                                                                             | A count or a length is over a limit of section 3.                                                                                                                                                                                                                                   |
-| `key_conflict`                                                                                               | Two keys that exclude each other, such as `run` and `open`.                                                                                                                                                                                                                         |
+| `key_conflict`                                                                                               | Two keys that exclude each other, such as `run` and `open`, or a key on a type that cannot have it: `choices_from` on a `choice` or a `bool` field.                                                                                                                                 |
 | `id_invalid`, `id_duplicate`                                                                                 | An identifier that does not follow section 3.3 (an empty plugin id included), or is used twice in one table.                                                                                                                                                                        |
 | `version_invalid`                                                                                            | A version that is not a strict Semantic Version, an empty one included.                                                                                                                                                                                                             |
 | `reserved_not_available`                                                                                     | A table, a key, a type, an event or a permission that is reserved (section 3.13), or `tier = "exec"`: the exec tier is not available in tote 1.0, so the manifest is incompatible (section 10).                                                                                     |
@@ -1560,9 +1883,10 @@ are `locale_missing_key` and `locale_extra_key`. Every other code of the table b
 | `exec_unused`                                                                                                | Warning. An `exec:` permission that no command runs.                                                                                                                                                                                                                                |
 | `env_uncovered`, `env_refused`                                                                               | An `env` table sets a name without an `env:` permission, or a name that is blocked.                                                                                                                                                                                                 |
 | `placeholder_syntax`, `placeholder_unknown`, `placeholder_scope`, `placeholder_list`                         | A placeholder that is malformed, unknown, not available in that place, or a list used inside a longer argument.                                                                                                                                                                     |
-| `argv0_invalid`                                                                                              | The first element of `run` is not a plain program name.                                                                                                                                                                                                                             |
+| `argv0_invalid`                                                                                              | The first element of `run` or of a `choices_from` is not a plain program name.                                                                                                                                                                                                      |
 | `argv.shell`, `argv.ssh_no_dashdash`, `pattern.unanchored`                                                   | A shell or launcher is run, `ssh` is run without `--` before the host, or a `pattern` is not anchored.                                                                                                                                                                              |
 | `argv.risky_flag`                                                                                            | Warning. A program runs with an option that can start another program (`git -c`).                                                                                                                                                                                                   |
+| `argv.choices_confirmed`                                                                                     | Warning. The `choices_from` of a field starts the same program with the same first word as the `run` of a contribution that asks for `confirm` (section 3.8.1).                                                                                                                     |
 | `key_clash`, `key_reserved`                                                                                  | Warnings. An accelerator used twice, or a core key (section 3.9).                                                                                                                                                                                                                   |
 | `deprecated_key`                                                                                             | Warning. A key that has a replacement.                                                                                                                                                                                                                                              |
 | `declarative_extra_file`                                                                                     | A file other than `plugin.toml`, `locales/` and the documentation files in a declarative package.                                                                                                                                                                                   |
@@ -1668,6 +1992,7 @@ A contribution of `contributions`:
 | `table`, `id`, `label`        | `command` or `item_action`, its id and label.                                                                                                    |
 | `output`                      | `pager`, `silent` or `terminal`.                                                                                                                 |
 | `run`, `open`, `env`          | The templates, and the names of the `env` table.                                                                                                 |
+| `suggestions`                 | The `choices_from` of the fields, as templates: `{"field", "run"}` for each, in the order of the fields. Absent when none. Never started.        |
 | `argv`                        | The arguments after substitution. Only when they could be built.                                                                                 |
 | `display`                     | `argv` written as a shell would print it, or the template when it could not be built.                                                            |
 | `dir`, `url`                  | The working directory. The address an `open` would show.                                                                                         |
@@ -1723,7 +2048,7 @@ its first error is one that the `manifest_invalid` row names; any other first er
 | `busy`                                                                               | 4                        | Another tote is changing plugins.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `stale`                                                                              | 4                        | The plugin changed while the call ran.                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `manifest_invalid`                                                                   | 1                        | The manifest has errors, and the first one has no code of its own for an install. When the first error is `id_invalid`, `perm_unknown`, `perm_refused`, `api_unsupported`, `tote_range`, `platform_none`, `reserved_not_available`, `declarative_extra_file`, `exec_self`, `exec_uncovered`, `perm_missing`, `manifest_too_large` or `bin_missing`, the error has that code instead (exit 4 for the three of `exec_self`, `exec_uncovered` and `perm_missing`, 1 for the others). The message is the first error. |
-| `input_invalid`, `dash_refused`, `no_entry`                                          | 2                        | Only on the run path, which no verb of 1.0 reaches.                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `input_invalid`, `dash_refused`, `no_entry`                                          | 2                        | Only on the run path and on the preparation of suggestions, which no verb reaches.                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | `id_mismatch`, `downgrade`, `prerelease`, `source_changed`                           | 1                        | An update rule of section 7.2.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `tag_mismatch`                                                                       | 1                        | The tag is not the version.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `hash_mismatch`, `platform_hash`                                                     | 5                        | The bytes do not match their pin.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
@@ -1732,6 +2057,7 @@ its first error is one that the `manifest_invalid` row names; any other first er
 | `net_status`                                                                         | 3 for status 401, else 1 | The download was answered with a status.                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `net_offline`, `net_timeout`, `net_tls`, `net_redirect`, `net_truncated`             | 1                        | A download failed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | `tree_hash`, `tree_perms`, `tree_owner`, `tree_symlink`, `tree_special`, `tree_name` | 5                        | The installed files changed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `choices_failed`                                                                     | 1                        | Run time only: the program of a `choices_from` did not give a list (section 4.4). The arguments are the field, the reason (`exit`, `signal`, `too_large`, `start`, `state`, `busy` or `refused`) and the detail line of the program. No verb returns it, so 1 is its class and never an exit code of a verb. A timeout and a cancel are results of the run and not this error.                                                                                                                                    |
 | `store_corrupt`, `disk`                                                              | 1                        | The lock cannot be read, or a write failed. Nothing changed.                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | `store_writable`                                                                     | 1                        | The plugins directory, or the directory of a plugin, can be written by other users: run `chmod go-w` on it. Plugins are off until then.                                                                                                                                                                                                                                                                                                                                                                           |
 | `source_read`                                                                        | 1                        | A file or a folder of the source cannot be read. The arguments are the path and the reason.                                                                                                                                                                                                                                                                                                                                                                                                                       |
@@ -1778,6 +2104,11 @@ described. None of them works, and nothing in this reference promises that it wi
   `remove` are the recall.
 
 - **Secrets for plugins.** There is no secret field or setting.
+- **A closed list built at run time.** A `choice` field whose values a program lists. API 1 has no
+  such field: `choices_from` is the suggestions of a `text` field (section 3.8.1) and is
+  `key_conflict` on a `choice`. The feature name `field.choices_closed` is reserved for it, so that
+  a manifest written for it is incompatible (`feature_missing`) and can never pass for a manifest of
+  `field.choices_from`.
 - **Reserved names:** section 3.13.
 - **Everything else that a later release adds** follows the rules of [../compat.md](../compat.md):
   new optional keys only, a key counts in `surface_sha256` only when it is set, and a manifest that

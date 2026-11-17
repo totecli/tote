@@ -92,6 +92,19 @@ else.
   plugin as **incompatible** (`tote_range`, `feature_missing`) and not as invalid.
 - `surface_sha256` counts a key only when it is set, so a new key leaves the hash, the consent and
   every stored `--grant` token of an installed plugin alone.
+- **A feature name keeps its meaning** in every 1.x release. `field.choices_from`, announced since
+  tote 1.1, is the suggestions of a `text` field: a program lists values, the user picks one or
+  types another, and the field stays free text. It is not a closed list. A closed list that a
+  program builds for a `choice` field is another feature and needs its own name,
+  `field.choices_closed`, which is reserved from now on and never announced by a release that does
+  not implement it: a manifest written for it is `incompatible` (`feature_missing`), and can never
+  be mistaken for one that uses `choices_from`. `choices_from` on a `choice` or a `bool` field is an
+  error and stays one.
+- The surface of a key that is added counts in `surface_sha256` in a fixed form. For `choices_from`
+  it is the key `choices_from` in the object of its field, an array of the templates as written; a
+  test pins the hash of a manifest that sets it, so a plugin that was consented to never asks again
+  because of a later release. Adding a `choices_from` or changing its argv is a change that asks
+  for consent (the escalation `choices`, API1.md section 6), like a removed `confirm`.
 - `plugin.schema.json` checks a feature name by its grammar (`^[a-z][a-z0-9_.]{0,63}$`) and not by a
   list, so a manifest of a later release stays valid for an older schema.
 
@@ -104,7 +117,10 @@ else.
   that object too, with `"code": "usage"` and exit 2. The values of `state`, `reason`, `kind`,
   `status`, finding codes and error codes are **open**: a script must tolerate a value it does not
   know. `message` and the human text change with the language and the release and are not a contract
-  (section 8). After a non-zero exit ignore every other output.
+  (section 8). After a non-zero exit ignore every other output. A command of an install or an update
+  document, and a contribution of a `plugin check` document, may carry the optional key
+  `suggestions` (since tote 1.1): an array of `{"field", "run"}`, with the id of a field and the
+  templates of its `choices_from`. The key is absent when no field has one.
 - **TSV** (`--format tsv`, the default in a pipe). No header, one line per record, columns are
   **positional** and new ones are only appended at the end. A tab, a newline and a carriage return
   in a cell are written `\t`, `\n` and `\r`.

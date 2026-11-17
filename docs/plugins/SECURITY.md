@@ -1,8 +1,8 @@
 # Security of tote plugins
 
-This document is the security statement for tote 1.0 and plugin API 1. It is written for the people
-who install plugins and for the people who write them. It says what tote protects, how, and where
-the protection stops.
+This document is the security statement for tote 1.0 and plugin API 1, with the suggestions of a
+text field that tote 1.1 adds (section 6.5). It is written for the people who install plugins and
+for the people who write them. It says what tote protects, how, and where the protection stops.
 
 Only the declarative tier is available in 1.0. A declarative plugin has no code of its own: it is a
 `plugin.toml` that tells tote which programs to run. Section 10 lists what is reserved and not
@@ -20,6 +20,8 @@ documents are [API1.md](API1.md), the reference, [AUTHORING.md](AUTHORING.md), t
 - A plugin makes tote run programs with your rights. It is not sandboxed. If a program the plugin
   lists can run other programs, the plugin can run anything you can run.
 - tote shows the exact command line templates before you agree, and nothing runs before you agree.
+  Since tote 1.1 a form field can also list values with a program, started by a key press and
+  without a confirmation: its argv is shown at consent too (section 6.5).
 - A plugin that asks for more later has to ask you again. A plugin that changes what its commands
   do, without asking for more access, does not always ask again (section 4.5). Read the update diff.
 - A plugin from a release is installed only if you type the sha256 checksum of the archive. That
@@ -65,6 +67,9 @@ tote: error: run.sh: a declarative plugin may not ship the file run.sh
 - Read, through placeholders, the name, path, cleaned remote, slug and branch of your saved
   repositories, if it holds `host:read:repos`.
 - Receive the environment variables it names in `env:` permissions, if they are set.
+- Since tote 1.1, ask tote to start a program to list suggestions for a text field, when you press
+  Ctrl+L on that field. There is no confirmation, no `env:` variable is passed to it, and its argv
+  is shown at consent (section 6.5).
 
 ### 3.3 What it cannot do
 
@@ -172,7 +177,7 @@ interface is meant to show the same one. In order:
 4. The code line: "No code of its own: tote runs only the programs listed below."
 5. The description, in a box labelled "written by the plugin, not checked by tote".
 6. Every command, in full: each `run` and `open` template, with its `cwd`, its `allow_dash` names
-   and its `env` table.
+   and its `env` table, and under it the argv of each `choices_from` of its fields (section 6.5).
 7. What the plugin will be able to do: one line per capability, grouped as terminal, programs,
    network, files, environment and host. Each line is tagged `[enforced]` or `[declared]`. Broad or
    sensitive lines are marked `!`: files in the home or the ssh directory or anywhere, a wildcard
@@ -278,7 +283,7 @@ If you decline, nothing changes: the old version stays installed and keeps runni
 
 ### 4.5 Changed commands, and what is not asked
 
-A changed command asks again only in four cases. This is a trade-off that was made on purpose, and
+A changed command asks again only in five cases. This is a trade-off that was made on purpose, and
 it leaves a residual risk.
 
 Asked again, for an entry that keeps its id:
@@ -287,6 +292,10 @@ Asked again, for an entry that keeps its id:
 - a name is added to its `allow_dash` list, or a new entry arrives with such a name;
 - a name is added to its `env` table, or the value of an existing name changes (a value can start
   another program);
+- a field gains a `choices_from`, or the argv of its `choices_from` changes, on an entry that keeps
+  its id or on a new entry (the escalation `choices`, since tote 1.1): the program of the
+  suggestions starts without a confirmation, and one `exec:` permission covers every word of it.
+  Removing a `choices_from` asks nothing;
 - a `[[platform]]` hash changes while the version stays the same (exec tier, not in 1.0).
 
 ```
@@ -294,6 +303,23 @@ $ tote plugin update esc --dry-run          # 1.1.0 removes confirm = true from 
 esc 1.1.0 asks for more access
 ...
   ! command drop no longer asks for confirmation
+...
+consent is asked because:
+  - what it runs changed in a way that asks again
+```
+
+The same screen for an update that adds the suggestions of a field (a real run of the `branches`
+plugin of AUTHORING.md):
+
+```
+$ tote plugin update branches --dry-run     # 0.2.0 adds choices_from to the field "branch"
+branches 0.2.0 asks for more access
+...
+  ! item_action log now suggests values with a program that starts before any confirmation
+Commands: 0 added, 0 removed, 1 changed
+  - item action log: git log --oneline -n 5 '{branch}' --
+  + item action log: git log --oneline -n 5 '{branch}' --
+  + suggests values for the field branch with: git -C '{repo.path}' branch '--format=%(refname:short)'
 ...
 consent is asked because:
   - what it runs changed in a way that asks again
@@ -370,7 +396,10 @@ installed plugin, which would otherwise ask for its consent again and invalidate
 `--grant` token. The same rule binds the later key: it counts in the hash only when a manifest sets
 it, and its zero value must mean the behaviour of version 1.0, never a different one. Tests pin the
 hash of a manifest that uses every key (`TestSurfaceHashPinned`) and fail when a zero-valued key is
-written (`TestSurfaceZeroValuesAbsent`).
+written (`TestSurfaceZeroValuesAbsent`). A second test pins the hash of a manifest that sets
+`choices_from` (`TestSurfaceChoicesPinned`): in the object of its field the key is
+`choices_from`, an array of the templates as written, unexpanded, and nothing else about it is
+hashed. The hash of a plugin that does not set the key is the one it had before tote 1.1.
 
 An author can compute all of them before publishing:
 
@@ -593,7 +622,8 @@ The environment of a program is built from nothing.
 - Set by tote: `TOTE_API`, `TOTE_HOST_VERSION`, `TOTE_LANG`, `TOTE_BIN`, `TOTE_PLUGIN_ID`,
   `TOTE_PLUGIN_DIR`, `TOTE_PLUGIN_STATE`, `TOTE_PLUGIN_CACHE`, `PYTHONDONTWRITEBYTECODE=1`, and
   `GIT_TERMINAL_PROMPT=0` for captured runs.
-- Each `env:<NAME>` permission, when the variable is set, then the `env` table of the command.
+- Each `env:<NAME>` permission, when the variable is set, then the `env` table of the command. The
+  program of a `choices_from` gets neither (section 6.5).
 
 Not passed: `SSH_AUTH_SOCK`, `XDG_RUNTIME_DIR` (it holds agent sockets and the hand-off file of the
 shell integration), `TOTE_HANDOFF`, tokens and everything the plugin did not declare.
@@ -627,7 +657,8 @@ a plugin that tried to plant one, is not found. The resolved file must not be th
   1024 bytes.
 - A value that starts with `-` is refused when its template does not start with `-`, unless the
   placeholder is named in `allow_dash`, or it is a `choice` field or the flag of a `bool` field. A
-  value can therefore not become an option by accident or by attack.
+  value can therefore not become an option by accident or by attack. A `text` field is never an
+  exception, and a value that was picked from the suggestions of a `choices_from` is not either.
 
 ```
 $ tote plugin check ./dash --argv --set rev=--output=/tmp/x
@@ -646,7 +677,8 @@ $ tote plugin check ./dash --argv --set rev=--output=/tmp/x
   is one of those forms. `ext::`, `file:` and the `<transport>::<address>` form are dropped.
 - The repository path is saved data that tote expands. A hostile repository can carry its own git
   configuration: tote derives `{repo.remote}` and `{repo.branch}` with `git config --local` and
-  `core.fsmonitor=false`, from a clean environment, in at most 1.5 seconds.
+  `core.fsmonitor=false`, from a clean environment, the two lookups side by side under one deadline
+  of 1.5 seconds.
 - An `open` template must produce an `https` address with a host, no user information, no space or
   control character, at most 2048 bytes. When the template names the host literally, the result must
   have exactly that host, so that no value can move the link. The consent line says that you confirm
@@ -669,6 +701,114 @@ $ tote plugin check ./dash --argv --set rev=--output=/tmp/x
   `remove`, which read `plugin-procs`.
 - A `terminal` run gives the program your terminal and has no timeout. It belongs to the plugin
   until it exits.
+
+### 6.5 Suggestions of a field
+
+Since tote 1.1 a `text` field can carry a `choices_from`: a program that lists values for the user
+to pick. This is a second way for a plugin to start a program, and the only one that starts without
+a command being run, so it has its own statement. The rules of the manifest are in API1.md, section
+3.8.1, and the exact run in section 4.4.
+
+**What runs, and when.**
+
+| Moment                                                                 | What starts                                                               |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Install, update, enable, `check`, `info`, `--dry-run`                  | Nothing that the plugin names (section 9). `check` prints the argv.       |
+| A form opens, the user moves to the field, types, presses Enter or Esc | Nothing that the plugin names.                                            |
+| A form is prepared, or the suggestions of a field are prepared         | tote's own `git` helper, if a placeholder reads `{repo.*}` (section 6.3). |
+| The user presses Ctrl+L on the field                                   | The program of the `choices_from`, once, for at most 10 seconds.          |
+
+So it is exact to say that no program of the plugin starts before the key press, and not that no
+program at all does: the `git` helper of section 6.3 may, as it already does for a command that
+reads `{repo.*}`. There is no way to start the list from the command line and no headless run.
+
+**What the program gets.**
+
+- No shell, no standard input, no terminal, a process group and a session of its own.
+- The environment of a command (section 6.1), **without** the variables of the `env:` permissions
+  and without the `env` table of the contribution, and with `NO_COLOR=1`. A plugin that holds
+  `env:GITHUB_TOKEN` therefore does not give the token to its list. The proxy variables are passed
+  when the plugin declares `net:`, as for a command.
+- The working directory is the cache directory of the plugin, created with mode 0700, never a
+  link. It is not the repository and not the directory of the user. It is a convention for where a
+  listing program may put its cache, and it is not a sandbox: the program can read any file you
+  can.
+- The same checks as a command before the start: the state of the plugin is recomputed from the
+  files, then checked again right before the start and once more after the process is recorded in
+  `plugin-procs`. It takes one of the 4 process slots.
+
+**Limits, and how it ends.** 10 seconds, 64 KiB of standard output, 1 MiB of standard error, 200
+suggestions. The process group gets SIGTERM and then SIGKILL 2 seconds later when the time is over,
+when a pipe is over its limit, and when the run is cancelled: Esc, submitting or closing the form,
+`disable` or `remove` of the plugin, quitting tote, Ctrl+C, and suspending tote with Ctrl+Z. A
+grandchild that keeps a pipe open cannot hold the form (the pipes are drained for 250 ms of silence,
+5 seconds at most, and closed). Unlike a captured run (section 6.4), what the program leaves running
+in its process group when it ends is then killed with SIGKILL, so that a list started up to 5 times
+per field in each form cannot pile up daemons; a descendant that called `setsid` again is out of
+reach. If
+tote is killed with SIGKILL, nobody stops the group; `plugin disable` and `plugin remove` reach it
+through `plugin-procs`.
+
+**Hostile output.** The list is data from a program that you allowed to run, and it is treated like
+all text that comes from a plugin (section 7), but stricter, because a value goes into a command.
+
+- tote reads the raw bytes, and a value is **dropped, never rewritten**: empty, over 128 bytes, not
+  valid UTF-8, holding a space, a control character, an escape, a bidirectional or zero-width or
+  other format character, a character that draws nothing (the braille blank, the Hangul and Khmer
+  fillers, the combining grapheme joiner, a variation selector), or not matching the `pattern` or
+  the `max_len` of the field. A cleaned value would be a different value from the one the program
+  meant, so there is no cleaning. Dropped entries are counted and shown ("3 hidden").
+- A line that holds a second TAB is dropped. At most 200 suggestions are kept. More than 64 KiB on
+  the standard output fails the whole list, and a list is never cut short and shown.
+- A **label** is shown, so it is redacted, stripped of escape sequences, cleaned and cut at 60
+  runes. It is never matched and never reaches an argv. It is the plugin's own words, in any
+  language, and it can lie: a label of "recommended" beside a harmful value is possible. Read the
+  value, which is always shown as the program printed it.
+- The **failure line** (the last non-empty line of the standard error, else the first of the
+  standard output) is cleaned, redacted and cut at 200 runes, so a program cannot paint on your
+  screen through a failure.
+- Credentials are masked by shape, as in section 7. There is no exact secret to mask: no `env:`
+  variable is passed to this run.
+- A list that did not end with status 0 is discarded whole, even when it printed lines. A timeout
+  and a cancel keep nothing.
+
+**What a pick can and cannot do.** A picked value is not trusted. It fills a free text field and,
+when the form is submitted, it is checked exactly like a typed value: `required`, `max_len`,
+`pattern`, the produced-text rules, then the **dash rule**, which a `text` field is never exempt
+from. A suggestion of `--upgrade`, or `-o=/tmp/x`, is refused as it would be if it were typed
+(`dash_refused`), and an anchored pattern that starts with a letter or a digit keeps it out of the
+list too. There is no membership check: the list is not part of the call, and the plugin cannot
+make a value valid by listing it. What a pick can do is what a typed value can do: be a word that
+the command's program reads in a way you did not expect. The list is also chosen by the plugin and
+the user decides, so a plugin can nudge you toward a value. tote shows the value and does not judge
+it.
+
+**Consent.** The consent screen lists the argv of each `choices_from` under its command (`suggests
+values for the field <id> with: ...`), and the update that adds one or changes one asks again, with
+the line "... now suggests values with a program that starts before any confirmation" (the
+escalation `choices`, section 4.5). Removing one asks nothing. Nothing else changes: the program of
+a `choices_from` is covered by an `exec:` permission like any other, and the plugin earns no new
+capability.
+
+**What is not enforced, and what is not promised.**
+
+- An `exec:` permission covers the **program**, not the word after it. `exec:git` that the user
+  allowed for `git log` also lets a `choices_from` run `git stash list`, `git fetch` or any other
+  word. This is the central limit of section 3.4, and it is why the list asks for consent when it
+  changes. A `confirm` does **not** guard the list: the list runs before the confirmation is asked
+  and without it. `check` warns (`argv.choices_confirmed`) only when the list runs the same program
+  and the same first word as the confirmed command. It cannot see the other cases.
+- `net:` and `fs:` permissions are declared and not enforced for this program either (section 2).
+  The list can reach the network and any file you can reach. That the program has no `env:` variable
+  does not stop it from reading `~/.config/gh` or an agent socket path that it finds on its own.
+- A program that reads a repository, such as `git -C {repo.path} branch`, reads the configuration of
+  a repository that may be hostile (section 3.5), before any confirmation. The user chose to press
+  Ctrl+L on a field of a command that works in that repository, and tote does not harden the
+  program. Pass the overrides that make sense, or list from a place that is not the repository.
+- A list that is stale, or changed between the pick and the submit, has no effect: nothing is
+  compared at the submit but the typed-text rules.
+- Cancelling is best effort in the way of section 8.2: a descendant that called `setsid` again
+  survives, and so does a program after a SIGKILL of tote.
 
 ## 7. Strings that come from a plugin
 
@@ -726,7 +866,8 @@ protects the host from a plugin that plants a link, not you from a plugin that e
    tote does not edit (dotted keys, an inline table), the command still succeeds, tells you, and the
    flag alone keeps the plugin off.
 3. It sends SIGTERM and then SIGKILL to the process groups recorded in `plugin-procs`, whichever
-   tote started them, and to every process of those sessions on Linux.
+   tote started them, and to every process of those sessions on Linux. A program that lists the
+   suggestions of a field is recorded there like any other, so a `disable` stops it too.
 
 It keeps the files, the settings and the consent. `--no-plugins` (or `TOTE_NO_PLUGINS=1`) turns
 every plugin off for one run.
@@ -771,7 +912,10 @@ text.
 
 The only program tote starts on its own during these verbs is `git`, to derive `{repo.remote}`,
 `{repo.slug}` and `{repo.branch}` of a saved repository when `check --argv` or a command needs them.
-It is read-only, as described in section 6.3. In the plugin code, programs are started in two files
+It is read-only, as described in section 6.3. `check` prints the argv of a `choices_from` as a
+template and never starts it, `--repo` included. The same `git` helper may start when the form of a
+command is prepared and when the suggestions of a field are prepared, which is not the program of
+the plugin (section 6.5). In the plugin code, programs are started in two files
 only, `run.go` (a prepared run, and the platform opener) and `git.go` (this helper), and a test
 enforces it.
 
@@ -815,6 +959,10 @@ These are reserved. The 1.0 documentation never describes them as working.
   plugin you installed cannot be recalled remotely. `disable` and `remove` are the recall.
 - **Secrets for plugins.** `env:TOTE_TOKEN` is refused (`reserved_not_available`). There is no
   secret field type.
+- **A closed list built at run time.** `choices_from` is the suggestions of a text field and a
+  closed list is another thing. A `choice` that a program fills would be the feature
+  `field.choices_closed`, which is reserved and never announced, so a manifest written for it is
+  incompatible (`feature_missing`) and cannot be taken for one that uses `choices_from`.
 - **Reserved permissions**: `host:read:connections`, `host:handoff`, `host:clipboard`,
   `host:notify`, `host:editor` (`reserved_not_available`). **Never grantable in API 1**:
   `hook:intercept`, `host:write:settings` (`perm_refused`).
@@ -830,49 +978,56 @@ These are reserved. The 1.0 documentation never describes them as working.
 Test names are in `internal/plugin` unless a path is given. Table-driven tests list their cases as
 subtests (`-run 'TestName/case'`).
 
-| Attack                                                                              | Defence                                                                                                                                                                                                    | Tested by                                                                                                                                                                     |
-| ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Entry `../evil`, `/etc/x`, `a\b` in an archive                                      | names checked, writes through `os.Root`                                                                                                                                                                    | `TestHostileArchives` (the cases of parent, absolute and backslash names), `TestEntryNames`                                                                                   |
-| Symlink, hard link, device or pipe in an archive                                    | refused by type                                                                                                                                                                                            | `TestHostileArchives` (the link, device and pipe cases), `TestInstallReleaseHostileArchives`                                                                                  |
-| Symlink or pipe in a directory source                                               | `Lstat` of each entry, file identity checked at copy                                                                                                                                                       | `TestInstallHostileSource`, `TestSecReviewHostileSources`                                                                                                                     |
-| Decompression bomb, huge entry, too many entries, depth, long path                  | limits counted while streaming                                                                                                                                                                             | `TestUnpackBomb`, `TestHostileArchives` (the limit cases), `TestUnpackOneByteOver`                                                                                            |
-| Second gzip stream, trailing data, truncation                                       | one stream and one tar, nothing after                                                                                                                                                                      | `TestHostileArchives` (the second-stream case)                                                                                                                                |
-| Download larger than allowed, or lying about its size                               | `Content-Length` and counting reader                                                                                                                                                                       | `TestDownloadSizeCap`, `TestDownloadLengthLies`                                                                                                                               |
-| Redirect to another host, scheme, port or user information                          | host allow-list, `https` only                                                                                                                                                                              | `TestDownloadRedirectRules`, `TestDownloadRedirectHosts`, `TestDownloadRedirectLimit`                                                                                         |
-| Redirect to another repository of the same host                                     | `origin_redirect`, exit 5                                                                                                                                                                                  | `TestDownloadRedirectRules` (to another owner, to another repository)                                                                                                         |
-| Bytes that are not the ones you pinned                                              | sha256 compared before any parse, and again after the file is re-read                                                                                                                                      | `TestInstallReleaseWrongPinIsCheckedFirst`, `TestInstallReleaseNeedsThePin`, `TestInstallReleaseSwappedDownload`                                                              |
-| A hash typed for a thing that has no archive                                        | refused (`hash_unexpected`)                                                                                                                                                                                | `TestInstallPinIsRefusedForADirectory`                                                                                                                                        |
-| A release whose manifest version is not its tag                                     | `tag_mismatch`                                                                                                                                                                                             | `TestInstallReleaseTagMismatch`                                                                                                                                               |
-| One byte of an installed file changed, a file added, a mode changed, a link planted | tree hash and modes checked at every load; state `broken`                                                                                                                                                  | `TestTamper`, `TestCacheSeesTamper`                                                                                                                                           |
-| Staged copy altered between consent and commit                                      | hashed again under the lock                                                                                                                                                                                | `TestInstallTamperedStaging`                                                                                                                                                  |
-| Source changed after the consent                                                    | the copy is installed, not the source                                                                                                                                                                      | `TestInstallIsTheCopy`                                                                                                                                                        |
-| Update that asks for more access                                                    | escalation rule, grant token                                                                                                                                                                               | `TestUpdateEscalationMatrix`, `TestUpdateReleaseEscalation`, `TestEscalationMatrix`, `TestPluginExitCodes` (in `cmd/tote`)                                                    |
-| Update that removes a `confirm`, adds `allow_dash` or `env`                         | surface escalation                                                                                                                                                                                         | `TestSurfaceEscalations`, `TestUpdateReleaseEscalation`                                                                                                                       |
-| Update from another source, older, same version, pre-release                        | refused; with `--force` consent is still asked                                                                                                                                                             | `TestUpdateRules`, `TestUpdateSourceChanged`, `TestUpdateReleaseRules`, `TestForcedUpdateAsksForConsent`                                                                      |
-| The same plugin installed again                                                     | nothing is asked and nothing is written; any difference (version, source, files) keeps the update rules                                                                                                    | `TestInstallIdempotent`, `TestPluginInstallIdempotent` (`cmd/tote`)                                                                                                           |
-| A plugin of the exec tier, new or already in the store                              | refused as incompatible (`reserved_not_available`), never enabled or run                                                                                                                                   | `TestExecTierRefused`, `TestExecTierRefusedEverywhere`, `TestPluginExecTierRefused` (`cmd/tote`)                                                                              |
-| A script that agrees for you                                                        | no `--yes`; `--grant` must equal the token                                                                                                                                                                 | `TestInstallConsent`, `TestPluginEnableConsent` (in `cmd/tote`)                                                                                                               |
-| A plugin that installs or removes plugins                                           | verbs refused from a plugin session                                                                                                                                                                        | `TestReviewMutatingVerbsRefuseFromAPluginSession`, `TestPluginFromPlugin` (in `cmd/tote`)                                                                                     |
-| A plugin that runs a program it did not declare, tote or a shell                    | covered by `exec:`, never tote, never a launcher                                                                                                                                                           | `TestProgramChecks`, `TestShellNames`                                                                                                                                         |
-| An id that passes for tote or for an official plugin                                | reserved verbs, words, prefix and official ids; not applied to a plugin that is already installed, so a later reservation cannot break it                                                                  | `TestReservedID`, `TestReservationKeepsInstalled`, `TestInstallOfficialIDOnlyBundled`, `TestPluginReservedIDs` (in `cmd/tote`)                                                |
-| A value that becomes an option, or an injected character                            | dash rule, anchored patterns, produced-text rules                                                                                                                                                          | `TestExpandArgv`, `TestExpandHostileValues`, `TestPrepareAllowDash`                                                                                                           |
-| Environment leak (agent socket, tokens, loader variables, hand-off file)            | built from nothing; blocked names                                                                                                                                                                          | `TestRunIsolation`, `TestEnvironmentFromNothing`, `TestSecReviewEnvTableCodeExecution`, `TestSecReviewCodeEnvNamesRefused`, `TestReviewEnvTableBlockedNames`                  |
-| A program planted in the plugins directory or the working directory                 | lookup refuses those places                                                                                                                                                                                | `TestScrubPath`, `TestLookBinName`                                                                                                                                            |
-| Escape sequences in program output or in a manifest                                 | pager filter, cleaner                                                                                                                                                                                      | `TestFilterEscapeInjection`, `TestRunEscapes`, `TestCleanLine`                                                                                                                |
-| Credential in program output                                                        | exact-value and shape masking                                                                                                                                                                              | `TestRedactor`, `TestRunRedacts`                                                                                                                                              |
-| A plugin plants links in its own directories to make the host write elsewhere       | host files in `plugins-host`, no link followed                                                                                                                                                             | `TestHostWritesNothingInPluginDirectories`, `TestWriteHostFileRefuses`                                                                                                        |
-| `remove ../data`, a linked id directory, a linked plugins directory                 | id grammar, `Lstat` walks                                                                                                                                                                                  | `TestRemoveBadIDs`, `TestRemoveSymlinkedID`, `TestRemoveTreeHostileLayouts`, `TestRemoveReleaseNeverFollowsLinks`                                                             |
-| A disabled plugin that keeps running                                                | state rechecked before every start; process groups stopped                                                                                                                                                 | `TestRunsOnlyWhenEveryConditionHolds`, `TestRunStateIsRechecked`, `TestKillSwitchSurvivesAnyConfigLayout`, `TestRemoveStopsRunningPlugin`, `TestRemoveSetsTheKillSwitchFirst` |
-| A corrupt or forged lock or `config.toml`                                           | the lock is parsed strictly and fails closed; `config.toml` fails closed for a syntax error or another schema, an unknown key is a warning, and a plugin switch that is not a boolean turns the plugin off | `TestFailClosed`, `TestLockFailsClosed`, `TestSecReviewLockForgeryFailsClosed`                                                                                                |
-| A hostile or huge manifest                                                          | structure limits before the TOML library runs                                                                                                                                                              | `TestHostileManifests`, `TestShapeIssues`                                                                                                                                     |
-| A program shipped in a declarative package                                          | extra files refused                                                                                                                                                                                        | `TestCheckPackageDeclarative`                                                                                                                                                 |
-| An `open` address that leaves the declared host or the scheme                       | checked address, fixed literal host                                                                                                                                                                        | `TestOpenDefenses`, `TestLiteralHost`                                                                                                                                         |
-| Output flood                                                                        | 8 MiB in the pager, 64 MiB stops the run                                                                                                                                                                   | `TestRunBigOutput`                                                                                                                                                            |
-| `check` that starts a program                                                       | nothing is started                                                                                                                                                                                         | `TestCheckRunsNothing`                                                                                                                                                        |
-| A crash or an I/O error in the middle of an install                                 | atomic switch, tree reuse                                                                                                                                                                                  | `TestInstallCrashAtEveryPoint`, `TestInstallFailureAtEveryPoint`, `TestCommitTreeCollision`                                                                                   |
-| A bundled plugin that no longer matches its pin                                     | pin test in the build                                                                                                                                                                                      | `TestBundledPins` (in `internal/plugin/bundled`)                                                                                                                              |
-| Network code outside `fetch.go`                                                     | import rule                                                                                                                                                                                                | `TestLayoutPluginImports`                                                                                                                                                     |
-| Reserved verbs such as `plugin run`                                                 | unknown subcommand, exit 2                                                                                                                                                                                 | `TestPluginRunIsReserved` (in `cmd/tote`)                                                                                                                                     |
+| Attack                                                                                              | Defence                                                                                                                                                                                                    | Tested by                                                                                                                                                                     |
+| --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Entry `../evil`, `/etc/x`, `a\b` in an archive                                                      | names checked, writes through `os.Root`                                                                                                                                                                    | `TestHostileArchives` (the cases of parent, absolute and backslash names), `TestEntryNames`                                                                                   |
+| Symlink, hard link, device or pipe in an archive                                                    | refused by type                                                                                                                                                                                            | `TestHostileArchives` (the link, device and pipe cases), `TestInstallReleaseHostileArchives`                                                                                  |
+| Symlink or pipe in a directory source                                                               | `Lstat` of each entry, file identity checked at copy                                                                                                                                                       | `TestInstallHostileSource`, `TestSecReviewHostileSources`                                                                                                                     |
+| Decompression bomb, huge entry, too many entries, depth, long path                                  | limits counted while streaming                                                                                                                                                                             | `TestUnpackBomb`, `TestHostileArchives` (the limit cases), `TestUnpackOneByteOver`                                                                                            |
+| Second gzip stream, trailing data, truncation                                                       | one stream and one tar, nothing after                                                                                                                                                                      | `TestHostileArchives` (the second-stream case)                                                                                                                                |
+| Download larger than allowed, or lying about its size                                               | `Content-Length` and counting reader                                                                                                                                                                       | `TestDownloadSizeCap`, `TestDownloadLengthLies`                                                                                                                               |
+| Redirect to another host, scheme, port or user information                                          | host allow-list, `https` only                                                                                                                                                                              | `TestDownloadRedirectRules`, `TestDownloadRedirectHosts`, `TestDownloadRedirectLimit`                                                                                         |
+| Redirect to another repository of the same host                                                     | `origin_redirect`, exit 5                                                                                                                                                                                  | `TestDownloadRedirectRules` (to another owner, to another repository)                                                                                                         |
+| Bytes that are not the ones you pinned                                                              | sha256 compared before any parse, and again after the file is re-read                                                                                                                                      | `TestInstallReleaseWrongPinIsCheckedFirst`, `TestInstallReleaseNeedsThePin`, `TestInstallReleaseSwappedDownload`                                                              |
+| A hash typed for a thing that has no archive                                                        | refused (`hash_unexpected`)                                                                                                                                                                                | `TestInstallPinIsRefusedForADirectory`                                                                                                                                        |
+| A release whose manifest version is not its tag                                                     | `tag_mismatch`                                                                                                                                                                                             | `TestInstallReleaseTagMismatch`                                                                                                                                               |
+| One byte of an installed file changed, a file added, a mode changed, a link planted                 | tree hash and modes checked at every load; state `broken`                                                                                                                                                  | `TestTamper`, `TestCacheSeesTamper`                                                                                                                                           |
+| Staged copy altered between consent and commit                                                      | hashed again under the lock                                                                                                                                                                                | `TestInstallTamperedStaging`                                                                                                                                                  |
+| Source changed after the consent                                                                    | the copy is installed, not the source                                                                                                                                                                      | `TestInstallIsTheCopy`                                                                                                                                                        |
+| Update that asks for more access                                                                    | escalation rule, grant token                                                                                                                                                                               | `TestUpdateEscalationMatrix`, `TestUpdateReleaseEscalation`, `TestEscalationMatrix`, `TestPluginExitCodes` (in `cmd/tote`)                                                    |
+| Update that removes a `confirm`, adds `allow_dash` or `env`                                         | surface escalation                                                                                                                                                                                         | `TestSurfaceEscalations`, `TestUpdateReleaseEscalation`                                                                                                                       |
+| A suggestion that is an option (`--upgrade`), holds an escape, a space or a bidirectional character | dropped, never rewritten; the pattern; the dash rule at the submit, a `text` field is never exempt                                                                                                         | `TestParseChoices`, `TestParseChoicesBytes`, `TestChoicesDashRule`, `TestChoicesFiltersTheValues`                                                                             |
+| A suggestions program that floods its output, or runs for ever                                      | 10 seconds, 64 KiB, 1 MiB of error, 200 kept; the group is killed                                                                                                                                          | `TestRunChoicesCap`, `TestRunChoicesTimeout`, `TestParseChoicesLimit`, `TestRunChoicesKillsWhatIgnoresTerm`                                                                   |
+| A grandchild that holds the pipe of a suggestions program                                           | the pipes are drained for 250 ms of silence, 5 seconds at most, then closed                                                                                                                                | `TestRunChoicesGrandchildKeepsThePipe`, `TestRunChoicesGrandchildKeepsWriting`, `TestRunChoicesKillsWhatItLeftBehind`                                                                                                |
+| A token handed to a suggestions program                                                             | no `env:` variable and no `env` table; the proxy variables only with `net:`                                                                                                                                | `TestChoicesEnvironment`, `TestRunChoicesEnvironment`                                                                                                                         |
+| A plugin that starts its suggestions without a user key press, or from `check`                      | only `Registry.RunChoices` starts it, and it needs a prepared run; `check` prints a template                                                                                                               | `TestChoicesStartsNothing`, `TestCheckShowsSuggestionsAndStartsNothing`, `TestRunChoicesRefusesOtherRuns`                                                                     |
+| A suggestions run of a disabled or changed plugin                                                   | state checked before the start and after the process is recorded; `disable` stops the group                                                                                                                | `TestChoicesNeedsAnEnabledPlugin`, `TestRunChoicesGuard`, `TestRunChoicesStoppedByDisable`                                                                                    |
+| An update that adds a program to start on a key press                                               | escalation `choices`; the argv is in the consent view                                                                                                                                                      | `TestSurfaceChoicesEscalation`, `TestConsentShowsSuggestions`, `TestSurfaceChoicesPinned`                                                                                     |
+| Update from another source, older, same version, pre-release                                        | refused; with `--force` consent is still asked                                                                                                                                                             | `TestUpdateRules`, `TestUpdateSourceChanged`, `TestUpdateReleaseRules`, `TestForcedUpdateAsksForConsent`                                                                      |
+| The same plugin installed again                                                                     | nothing is asked and nothing is written; any difference (version, source, files) keeps the update rules                                                                                                    | `TestInstallIdempotent`, `TestPluginInstallIdempotent` (`cmd/tote`)                                                                                                           |
+| A plugin of the exec tier, new or already in the store                                              | refused as incompatible (`reserved_not_available`), never enabled or run                                                                                                                                   | `TestExecTierRefused`, `TestExecTierRefusedEverywhere`, `TestPluginExecTierRefused` (`cmd/tote`)                                                                              |
+| A script that agrees for you                                                                        | no `--yes`; `--grant` must equal the token                                                                                                                                                                 | `TestInstallConsent`, `TestPluginEnableConsent` (in `cmd/tote`)                                                                                                               |
+| A plugin that installs or removes plugins                                                           | verbs refused from a plugin session                                                                                                                                                                        | `TestReviewMutatingVerbsRefuseFromAPluginSession`, `TestPluginFromPlugin` (in `cmd/tote`)                                                                                     |
+| A plugin that runs a program it did not declare, tote or a shell                                    | covered by `exec:`, never tote, never a launcher                                                                                                                                                           | `TestProgramChecks`, `TestShellNames`                                                                                                                                         |
+| An id that passes for tote or for an official plugin                                                | reserved verbs, words, prefix and official ids; not applied to a plugin that is already installed, so a later reservation cannot break it                                                                  | `TestReservedID`, `TestReservationKeepsInstalled`, `TestInstallOfficialIDOnlyBundled`, `TestPluginReservedIDs` (in `cmd/tote`)                                                |
+| A value that becomes an option, or an injected character                                            | dash rule, anchored patterns, produced-text rules                                                                                                                                                          | `TestExpandArgv`, `TestExpandHostileValues`, `TestPrepareAllowDash`                                                                                                           |
+| Environment leak (agent socket, tokens, loader variables, hand-off file)                            | built from nothing; blocked names                                                                                                                                                                          | `TestRunIsolation`, `TestEnvironmentFromNothing`, `TestSecReviewEnvTableCodeExecution`, `TestSecReviewCodeEnvNamesRefused`, `TestReviewEnvTableBlockedNames`                  |
+| A program planted in the plugins directory or the working directory                                 | lookup refuses those places                                                                                                                                                                                | `TestScrubPath`, `TestLookBinName`                                                                                                                                            |
+| Escape sequences in program output or in a manifest                                                 | pager filter, cleaner                                                                                                                                                                                      | `TestFilterEscapeInjection`, `TestRunEscapes`, `TestCleanLine`                                                                                                                |
+| Credential in program output                                                                        | exact-value and shape masking                                                                                                                                                                              | `TestRedactor`, `TestRunRedacts`                                                                                                                                              |
+| A plugin plants links in its own directories to make the host write elsewhere                       | host files in `plugins-host`, no link followed                                                                                                                                                             | `TestHostWritesNothingInPluginDirectories`, `TestWriteHostFileRefuses`                                                                                                        |
+| `remove ../data`, a linked id directory, a linked plugins directory                                 | id grammar, `Lstat` walks                                                                                                                                                                                  | `TestRemoveBadIDs`, `TestRemoveSymlinkedID`, `TestRemoveTreeHostileLayouts`, `TestRemoveReleaseNeverFollowsLinks`                                                             |
+| A disabled plugin that keeps running                                                                | state rechecked before every start; process groups stopped                                                                                                                                                 | `TestRunsOnlyWhenEveryConditionHolds`, `TestRunStateIsRechecked`, `TestKillSwitchSurvivesAnyConfigLayout`, `TestRemoveStopsRunningPlugin`, `TestRemoveSetsTheKillSwitchFirst` |
+| A corrupt or forged lock or `config.toml`                                                           | the lock is parsed strictly and fails closed; `config.toml` fails closed for a syntax error or another schema, an unknown key is a warning, and a plugin switch that is not a boolean turns the plugin off | `TestFailClosed`, `TestLockFailsClosed`, `TestSecReviewLockForgeryFailsClosed`                                                                                                |
+| A hostile or huge manifest                                                                          | structure limits before the TOML library runs                                                                                                                                                              | `TestHostileManifests`, `TestShapeIssues`                                                                                                                                     |
+| A program shipped in a declarative package                                                          | extra files refused                                                                                                                                                                                        | `TestCheckPackageDeclarative`                                                                                                                                                 |
+| An `open` address that leaves the declared host or the scheme                                       | checked address, fixed literal host                                                                                                                                                                        | `TestOpenDefenses`, `TestLiteralHost`                                                                                                                                         |
+| Output flood                                                                                        | 8 MiB in the pager, 64 MiB stops the run                                                                                                                                                                   | `TestRunBigOutput`                                                                                                                                                            |
+| `check` that starts a program                                                                       | nothing is started                                                                                                                                                                                         | `TestCheckRunsNothing`                                                                                                                                                        |
+| A crash or an I/O error in the middle of an install                                                 | atomic switch, tree reuse                                                                                                                                                                                  | `TestInstallCrashAtEveryPoint`, `TestInstallFailureAtEveryPoint`, `TestCommitTreeCollision`                                                                                   |
+| A bundled plugin that no longer matches its pin                                                     | pin test in the build                                                                                                                                                                                      | `TestBundledPins` (in `internal/plugin/bundled`)                                                                                                                              |
+| Network code outside `fetch.go`                                                                     | import rule                                                                                                                                                                                                | `TestLayoutPluginImports`                                                                                                                                                     |
+| Reserved verbs such as `plugin run`                                                                 | unknown subcommand, exit 2                                                                                                                                                                                 | `TestPluginRunIsReserved` (in `cmd/tote`)                                                                                                                                     |
 
 To run them:
 
@@ -902,5 +1057,9 @@ go test -p 1 ./internal/plugin ./internal/plugin/bundled ./cmd/tote
    environment from its children.
 9. There is no revocation and no remote recall in 1.0.
 10. The masking of secrets in output is a best effort.
+11. The suggestions of a field (section 6.5) start a program without a confirmation. The consent
+    shows its argv and asks again when it changes, but one `exec:` permission covers every word of
+    the program, a `confirm` does not guard the list, and nothing stops the program from reading
+    files or the network.
 
 If you find a way around a protection listed as enforced, it is a bug in tote.

@@ -45,7 +45,8 @@ disappear from the right as the terminal narrows, with a filter line and a panel
 command Enter would run (or the path of a repository and its Git branch). The palette searches every
 record and a few actions from anywhere; the settings are changed in place and saved at once; the
 Plugins screen lists installed and bundled plugins with their state; `?` lists every key that
-applies.
+applies. The palette and the lists of choices grow with a wide or tall terminal, up to about 60% of
+it, so that long names and commands are cut less often.
 
 | Key                                         | Where                             | Action                                                                                                                                                                                                                                        |
 | ------------------------------------------- | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -66,11 +67,17 @@ applies.
 | Space                                       | Plugins                           | Enable or disable the plugin.                                                                                                                                                                                                                 |
 | `a`, `s`, `i`, `d`, `c`                     | Plugins                           | Allow (consent), settings, install, remove, check.                                                                                                                                                                                            |
 | Esc                                         | Everywhere                        | Go back, close an overlay.                                                                                                                                                                                                                    |
+| `Ctrl+L`                                    | A text field with suggestions     | Plugin forms (tote 1.1): list the values that the plugin's program suggests, then pick one.                                                                                                                                                   |
 | `q`                                         | Everywhere                        | Quit (not while typing in a field).                                                                                                                                                                                                           |
 | `Ctrl+C`                                    | Everywhere                        | Go back, never quits at once (twice on the welcome page quits).                                                                                                                                                                               |
 | `Ctrl+D`, `Ctrl+Z`                          | Everywhere                        | Quit, suspend.                                                                                                                                                                                                                                |
 
-In forms, Tab goes to the next field, `Ctrl+S` saves and Esc cancels.
+In forms, Tab goes to the next field, `Ctrl+S` saves and Esc cancels. On a text field of a plugin
+form that offers suggestions (`choices_from`, since tote 1.1), `Ctrl+L` starts the program that
+lists them: nothing starts before that key press, you can always type a value instead, and Esc
+(which stops the listing and keeps the form, a second Esc closes it), submitting or closing the form
+stops the program. As soon as the program starts, a loading box opens with a spinner, the command
+that runs and the seconds it has taken; the list replaces it when it arrives.
 
 Mouse: pointing highlights, a click selects, a double click opens, the wheel scrolls and a click on
 a key of the footer presses it. Dragging selects text and copies it when you release the button;
@@ -382,7 +389,9 @@ Consent comes first. Before a plugin is installed, or when an update asks for mo
 command in full and what the plugin declares (programs, files, network, environment variables, the
 terminal), marking what tote enforces and what is only declared. Nothing runs before you agree, a
 plugin whose files changed after you agreed is refused, and any plugin can be switched off with one
-command. The programs a plugin names still run with your rights: read the list.
+command. The programs a plugin names still run with your rights: read the list. Since tote 1.1 a
+plugin can also suggest values for a text field with a program that you start with `Ctrl+L`; its
+argv is shown at consent and an update that adds one asks again.
 
 The plugin that ships with tote is **gft**. It is embedded in the binary, listed as `available`
 until you install it, and needs the `gft` program (GitHub releases and Git stashes). On a saved

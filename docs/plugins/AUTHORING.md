@@ -230,11 +230,11 @@ flag = "-i"
 
 Each `[[command.field]]` is one question, asked in file order. The field types are:
 
-| Type     | Value                                          | Keys                                                                               |
-| -------- | ---------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `text`   | A string.                                      | `max_len` (256 by default, at most 1024), `pattern`, `default`, `required`, `hint` |
-| `choice` | One of a fixed list, the empty string allowed. | `choices` (1 to 64 strings)                                                        |
-| `bool`   | On or off.                                     | `flag`: a literal starting with `-`, required                                      |
+| Type     | Value                                          | Keys                                                                                               |
+| -------- | ---------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `text`   | A string.                                      | `max_len` (256 by default, at most 1024), `pattern`, `default`, `required`, `hint`, `choices_from` |
+| `choice` | One of a fixed list, the empty string allowed. | `choices` (1 to 64 strings)                                                                        |
+| `bool`   | On or off.                                     | `flag`: a literal starting with `-`, required                                                      |
 
 `default` is a template: it may use the fields above it, `{repo.*}`, `{setting.*}`, `{cwd}` and
 `{home}`, and a value that cannot be resolved gives an empty default, never an error. `hint` is a
@@ -262,8 +262,9 @@ Two rules protect the command line from the values:
   `1 --force`. `check` refuses an unanchored pattern (`pattern.unanchored`).
 - **The dash rule.** If a substituted argument starts with `-` and its template did not, tote
   refuses the command (`dash_refused`). Exceptions: a `bool` flag, a value from a `choice`, and the
-  placeholders you list in `allow_dash`. Put `--` before user text where the program supports it, as
-  `grep -e {word} -- .` does.
+  placeholders you list in `allow_dash`. A `text` field is never an exception, even when the value
+  was picked from suggestions (see "Suggest values from a program" in step 5). Put `--` before user
+  text where the program supports it, as `grep -e {word} -- .` does.
 
 Test it without running anything: `check --argv` accepts `--set <field>=<value>`, any number of
 times, and prints the command the form would build. A `bool` takes `true 1 yes on` or
@@ -516,6 +517,188 @@ The repository members you can use are `{repo.path}`, `{repo.name}`, `{repo.remo
 (`owner/name`, only for a github.com remote) and `{repo.branch}`. In a `[[command]]` they refer to
 the current repository: the saved repository that contains the directory tote was started in. An
 entry whose placeholder has no value is greyed in the menu with the reason.
+
+### Suggest values from a program
+
+Since tote 1.1, a `text` field can offer **suggestions** that a program lists when the user asks for
+them. The user presses Ctrl+L on the field, tote starts your program, a picker shows the values it
+printed, and the pick fills the field. While your program runs a loading box is open, with a spinner
+and the line it runs, and the user can press Esc to stop it, so a slow program is not a frozen
+screen. The field is still free text: the user can type any value, with the list or without
+it, and the list never replaces the checks of `pattern`, `max_len` and `required`.
+
+This is not a closed list. A `choice` field is the closed list, and its values are in `choices`.
+`choices_from` on a `choice` or a `bool` field is an error (`key_conflict`). A closed list that a
+program builds would be another feature, `field.choices_closed`, which is reserved: do not write for
+it.
+
+The example is a plugin of its own, `branches`, so that the hashes of `demo` do not move. It shows
+the last commits of a branch of a saved repository, and suggests the branches of that repository:
+
+```toml
+api = 1
+id = "branches"
+version = "0.2.0"
+tote = ">=1.1.0, <2"
+requires_features = ["field.choices_from"]
+title = "Branches"
+description = "Show the last commits of a branch of a repository."
+license = "MIT"
+tier = "declarative"
+permissions = ["exec:git", "fs:read:repo", "host:read:repos"]
+
+[[item_action]]
+id = "log"
+target = "repo"
+label = "Show the last commits of a branch"
+run = ["git", "log", "--oneline", "-n", "5", "{branch}", "--"]
+output = "pager"
+
+[[item_action.field]]
+id = "branch"
+type = "text"
+label = "Branch"
+hint = "Ctrl+L lists the branches of the repository."
+required = true
+pattern = "^[A-Za-z0-9][A-Za-z0-9._/-]{0,127}$"
+choices_from = ["git", "-C", "{repo.path}", "branch", "--format=%(refname:short)"]
+```
+
+The two lines at the top matter. `requires_features = ["field.choices_from"]` and
+`tote = ">=1.1.0, <2"` make tote 1.0 report the plugin as `incompatible` (it does not know the key)
+and not as invalid, which is what you want. Declare both.
+
+`choices_from` is an argv, like `run`: the first element is a literal program that an `exec:`
+permission covers, and every other element is a template. It may use the fields declared **before**
+this one, the settings, `{repo.*}`, `{cwd}` and `{home}`. Its own field and the fields after it do
+not exist yet: `{branch}` there is `placeholder_unknown`. Here `{repo.path}` needs
+`host:read:repos`, which the plugin declares. The program counts as used, so `exec:git` is not
+unused even when only the suggestions run it.
+
+`check` shows it and starts nothing:
+
+```sh
+tote plugin check ./branches --argv --set branch=main-2 --repo proj
+```
+
+```
+checking directory: ./branches
+branches 0.2.0 (declarative)
+what it runs:
+  - item action log: git log --oneline -n 5 main-2 --
+    in /home/u/work/proj
+    suggestions for the field branch: git -C '{repo.path}' branch '--format=%(refname:short)'
+access it asks for:
+  - exec:git
+  - fs:read:repo
+  - host:read:repos
+...
+./branches: no problem found
+```
+
+The argv under `suggestions` is the template. It is the same line that the user reads at consent,
+under the command: `suggests values for the field branch with: git -C ...`.
+
+**What your program must do.**
+
+- Print one suggestion per line to the standard output, `value` or `value`, a TAB and a label. The
+  value is exactly what fills the field. The label is only shown. Exit with status 0.
+- A value has no space, no control character and no escape, at most 128 bytes, and satisfies the
+  `pattern` and the `max_len` of the field. A value that does not is dropped and counted ("3
+  hidden"), never rewritten, so a program that ends its lines with CR LF lists nothing.
+- Print at most 64 KiB, and finish within 10 seconds. More output fails the whole list, and so does
+  a time out. tote keeps the first 200 suggestions and says how many more there were.
+- On a failure, exit with a status other than 0 and say why on the **standard error**, on a last
+  line of its own. tote shows that line next to the reason. A tool that writes its errors to the
+  standard output is shown too, with its first non-empty line, but give the standard error the
+  message.
+- Do not rely on anything but the argv. The program has no standard input and no terminal. Its
+  working directory is the cache directory of the plugin (`TOTE_PLUGIN_CACHE`), not the repository
+  and not the directory of the user, so give it the repository (`git -C {repo.path}`). Its
+  environment is the one of a command, but **without** the variables of your `env:` permissions and
+  without your `env` table: a `GITHUB_TOKEN` is not passed. `NO_COLOR=1` is set, and the proxy
+  variables are passed when the plugin declares `net:`.
+- Do not change anything. The user did not confirm this run, and tote does not ask: a listing must
+  only read.
+
+A suggestion never reaches your command unless the user submits it, and then it is checked as typed
+text, the dash rule included: `--upgrade` is refused even if the program printed it. Anchor the
+`pattern` and make it start with a letter or a digit, so that the list cannot offer a value the
+field will refuse.
+
+**What the user sees.** The key hints of a form that has suggestions list `ctrl+l: suggestions`.
+Nothing starts before the key press: not when the form opens, and not when the user moves to the
+field or presses Enter.
+
+- While the program runs, a loading box opens over the form. It shows a spinner, the argv and, after
+  a second, the seconds taken, and the footer says `esc cancel`. The first Esc stops the listing and
+  keeps the form with what was typed; a second Esc closes the form.
+- If an earlier field that the argv names is not valid yet, or a placeholder is empty, the status
+  line under the form says "Suggestions wait for the field <label>." and nothing starts. A form
+  that needs a repository says "Suggestions need a repository with a GitHub remote.".
+- The picker lists the values with their label dimmed, narrowed to the values that hold what the
+  user already typed, whatever the case. When none does, it shows the whole list and says so. The
+  number of hidden entries and of valid ones past the limit is on a line under the list. Esc closes
+  it and keeps what was typed.
+- An empty list says "no suggestion", with the number of values that were hidden. A failure says
+  why, in the language of tote: the status or the signal, "too much output", "took more than 10
+  seconds", and the line of the program.
+
+The program is stopped when the user presses Esc, submits or closes the form, quits tote or
+suspends it, and when the plugin is disabled. When it ends by itself, whatever it left running in
+its process group is killed: a listing is a short lookup, not a place to start a daemon. A list is
+kept in memory while the form is open, for that field and that exact argv, and is never written to
+a file. An empty answer is not kept: the next key press asks again, within the limit of 5 starts of
+the field.
+
+Ctrl+L is also the key that most terminals use to redraw the screen. tote uses it for the
+suggestions only on a field that has a `choices_from` and leaves it alone everywhere else. A
+terminal multiplexer or an editor plugin can bind Ctrl+L before tote sees it; the key then never
+arrives, and the user types the value.
+
+**The lint.** Three mistakes that `check` catches:
+
+```
+  error: command[0].field[0].choices_from[3], line 23: {name} is not a known placeholder
+  error: command[0].field[2].choices_from, line 35: choices_from and choice cannot be used together
+  error: command[0].field[3].choices_from[0], line 41: the command runs curl, which no exec: permission covers
+```
+
+and a warning, when the command asks for `confirm` and the suggestions run the same program with
+the same first word:
+
+```
+  warning: command[0].field[0].choices_from, line 23: the suggestions of a field run git stash, which starts before the confirmation is asked
+```
+
+A `confirm` does not guard what the list runs. `git stash list` only reads, so here the warning is
+a reminder and not a verdict: check that the word you list with is one that reads and nothing else.
+
+**Consent.** Adding a `choices_from`, or changing its argv, asks for consent again, as a new
+`exec:` permission does, because the program starts before any confirmation and one `exec:git`
+covers every word of git. The update view says so:
+
+```sh
+tote plugin update branches ./branches --dry-run
+```
+
+```
+branches 0.2.0 asks for more access
+...
+Unchanged: 3
+No longer asked: 0
+  ! item_action log now suggests values with a program that starts before any confirmation
+Commands: 0 added, 0 removed, 1 changed
+  - item action log: git log --oneline -n 5 '{branch}' --
+  + item action log: git log --oneline -n 5 '{branch}' --
+  + suggests values for the field branch with: git -C '{repo.path}' branch '--format=%(refname:short)'
+...
+consent is asked because:
+  - what it runs changed in a way that asks again
+```
+
+Removing a `choices_from` asks nothing. [API1.md](API1.md) section 4.4 has the exact rules of the
+run, the limits and the failure reasons.
 
 ## 8. Step 6: the requirement
 
@@ -1152,8 +1335,10 @@ An update asks again, and a script must pass a new `--grant`, in two cases:
    command (`derived:tty`), or any new permission. Dropped permissions never ask.
 2. **It runs something it could not before.** A `confirm` removed or turned off on an entry that
    kept its id, an `allow_dash` entry added (a new entry that carries one asks too), an `env` name
-   or value added or changed (a new entry that carries an `env` table asks too). Any other change to
-   a command, even to its program or arguments, is shown in the diff and is **not** asked. This is a
+   or value added or changed (a new entry that carries an `env` table asks too), a field that gains
+   a `choices_from` or whose `choices_from` argv changes (a new entry that has one asks too). Any
+   other change to a command, even to its program or arguments, is shown in the diff and is **not**
+   asked. This is a
    choice, and a limit: the user reads the diff but is not stopped by it.
 
 Try the first case. Raise the version to `0.2.0`, add `"exec:wc"` to `permissions` and add:
@@ -1370,7 +1555,8 @@ A checklist:
 5. `tote plugin check ./demo.tar.gz` on the archive you attach, and the `.sha256` file is its line.
 6. If the manifest uses a key or a feature that only a later tote has, `tote` says so
    (`tote = ">=1.1.0"`, or a name in `requires_features`): tote 1.0 then reports the plugin as
-   `incompatible`, which is what you want, and not as invalid.
+   `incompatible`, which is what you want, and not as invalid. A manifest with a `choices_from`
+   declares `requires_features = ["field.choices_from"]` and `tote = ">=1.1.0, <2"`.
 
 ## 14. Remove it
 
@@ -1575,27 +1761,30 @@ gives `findings[]` with a `code` that keeps its meaning (the set of codes can gr
 a message can change); the catalogs are keyed `plugin_err_<code>`, a dot or a dash of the code
 becoming `_`. Here is what each of these looked like.
 
-| You wrote                            | `check` says                                                                                         | Code                                                  |
-| ------------------------------------ | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| `permissions` without `exec:grep`    | `command[0].run[0], line 14: the command runs grep, which no exec: permission covers`                | `exec_uncovered`                                      |
-| `{wrod}` in `run`                    | `command[0].run[3], line 14: {wrod} is not a known placeholder`                                      | `placeholder_unknown`                                 |
-| `pattern = "[a-z]+"`                 | `command[0].field[0].pattern, line 21: the pattern [a-z]+ does not start with ^ and end with $`      | `pattern.unanchored`                                  |
-| `confrim = true`                     | `command[0].confrim, line 16: unknown key`                                                           | `unknown_key`                                         |
-| `run = ["sh", "-c", "..."]`          | `sh is a shell or a launcher: a command may not run it`                                              | `argv.shell`                                          |
-| a command with no `output`           | `command[0].output, line 11: this key is required`                                                   | `key_missing`                                         |
-| `net:example.org:8080`               | `permissions[1], line 9: invalid permission "net:example.org:8080" (host)`                           | `perm_invalid`                                        |
-| `[[hook]]`                           | `hook: hook is not available in this version of tote (reserved for a later one)`                     | `reserved_not_available`                              |
-| `tier = "exec"`                      | `tier, line 5: tier = "exec" is not available in this version of tote (reserved for a later one)`    | `reserved_not_available` (the plugin is incompatible) |
-| `id = ""`                            | `id, line 2: the id "" is not allowed: use lowercase letters, digits and dashes, 2 to 32 characters` | `id_invalid`                                          |
-| `version = ""`                       | `version, line 3: the version "" is not a strict semantic version`                                   | `version_invalid`                                     |
-| `run = ["{tool}", ...]`              | `command[0].run[0], line 14: the program "" of a command is not a plain name`                        | `argv0_invalid`                                       |
-| a `[[list]]` in a declarative plugin | `list: [list] is for exec plugins, this plugin is declarative`                                       | `tier_mismatch`                                       |
-| `id = "repo"`                        | `id, line 2: the id "repo" is not allowed: it is a tote command`                                     | `id_invalid`                                          |
-| `run.sh` next to `plugin.toml`       | `run.sh: a declarative plugin may not ship the file run.sh`                                          | `declarative_extra_file`                              |
-| a choice with no English label       | `locales.en....choice.TODO: the translation lacks the key ...`                                       | `locale_missing_key` (warning)                        |
-| a permission nothing uses            | `the permission exec:grep is declared but no command runs it`                                        | `exec_unused` (warning)                               |
-| `version = "1.0"`                    | `version, line 3: the version "1.0" is not a strict semantic version`                                | `version_invalid`                                     |
-| `tote = ">=2.0.0"` on tote 1.0.3     | `tote, line 4: this plugin needs tote >=2.0.0, you have 1.0.3`                                       | `tote_range`                                          |
+| You wrote                                                     | `check` says                                                                                         | Code                                                  |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `permissions` without `exec:grep`                             | `command[0].run[0], line 14: the command runs grep, which no exec: permission covers`                | `exec_uncovered`                                      |
+| `{wrod}` in `run`                                             | `command[0].run[3], line 14: {wrod} is not a known placeholder`                                      | `placeholder_unknown`                                 |
+| `pattern = "[a-z]+"`                                          | `command[0].field[0].pattern, line 21: the pattern [a-z]+ does not start with ^ and end with $`      | `pattern.unanchored`                                  |
+| `confrim = true`                                              | `command[0].confrim, line 16: unknown key`                                                           | `unknown_key`                                         |
+| `run = ["sh", "-c", "..."]`                                   | `sh is a shell or a launcher: a command may not run it`                                              | `argv.shell`                                          |
+| a command with no `output`                                    | `command[0].output, line 11: this key is required`                                                   | `key_missing`                                         |
+| `net:example.org:8080`                                        | `permissions[1], line 9: invalid permission "net:example.org:8080" (host)`                           | `perm_invalid`                                        |
+| `[[hook]]`                                                    | `hook: hook is not available in this version of tote (reserved for a later one)`                     | `reserved_not_available`                              |
+| `tier = "exec"`                                               | `tier, line 5: tier = "exec" is not available in this version of tote (reserved for a later one)`    | `reserved_not_available` (the plugin is incompatible) |
+| `id = ""`                                                     | `id, line 2: the id "" is not allowed: use lowercase letters, digits and dashes, 2 to 32 characters` | `id_invalid`                                          |
+| `version = ""`                                                | `version, line 3: the version "" is not a strict semantic version`                                   | `version_invalid`                                     |
+| `run = ["{tool}", ...]`                                       | `command[0].run[0], line 14: the program "" of a command is not a plain name`                        | `argv0_invalid`                                       |
+| a `[[list]]` in a declarative plugin                          | `list: [list] is for exec plugins, this plugin is declarative`                                       | `tier_mismatch`                                       |
+| `id = "repo"`                                                 | `id, line 2: the id "repo" is not allowed: it is a tote command`                                     | `id_invalid`                                          |
+| `run.sh` next to `plugin.toml`                                | `run.sh: a declarative plugin may not ship the file run.sh`                                          | `declarative_extra_file`                              |
+| a choice with no English label                                | `locales.en....choice.TODO: the translation lacks the key ...`                                       | `locale_missing_key` (warning)                        |
+| a permission nothing uses                                     | `the permission exec:grep is declared but no command runs it`                                        | `exec_unused` (warning)                               |
+| `version = "1.0"`                                             | `version, line 3: the version "1.0" is not a strict semantic version`                                | `version_invalid`                                     |
+| `tote = ">=2.0.0"` on tote 1.0.3                              | `tote, line 4: this plugin needs tote >=2.0.0, you have 1.0.3`                                       | `tote_range`                                          |
+| `choices_from` on a `choice` field                            | `command[0].field[2].choices_from, line 35: choices_from and choice cannot be used together`         | `key_conflict`                                        |
+| `{name}` in the `choices_from` of the field `name`            | `command[0].field[0].choices_from[3], line 23: {name} is not a known placeholder`                    | `placeholder_unknown`                                 |
+| a `choices_from` that runs the program of a `confirm` command | `the suggestions of a field run git stash, which starts before the confirmation is asked`            | `argv.choices_confirmed` (warning)                    |
 
 Two notes. A `dev` build of tote satisfies every range, so `tote_range` only shows on a release
 build. And when several things are wrong, `check` lists them all; the install commands report the
@@ -1635,8 +1824,12 @@ These exist in the manifest grammar or in the plans, and are **reserved**. Do no
   Every install and update is a deliberate act with a hash you typed. There is no `update --all`.
 - **Reserved tables and types**: `[[widget]]`, `[[panel]]`, `[[decorator]]`, `[[provider]]`,
   `[[connector]]`, `[[hook]]`, `[[job]]`, `[[screen]]`, `[[import]]`, `[[badge]]`, `[[search]]`; the
-  field types `connection`, `connections`, `repo` and `path`; the keys `secret`, `remember` and
-  `choices_from`; the setting types `dir` and `secret_ref`; the permissions `host:read:connections`,
+  field types `connection`, `connections`, `repo` and `path`; the keys `secret` and `remember`;
+  the setting types `dir` and `secret_ref`; the permissions `host:read:connections`,
   `host:handoff`, `host:clipboard`, `host:notify`, `host:editor`. A manifest that uses one is
   refused with `reserved_not_available`, so that nobody ships a feature that does nothing.
+- **A closed list built at run time.** `choices_from` is not it: since tote 1.1 it gives the
+  suggestions of a `text` field, and it is an error on a `choice`. A `choice` whose values a program
+  lists would be the feature `field.choices_closed`, which is reserved: a manifest that requires it
+  is incompatible and never runs.
 - **`ghrel` and `ghsec`** are not part of 1.0.
