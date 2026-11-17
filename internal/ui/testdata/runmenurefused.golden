@@ -8,8 +8,8 @@
 
                 ╭─ Actions: proj ──────────────────────────────╮
                 │ ❯    Show the latest release             gft │
-                │      List the release assets             gft │
-                │      Show the release notes              gft │
+                │ !    List the release assets             gft │
+                │ !    Show the release notes              gft │
                 │   s  List stashes                        gft │
                 │      Show a stash…                       gft │
                 │      Drop a stash…                       gft │
@@ -27,8 +27,8 @@
 
   ╭─ Actions: proj ──────────────────╮
   │ ❯    Show the latest release     │
-  │      List the release assets     │
-  │      Show the release notes      │
+  │ !    List the release assets     │
+  │ !    Show the release notes      │
   │   s  List stashes                │
   │      Show a stash…               │
   │      Drop a stash…               │
@@ -39,8 +39,8 @@
 == 24x7
   ╭─ Actions: proj ──╮
   │ ❯    Show the l… │
-  │      List the r… │
-  │      Show the r… │
+  │ !    List the r… │
+  │ !    Show the r… │
   ╰──────────────────╯
    ⏎ · esc · ↑↓
    gft: this reposito…

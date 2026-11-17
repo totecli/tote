@@ -64,3 +64,35 @@ func TestActionMenuUnavailableKeepsPlugin(t *testing.T) {
 		t.Errorf("double click: cur %d toast %q log %q", m.cur, g.toastText(), readLog(t, log))
 	}
 }
+
+// TestActionMenuUnavailableIsMarked checks that an action that cannot run has the warning glyph in
+// its marker column when it is not selected, so that it stands out without colors, and that an
+// action that can run has none.
+//
+// Parameters:
+//   - t: test to report to
+func TestActionMenuUnavailableIsMarked(t *testing.T) {
+	g, _, _ := gftRig(t)
+	m := g.repoActions()
+
+	g.press("down", "down", "down")
+
+	if m.cur != 3 {
+		t.Fatalf("the cursor is on %d, want the stash action", m.cur)
+	}
+
+	for _, tt := range []struct {
+		label  string
+		marked bool
+	}{
+		{"Show the latest release", true},
+		{"List stashes", false},
+	} {
+		y, _ := lineOf(g, tt.label)
+		line := strings.Split(g.text(), "\n")[y]
+
+		if got := strings.Contains(line, "! "); got != tt.marked {
+			t.Errorf("%q: marked %v, want %v: %q", tt.label, got, tt.marked, line)
+		}
+	}
+}

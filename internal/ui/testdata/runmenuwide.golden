@@ -15,9 +15,9 @@
 
 
                                                                             ╭─ Actions: proj ──────────────────────────────╮
-                                                                            │      Show the latest release             gft │
+                                                                            │ !    Show the latest release             gft │
                                                                             │ ❯    List the release assets             gft │
-                                                                            │      Show the release notes              gft │
+                                                                            │ !    Show the release notes              gft │
                                                                             │   s  List stashes                        gft │
                                                                             │      Show a stash…                       gft │
                                                                             │      Drop a stash…                       gft │

@@ -27,10 +27,8 @@ type repoMenuReadyMsg struct {
 }
 
 // actionMenu is the menu of the actions that plugins offer on one repository. An action that
-// cannot run now stays in the list, muted, with its plugin at its right as the others; the status
-// line gives the reason in full while the row is selected, and Enter on it shows it again and
-// starts nothing. It is a list of choices like the others, so it scrolls, takes
-// clicks and fits a terminal of 24 lines by 7.
+// cannot run now stays in the list, muted and marked with the warning glyph; the status line gives
+// the reason while the row is selected, and Enter on it shows it again and starts nothing.
 //
 // Repo is the raw name of the repository and Offers the actions in the order of the list. Why is
 // the reason each one cannot run, empty when it can, and Held is true while the status line still

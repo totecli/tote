@@ -12,7 +12,8 @@ const pickWidth = 48
 // pickItem is one line of a list of choices.
 //
 // Label is the translated text, Value what the choice gives back and Note a short muted text at
-// the right, such as "current". Off draws the choice muted: the caller has to refuse it.
+// the right, such as "current". Off draws the choice muted and marks it with the warning glyph, so
+// that it stands out without colors too: the caller has to refuse it.
 type pickItem struct {
 	label string
 	value string
@@ -241,7 +242,7 @@ func (p *pickOverlay) draw(e *env, maxW, maxH int) ([]string, []zone) {
 			cells = append(cells, cell{text: it.note, w: noteW, muted: true})
 		}
 
-		items = append(items, box.renderBoxRow(i == p.cur, false, cells, inner))
+		items = append(items, box.renderBoxRow(i == p.cur, it.off, cells, inner))
 	}
 
 	lines, zs := win.stack(e, items, spaces(box.indent()+2), 1, inner)

@@ -8,8 +8,8 @@
 
                 +- Actions : proj -----------------------------+
                 | >    Afficher la derniere release        gft |
-                |      Lister les assets de la release     gft |
-                |      Afficher les notes de release       gft |
+                | !    Lister les assets de la release     gft |
+                | !    Afficher les notes de release       gft |
                 |   s  Lister les stashes                  gft |
                 |      Afficher un stash...                gft |
                 |      Supprimer un stash...               gft |
@@ -27,8 +27,8 @@
 
   +- Actions : proj -----------------+
   | >    Afficher la derniere rel... |
-  |      Lister les assets de la ... |
-  |      Afficher les notes de re... |
+  | !    Lister les assets de la ... |
+  | !    Afficher les notes de re... |
   |   s  Lister les stashes          |
   |      Afficher un stash...        |
   |      Supprimer un stash...       |
@@ -39,8 +39,8 @@
 == 24x7
   +- Actions : proj -+
   | >    Afficher... |
-  |      Lister l... |
-  |      Afficher... |
+  | !    Lister l... |
+  | !    Afficher... |
   +------------------+
    enter - esc
    ce depot n'a pas...
