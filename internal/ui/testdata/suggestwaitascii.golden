@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+
+
+                +- Suggestions : Tag --------------------------+
+                |   | Chargement                               |
+                | gft --releases --plain -- demo/proj          |
+                +----------------------------------------------+
+                  esc annuler
+                  | Liste en cours : gft --releas...-- demo/proj
+
+
+
+
+
+
+
+
+
+== 40x12
+
+
+
+  +- Suggestions : Tag --------------+
+  |   | Chargement                   |
+  | gft --releases ...n -- demo/proj |
+  +----------------------------------+
+   esc
+   | Liste en cours : gft --r...o/proj
+
+
+
+== 24x7
+
+  +- Suggestions... -+
+  |   | Cha...       |
+  +------------------+
+   esc
+   | Liste en cours...
+

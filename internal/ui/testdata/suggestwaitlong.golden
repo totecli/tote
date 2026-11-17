@@ -1,0 +1,46 @@
+== 80x24
+
+
+
+
+
+
+
+
+
+                ╭─ Suggestions: Tag ───────────────────────────╮
+                │   ⠋ Loading                                  │
+                │ gft --releases --plain…tory-with-a-long-name │
+                ╰──────────────────────────────────────────────╯
+                  esc cancel
+                  ⠋ Listing: gft --releases --…-with-a-long-name
+
+
+
+
+
+
+
+
+
+== 40x12
+
+
+
+  ╭─ Suggestions: Tag ───────────────╮
+  │   ⠋ Loading                      │
+  │ gft --releases -…ith-a-long-name │
+  ╰──────────────────────────────────╯
+   esc
+   ⠋ Listing: gft --releas…a-long-name
+
+
+
+== 24x7
+
+  ╭─ Suggestions: … ─╮
+  │   ⠋ Loadi…       │
+  ╰──────────────────╯
+   esc
+   ⠋ Listing: gft …ame
+

@@ -81,10 +81,8 @@ func cannedMenu(e *env) *actionMenu {
 	return newActionMenu(e, "proj", offers)
 }
 
-// wideBoxFrames lists the reference frames of the boxes that adapt to a wide terminal: the palette
-// with long rows, the menu of the actions of a repository and the picker of suggestions, each
-// in English, in French and in ASCII. The menu of gft is the one of the other frames; the canned
-// menu has long labels and an action that cannot run, whose reason is on the status line.
+// wideBoxFrames lists the reference frames of the boxes that adapt to a wide terminal, each in
+// English, in French and in ASCII.
 func wideBoxFrames() []frameCase {
 	var out []frameCase
 
@@ -113,6 +111,11 @@ func wideBoxFrames() []frameCase {
 			frameCase{
 				name: "suggestpickerlong" + look.suffix, data: dataPlugRun, start: StartHome,
 				keys: []string{"suggest:pickerlong"}, sizes: [][2]int{wideBoxSize},
+				check: wideBoxCheck, setup: look.setup,
+			},
+			frameCase{
+				name: "suggestwaitwide" + look.suffix, data: dataPlugRun, start: StartHome,
+				keys: []string{"suggest:waitlong"}, sizes: [][2]int{wideBoxSize},
 				check: wideBoxCheck, setup: look.setup,
 			},
 		)

@@ -6,6 +6,10 @@ import (
 	"github.com/totecli/tote/internal/plugin"
 )
 
+// longArgv is an argv too long for the status line of the form and for the box that loads.
+const longArgv = "gft --releases --plain --dir=/home/tester/Downloads/" +
+	"a-very-long-directory-name/with/many/parts -- demo/a-repository-with-a-long-name"
+
 // cannedSuggest returns the form of a command with suggestions in the state a frame shows,
 // without starting a program. The form has three fields, Repository, Tag and Asset; the keys are on
 // Tag, which lists its suggestions, and Repository holds a value. The kinds are idle (the hint of
@@ -14,7 +18,9 @@ import (
 // that exits with a status and a line), signal, timeout, toolarge, empty, ready (a list was
 // shown), nomatch (a list that holds nothing that is typed), limit and stopped; the picker kinds
 // are picker, pickerhidden (a list with dropped and uncounted entries), pickerfiltered,
-// pickernone and pickerlong (long values and labels, which a wide terminal shows whole).
+// pickernone and pickerlong (long values and labels, which a wide terminal shows whole). The
+// loading box over the form is wait (the program just started), waitsecs (it has run for seven
+// seconds, the spinner on its third frame) and waitlong (an argv too long for the box).
 //
 // Parameters:
 //   - e: shared environment
@@ -56,8 +62,19 @@ func cannedSuggest(e *env, kind string) (overlay, *fieldsForm) {
 	case "loading":
 		s.phase, s.argv = sugRunning, argv
 	case "long":
-		s.phase, s.argv = sugRunning, "gft --releases --plain --dir=/home/tester/Downloads/"+
-			"a-very-long-directory-name/with/many/parts -- demo/a-repository-with-a-long-name"
+		s.phase, s.argv = sugRunning, longArgv
+	case "wait", "waitsecs", "waitlong":
+		s.phase, s.argv = sugRunning, argv
+
+		if kind == "waitsecs" {
+			s.spin, s.secs = 2, 7
+		}
+
+		if kind == "waitlong" {
+			s.argv = longArgv
+		}
+
+		return newSuggestWait(e, f, "tag"), f
 	case "waiting":
 		s.phase, s.text = sugWaiting, f.waitText(e, "repo")
 	case "waitingrepo":
@@ -127,6 +144,9 @@ func pluginSuggestFrames() []frameCase {
 		{"preparing", false},
 		{"loading", true},
 		{"long", false},
+		{"wait", true},
+		{"waitsecs", false},
+		{"waitlong", false},
 		{"waiting", true},
 		{"waitingrepo", false},
 		{"failed", true},

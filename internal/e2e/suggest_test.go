@@ -4,6 +4,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"testing"
@@ -44,11 +45,9 @@ pattern = "^[A-Za-z0-9._-]{0,24}$"
 choices_from = ["lister", "--tags", "{name}"]
 `
 
-// fakeLister plays the part of the program of the suggestions: it records every start and its
-// directory, then answers by the value that follows --tags: hang waits to be stopped, fail writes
-// an option error with colors to its standard output and exits with status 1, any other value
-// prints three suggestions with a label for two of them. The word OUT stands for the output
-// directory of the sandbox.
+// fakeLister plays the program of the suggestions and records every start and its directory. The
+// value after --tags picks the behaviour (see the case block); OUT stands for the output directory
+// of the sandbox.
 const fakeLister = `#!/bin/sh
 echo "$PWD|$*" >> "OUT/lister.log"
 case "$1" in
@@ -58,6 +57,7 @@ esac
 echo $$ > "OUT/lister.pid"
 case "$2" in
 hang) exec sleep 30;;
+slow) while [ ! -e "OUT/lister.go" ]; do sleep 0.05; done;;
 fail) printf '\033[31mUnknown option: --tags\033[0m\n'; exit 1;;
 esac
 printf 'v1.0\tfirst\nv2.0\nv3.0\trecommended\n'
@@ -308,4 +308,62 @@ func TestSuggestionsCancelBinary(t *testing.T) {
 			}
 		}
 	}
+}
+
+// TestSuggestionsLoadingBinary checks what the person sees while a slow program lists: the box of
+// the list opens at once with its title and a loading row, the argv that runs, no value of the
+// list and the seconds once one has passed; then the list takes its place when the program answers.
+//
+// Parameters:
+//   - t: test to report to
+func TestSuggestionsLoadingBinary(t *testing.T) {
+	t.Parallel()
+
+	sb := suggestSandbox(t)
+	tm := newTerm(t, sb, startOptions{W: 100, H: 30}, "tote")
+	tm.toRepos()
+
+	tm.openPick("slow")
+	tm.key("C-l")
+	tm.waitText("Suggestions: Tag")
+	tm.waitText("Loading")
+	tm.waitText("lister --tags slow")
+
+	pid := listerPid(tm)
+
+	if s := tm.look(); s.has("v1.0") || !s.has("Listing:") || !s.has("cancel") {
+		t.Errorf("the loading box is not what is expected:\n%s", s.Text)
+	}
+
+	// The spinner and the count of seconds are moved by the timer of the interface.
+	tm.waitText("1 s")
+
+	// A key typed while it loads goes nowhere, and a second Ctrl+L starts nothing.
+	tm.typeText("x")
+	tm.key("C-l")
+
+	if n := lines(filepath.Join(sb.Out, "lister.log")); n != 1 {
+		t.Errorf("%d starts while loading, want 1", n)
+	}
+
+	if err := os.WriteFile(filepath.Join(sb.Out, "lister.go"), nil, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	tm.waitText("v1.0")
+	tm.waitText("recommended")
+	tm.waitGone("Loading")
+	waitProcessGone(t, pid)
+
+	// Esc on the list closes it, and the field is as it was: the typed key was dropped.
+	tm.key("Escape")
+	tm.waitGone("Suggestions: Tag")
+
+	if s := tm.look(); !s.has("Repository") || regexp.MustCompile(`Tag\s+x`).MatchString(s.Text) {
+		t.Errorf("the form changed while the box loaded:\n%s", s.Text)
+	}
+
+	tm.key("Escape")
+	tm.waitText("The project")
+	tm.quit()
 }
