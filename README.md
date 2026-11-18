@@ -37,8 +37,10 @@ How it differs from mn:
 ## The interface
 
 `tote` with no argument, run in a terminal, opens the full-screen interface; in a pipe or a script
-it prints the help. `tote co` and `tote config` with no argument open it on the Connections list and
-on the settings.
+it prints the help. With no argument, `tote co`, `tote repos`, `tote alias`, `tote funcs`,
+`tote plugin` and `tote config` open it on their own list or screen when run in a terminal, and
+print the list when they are not (`tote co -l`, `tote repos list`, `--json` and `--format` always
+print).
 
 The welcome page is a boxed greeting with the number of records of each kind and a menu:
 Connections, Repos, Aliases, Functions, Plugins, Settings. A list shows one kind in columns that
@@ -551,7 +553,7 @@ directory.
 - With `--apply`, each tote file it changes is first copied to `FILE.bak-<date>-<time>`, and the new
   records are checked in the files afterwards.
 
-Read the dry run first, then check the result with `tote co -l`, `tote repos` and so on.
+Read the dry run first, then check the result with `tote co -l`, `tote repos list` and so on.
 
 ## Contributing
 
