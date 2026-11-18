@@ -13,6 +13,7 @@ import (
 	"github.com/totecli/tote/internal/config"
 	"github.com/totecli/tote/internal/shell"
 	"github.com/totecli/tote/internal/store"
+	"github.com/totecli/tote/internal/ui"
 )
 
 // descOpt is the --desc option shared by every add verb.
@@ -200,33 +201,48 @@ func buildFunc(o options) (store.Func, error) {
 	}, nil
 }
 
-// runAlias implements "tote alias".
+// runAlias implements "tote alias". With no argument it opens the aliases in the interface on a
+// terminal, and prints the list otherwise.
 //
 // Parameters:
 //   - args: arguments after the verb
 //
 // Returns the exit code of the verb.
 func (a *app) runAlias(args []string) int {
+	if len(args) == 0 && a.interactive() {
+		return a.runUI(ui.StartAliases)
+	}
+
 	return aliasSpec().dispatch(a, args)
 }
 
-// runFuncs implements "tote funcs".
+// runFuncs implements "tote funcs". With no argument it opens the functions in the interface on
+// a terminal, and prints the list otherwise.
 //
 // Parameters:
 //   - args: arguments after the verb
 //
 // Returns the exit code of the verb.
 func (a *app) runFuncs(args []string) int {
+	if len(args) == 0 && a.interactive() {
+		return a.runUI(ui.StartFuncs)
+	}
+
 	return funcSpec().dispatch(a, args)
 }
 
-// runRepos implements "tote repos", which adds "open" to the generic verbs.
+// runRepos implements "tote repos", which adds "open" to the generic verbs. With no argument it
+// opens the repositories in the interface on a terminal, and prints the list otherwise.
 //
 // Parameters:
 //   - args: arguments after the verb
 //
 // Returns the exit code of the verb.
 func (a *app) runRepos(args []string) int {
+	if len(args) == 0 && a.interactive() {
+		return a.runUI(ui.StartRepos)
+	}
+
 	if len(args) > 0 && args[0] == "open" {
 		return a.repoOpen(args[1:])
 	}

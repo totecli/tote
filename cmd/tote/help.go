@@ -47,26 +47,26 @@ func commands() []command {
 		{
 			names: []string{"alias", "aliases", "a"}, label: "alias, a", run: (*app).runAlias,
 			desc:  "help_cmd_alias",
-			usage: []string{"usage_alias_list", "usage_alias_add", "usage_alias_rm"},
+			usage: []string{"usage_alias_ui", "usage_alias_list", "usage_alias_add", "usage_alias_rm"},
 		},
 		{
 			names: []string{"repos", "repo", "r"}, label: "repos, repo, r", run: (*app).runRepos,
 			desc: "help_cmd_repos",
 			usage: []string{
-				"usage_repos_list", "usage_repos_open", "usage_repos_add", "usage_repos_rm",
-				"usage_repos_root",
+				"usage_repos_ui", "usage_repos_list", "usage_repos_open", "usage_repos_add",
+				"usage_repos_rm", "usage_repos_root",
 			},
 		},
 		{
 			names: []string{"funcs", "func", "f"}, label: "funcs, f", run: (*app).runFuncs,
 			desc:  "help_cmd_funcs",
-			usage: []string{"usage_funcs_list", "usage_funcs_add", "usage_funcs_rm"},
+			usage: []string{"usage_funcs_ui", "usage_funcs_list", "usage_funcs_add", "usage_funcs_rm"},
 		},
 		{
 			names: []string{"plugin", "plugins"}, label: "plugin, plugins", run: (*app).runPlugin,
 			desc: "help_cmd_plugin",
 			usage: []string{
-				"usage_plugin_list", "usage_plugin_info", "usage_plugin_install",
+				"usage_plugin_ui", "usage_plugin_list", "usage_plugin_info", "usage_plugin_install",
 				"usage_plugin_update", "usage_plugin_enable", "usage_plugin_disable",
 				"usage_plugin_remove", "usage_plugin_check", "usage_plugin_source",
 				"usage_plugin_hash", "usage_plugin_argv", "usage_plugin_flags",

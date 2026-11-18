@@ -1,6 +1,7 @@
 Gérer les plugins : lister, détailler, installer, mettre à jour, activer, désactiver, supprimer, vérifier
 
 Utilisation :
+  sur un terminal, « tote plugin » sans argument ouvre les plugins dans l’interface
   tote plugin [list] [--format table|tsv|json | --json]
   tote plugin info <id> [--json]
   tote plugin install <source> [--sha256 <hex>] [--grant <token>] [--dry-run] [--force] [--json]

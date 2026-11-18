@@ -164,6 +164,100 @@ func TestConnectionsOpensInterface(t *testing.T) {
 	}
 }
 
+// TestListVerbsOpenInterface checks which forms of "tote repos", "tote alias" and "tote funcs"
+// open the interface: the bare command on a terminal, under each of its names, and nothing else.
+// Every other form keeps printing, so that scripts do not change.
+//
+// Parameters:
+//   - t: test to report to
+func TestListVerbsOpenInterface(t *testing.T) {
+	kinds := []struct {
+		names []string
+		file  string
+		data  string
+		start ui.Start
+	}{
+		{[]string{"repos", "repo", "r"}, "repos.toml", fixtureRepos, ui.StartRepos},
+		{[]string{"alias", "aliases", "a"}, "aliases.toml", fixtureAliases, ui.StartAliases},
+		{[]string{"funcs", "func", "f"}, "funcs.toml", fixtureFuncs, ui.StartFuncs},
+	}
+
+	for _, k := range kinds {
+		for _, name := range k.names {
+			tests := []struct {
+				label string
+				args  []string
+				tty   bool
+				ttyIn bool
+				ui    bool
+			}{
+				{"no argument on a terminal", []string{name}, true, true, true},
+				{"no terminal", []string{name}, false, false, false},
+				{"output only is a terminal", []string{name}, true, false, false},
+				{"input only is a terminal", []string{name}, false, true, false},
+				{"list", []string{name, "list"}, true, true, false},
+				{"ls", []string{name, "ls"}, true, true, false},
+				{"list flag", []string{name, "-l"}, true, true, false},
+				{"format flag", []string{name, "--format", "json"}, true, true, false},
+				{"json flag", []string{name, "--json"}, true, true, false},
+				{"help", []string{name, "--help"}, true, true, false},
+				{"unknown verb", []string{name, "nope"}, true, true, false},
+			}
+
+			for _, tt := range tests {
+				h := newHarness(t)
+				p := withUI(h)
+				h.tty, h.ttyIn = tt.tty, tt.ttyIn
+				h.write(k.file, k.data)
+
+				h.run(tt.args...)
+
+				if got := len(p.calls) == 1; got != tt.ui {
+					t.Errorf("%s, %s: interface started = %v, want %v", name, tt.label, got, tt.ui)
+				}
+
+				if tt.ui && p.calls[0].Start != k.start {
+					t.Errorf("%s, %s: start = %d, want %d", name, tt.label, p.calls[0].Start,
+						k.start)
+				}
+
+				if !tt.ui && len(p.calls) != 0 {
+					t.Errorf("%s, %s: %d starts of the interface", name, tt.label, len(p.calls))
+				}
+			}
+		}
+	}
+}
+
+// TestListVerbsPrintWithoutTerminal checks that "tote repos", "tote alias" and "tote funcs"
+// without a terminal still print their records, as they did before they could open the
+// interface.
+//
+// Parameters:
+//   - t: test to report to
+func TestListVerbsPrintWithoutTerminal(t *testing.T) {
+	kinds := []struct {
+		name string
+		file string
+		data string
+	}{
+		{"repos", "repos.toml", fixtureRepos},
+		{"alias", "aliases.toml", fixtureAliases},
+		{"funcs", "funcs.toml", fixtureFuncs},
+	}
+
+	for _, k := range kinds {
+		h := newHarness(t)
+		p := withUI(h)
+		h.tty, h.ttyIn = false, false
+		h.write(k.file, k.data)
+
+		if rc := h.run(k.name); rc != exitOK || len(p.calls) != 0 || h.out.Len() == 0 {
+			t.Errorf("%s: exit %d, %d starts, stdout %q", k.name, rc, len(p.calls), h.out.String())
+		}
+	}
+}
+
 // TestUIErrors checks the exit codes of an interface that stops.
 //
 // Parameters:

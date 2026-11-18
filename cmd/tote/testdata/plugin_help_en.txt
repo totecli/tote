@@ -1,6 +1,7 @@
 Manage plugins: list, info, install, update, enable, disable, remove, check
 
 Usage:
+  on a terminal, "tote plugin" without arguments opens the plugins in the interface
   tote plugin [list] [--format table|tsv|json | --json]
   tote plugin info <id> [--json]
   tote plugin install <source> [--sha256 <hex>] [--grant <token>] [--dry-run] [--force] [--json]
