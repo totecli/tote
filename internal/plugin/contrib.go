@@ -405,7 +405,7 @@ func (x *extractor) fieldDefault(n *node, f *Field) {
 //   - n: table of the field
 //   - f: field being read
 func (x *extractor) fieldTyped(n *node, f *Field) {
-	x.only(n, f.Type, "text", "pattern", "max_len", "choices_from")
+	x.only(n, f.Type, "text", "pattern", "max_len", "choices_from", "multiline", "lines")
 	x.only(n, f.Type, "choice", "choices")
 	x.only(n, f.Type, "bool", "flag")
 
@@ -422,10 +422,60 @@ func (x *extractor) fieldTyped(n *node, f *Field) {
 			listOpt{limit: MaxArgvElems, item: strOpt{bytes: MaxArgvElemBytes}}); ok {
 			f.ChoicesFrom = argv
 		}
+
+		x.fieldMultiline(n, f)
 	case "choice":
 		f.Choices, _ = n.strs("choices", listOpt{limit: MaxChoices, item: strOpt{runes: MaxChoiceRunes}})
 	case "bool":
 		f.Flag, _ = n.str("flag", strOpt{required: true, nonEmpty: true, bytes: MaxFlagBytes})
+	}
+}
+
+// fieldMultiline reads multiline and lines on a text field. A multiline field refuses pattern,
+// default and choices_from (key_conflict): the anchors of a pattern would apply per line, and a
+// default or a suggestion with line feeds is not worth freezing. lines needs multiline = true
+// (key_missing on multiline when it is absent, key_conflict on lines when it is false). Without max_len, a multiline field takes the byte limit of
+// its value as its limit in runes, which the byte limit then bounds.
+//
+// Parameters:
+//   - n: table of the text field
+//   - f: field being read
+func (x *extractor) fieldMultiline(n *node, f *Field) {
+	multi, isBool := n.boolean("multiline")
+	_, hasMulti := n.raw("multiline")
+
+	rows, hasRows := n.integer("lines", MinMultilineRows, MaxMultilineRows)
+	_, rawRows := n.raw("lines")
+
+	if !multi {
+		switch {
+		case !rawRows:
+		case !hasMulti:
+			x.c.add(CodeKeyMissing, n.at("multiline"), "multiline")
+		case isBool:
+			// multiline = false: the key is there, it just does not go with lines. A value of
+			// another type was already reported as type_invalid.
+			x.c.add(CodeKeyConflict, n.at("lines"), "lines", "multiline = false")
+		}
+
+		return
+	}
+
+	f.Multiline = true
+	f.Lines = DefaultMultilineRows
+
+	if hasRows {
+		f.Lines = int(rows)
+	}
+
+	for _, k := range []string{"pattern", "default", "choices_from"} {
+		if _, ok := n.raw(k); ok {
+			x.c.add(CodeKeyConflict, n.at(k), k, "multiline")
+		}
+	}
+
+	if _, ok := n.raw("max_len"); !ok {
+		f.MaxLen = MaxMultilineBytes
 	}
 }
 

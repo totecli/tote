@@ -127,8 +127,12 @@ func TestSurfaceChoicesOnlyWhenSet(t *testing.T) {
 // Parameters:
 //   - t: test to report to
 func TestFieldFieldsAreDecided(t *testing.T) {
-	display := []string{"Path", "Label", "Hint", "Default", "HasDefault", "MaxLen", "broken"}
-	read := []string{"ID", "Type", "Flag", "Pattern", "Choices", "ChoicesFrom", "Required"}
+	display := []string{
+		"Path", "Label", "Hint", "Default", "HasDefault", "MaxLen", "Lines", "broken",
+	}
+	read := []string{
+		"ID", "Type", "Flag", "Pattern", "Choices", "ChoicesFrom", "Multiline", "Required",
+	}
 
 	typ := reflect.TypeOf(Field{})
 

@@ -14,7 +14,8 @@ import (
 // table, changes the value of an env name (review of 4 November 2026: the value can start a
 // program), changes the pinned hash of a platform build without a version bump, or adds a
 // choices_from to a field or changes its argv: the suggestions start a program before any
-// confirmation, and one exec: permission covers every word of that program.
+// confirmation, and one exec: permission covers every word of that program. A field that becomes
+// multiline asks too: line feeds then reach the argv of the program, which they never did.
 const (
 	EscConfirmRemoved  = "confirm_removed"
 	EscAllowDashAdded  = "allow_dash_added"
@@ -22,6 +23,7 @@ const (
 	EscEnvChanged      = "env_changed"
 	EscPlatformChanged = "platform_changed"
 	EscChoices         = "choices"
+	EscMultiline       = "multiline"
 )
 
 // Table names of the surface that are not tables of the manifest, and the joiner of the id of a
@@ -194,6 +196,12 @@ func fieldObject(f Field) map[string]any {
 		obj["choices_from"] = f.ChoicesFrom
 	}
 
+	// A multiline field lets line feeds reach the program, so it is part of what the user
+	// consents to; lines only sets the height of the box and is left out.
+	if f.Multiline {
+		obj["multiline"] = true
+	}
+
 	if f.Required {
 		obj["required"] = true
 	}
@@ -302,6 +310,8 @@ type SurfaceChange struct {
 //
 // A field that gains a choices_from, or whose choices_from argv changes, asks too (EscChoices),
 // for an entry that kept its id and for a new entry alike. Removing a choices_from asks nothing.
+// A field that is multiline and was not, or a new entry with a multiline field, asks as well
+// (EscMultiline); a field that stops being multiline asks nothing.
 //
 // Parameters:
 //   - old: manifest of the installed version
@@ -379,7 +389,33 @@ func entryChanges(table string, se surfaceEntry, prev *Entry) []SurfaceChange {
 		add(EscChoices)
 	}
 
+	if multilineAdded(se.e, prev) {
+		add(EscMultiline)
+	}
+
 	return out
+}
+
+// multilineAdded reports whether a contribution has a multiline field that the installed version of
+// the contribution did not have as a multiline field of the same id.
+//
+// Parameters:
+//   - e: contribution of the new version
+//   - prev: same contribution in the installed version, nil when the id is new
+func multilineAdded(e, prev *Entry) bool {
+	for _, f := range e.Fields {
+		if !f.Multiline {
+			continue
+		}
+
+		if prev == nil || !slices.ContainsFunc(prev.Fields, func(o Field) bool {
+			return o.ID == f.ID && o.Multiline
+		}) {
+			return true
+		}
+	}
+
+	return false
 }
 
 // choicesAdded reports whether a contribution has a field with a choices_from that the installed

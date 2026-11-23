@@ -119,7 +119,7 @@ func (pc *prep) buildChoices() (Prepared, *Error) {
 		return Prepared{}, perr
 	}
 
-	argv, perr := pc.expandArgv(name, f.ChoicesFrom, map[string]bool{})
+	argv, perr := pc.expandArgv(name, f.ChoicesFrom, map[string]bool{}, false)
 	if perr != nil {
 		return Prepared{}, perr
 	}

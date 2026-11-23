@@ -24,10 +24,24 @@ func testHost() Host {
 	return h
 }
 
+// features11 is the list of features that tote 1.1 announces: the ones of 1.0 and
+// field.choices_from.
+var features11 = append(slices.Clone(features10), "field.choices_from")
+
 // testHost11 is the host of the tests of the suggestions: tote 1.1.0 on linux/amd64 with the
-// features that this tote announces.
+// features of 1.1.
 func testHost11() Host {
 	h := NewHost("1.1.0", "tote-test")
+	h.OS, h.Arch = "linux", "amd64"
+	h.Features = slices.Clone(features11)
+
+	return h
+}
+
+// testHost12 is the host of the tests of the multiline fields: tote 1.2.0 on linux/amd64 with the
+// features that this tote announces.
+func testHost12() Host {
+	h := NewHost("1.2.0", "tote-test")
 	h.OS, h.Arch = "linux", "amd64"
 
 	return h

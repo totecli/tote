@@ -28,8 +28,8 @@ func TestExecFeaturesSwitch(t *testing.T) {
 		wantCount    int
 		wantAnnounce bool
 	}{
-		{"declarative tier", false, 7, false},
-		{"with the exec tier", true, 9, true},
+		{"declarative tier", false, 8, false},
+		{"with the exec tier", true, 10, true},
 	}
 
 	for _, tt := range tests {

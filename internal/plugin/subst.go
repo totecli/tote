@@ -337,10 +337,12 @@ type Item struct {
 
 // FieldValue is the submitted value of a form field after validation. Text is what a {field}
 // placeholder gives: the value, or for a bool its flag when true and the empty text when false.
-// Type is the field type, which decides the dash rule.
+// Type is the field type, which decides the dash rule. Multiline is true for the value of a
+// multiline text field, whose line feeds may reach an element of the run and nothing else.
 type FieldValue struct {
-	Text string
-	Type string
+	Text      string
+	Type      string
+	Multiline bool
 }
 
 // Values holds what the placeholders of one call read: the validated fields, the effective
@@ -438,7 +440,66 @@ func ProducedIssue(s string, limit int) string {
 	return ""
 }
 
+// ProducedIssueLines is ProducedIssue for the value of a multiline field: the line feed is the one
+// control character it accepts. Carriage return, tab, NUL, the other controls and the bidi,
+// zero-width and other format characters stay refused, so a carriage return must be turned into a
+// line feed with NormalizeLines first.
+//
+// Parameters:
+//   - s: produced text
+//   - limit: longest allowed length in bytes
+func ProducedIssueLines(s string, limit int) string {
+	if len(s) > limit {
+		return RejectLength
+	}
+
+	if !utf8.ValidString(s) {
+		return RejectUTF8
+	}
+
+	for _, r := range s {
+		if r != '\n' && (unsafeRune(r) || r == '\t') {
+			return RejectControl
+		}
+	}
+
+	return ""
+}
+
+// NormalizeLines turns every line break of a multiline value into a line feed: a carriage return
+// followed by a line feed, and a lone carriage return, each become one line feed. checkField does
+// it for a multiline field, and a form should do it as text comes in (a paste from a terminal or
+// from Windows), so that what the user sees is what the program gets.
+//
+// Parameters:
+//   - s: text typed or pasted into a multiline field
+func NormalizeLines(s string) string {
+	if !strings.Contains(s, "\r") {
+		return s
+	}
+
+	return strings.ReplaceAll(strings.ReplaceAll(s, "\r\n", "\n"), "\r", "\n")
+}
+
+// LineCount gives the number of lines of a multiline value: 0 for the empty text, else one more
+// than the number of line feeds, so that a trailing line feed opens a last, empty line.
+//
+// Parameters:
+//   - s: value, after NormalizeLines
+func LineCount(s string) int {
+	if s == "" {
+		return 0
+	}
+
+	return strings.Count(s, "\n") + 1
+}
+
 // ExpandArgv substitutes the placeholders of one element of a run template.
+//
+// It is the only substitution where a line feed may appear: in the text that a placeholder of a
+// multiline field gives (FieldValue.Multiline). The literal text of the element and every other
+// placeholder stay on one line, and the whole element is still bounded by MaxArgvElemBytes. An
+// argv that is not the run, such as the choices_from of a field, uses ExpandArgvStrict.
 //
 // Parameters:
 //   - t: parsed element
@@ -450,13 +511,38 @@ func ProducedIssue(s string, limit int) string {
 // unavailable (an empty placeholder that is not optional), why a value is refused (the dash rule)
 // or why the produced text is not acceptable.
 func ExpandArgv(t Template, v *Values, allow map[string]bool) ([]string, *Error) {
+	return expandElem(t, v, allow, true)
+}
+
+// ExpandArgvStrict is ExpandArgv for an argv that is not the run of a contribution: a line feed is
+// refused (produced_invalid, control) even in the value of a multiline field.
+//
+// Parameters:
+//   - t: parsed element
+//   - v: values of the call
+//   - allow: names of the placeholders that allow_dash lists
+func ExpandArgvStrict(t Template, v *Values, allow map[string]bool) ([]string, *Error) {
+	return expandElem(t, v, allow, false)
+}
+
+// expandElem is the body of ExpandArgv and ExpandArgvStrict.
+//
+// Parameters:
+//   - t: parsed element
+//   - v: values of the call
+//   - allow: names of the placeholders that allow_dash lists
+//   - lines: true when the value of a multiline field may keep its line feeds
+func expandElem(t Template, v *Values, allow map[string]bool, lines bool) ([]string, *Error) {
 	if h, whole := t.Whole(); whole {
 		if vals, list := v.resolve(h); list {
 			return expandList(h, vals, v, allow)
 		}
 	}
 
-	var b strings.Builder
+	var (
+		b     strings.Builder
+		multi bool
+	)
 
 	for _, part := range t.Parts {
 		if part.Holder == nil {
@@ -479,11 +565,13 @@ func ExpandArgv(t Template, v *Values, allow map[string]bool) ([]string, *Error)
 		}
 
 		b.WriteString(vals[0])
+
+		multi = multi || (lines && multilineHolder(*part.Holder, v))
 	}
 
 	out := b.String()
 
-	if rule := ProducedIssue(out, MaxArgvElemBytes); rule != "" {
+	if rule := argvIssue(t, v, out, multi); rule != "" {
 		return nil, newError(CodeProducedInvalid, "argv", rule)
 	}
 
@@ -492,6 +580,54 @@ func ExpandArgv(t Template, v *Values, allow map[string]bool) ([]string, *Error)
 	}
 
 	return []string{out}, nil
+}
+
+// multilineHolder reports whether a placeholder reads the value of a multiline field.
+//
+// Parameters:
+//   - h: placeholder
+//   - v: values of the call
+func multilineHolder(h Placeholder, v *Values) bool {
+	return h.Kind == KindField && v.Fields[h.Name].Multiline
+}
+
+// argvIssue checks one produced element of an argv. Without a multiline value in it, the element
+// is checked as one text by ProducedIssue. With one, the whole element may hold line feeds
+// (ProducedIssueLines), and each other piece of it, literal or placeholder, must still pass
+// ProducedIssue on its own, so that the line feeds can only come from the multiline value.
+//
+// Parameters:
+//   - t: parsed element
+//   - v: values of the call
+//   - out: produced element
+//   - multi: true when a multiline value went into the element and may keep its line feeds
+func argvIssue(t Template, v *Values, out string, multi bool) string {
+	if !multi {
+		return ProducedIssue(out, MaxArgvElemBytes)
+	}
+
+	if rule := ProducedIssueLines(out, MaxArgvElemBytes); rule != "" {
+		return rule
+	}
+
+	for _, part := range t.Parts {
+		piece := part.Text
+
+		if h := part.Holder; h != nil {
+			if multilineHolder(*h, v) {
+				continue
+			}
+
+			vals, _ := v.resolve(*h)
+			piece = vals[0]
+		}
+
+		if rule := ProducedIssue(piece, MaxArgvElemBytes); rule != "" {
+			return rule
+		}
+	}
+
+	return ""
 }
 
 // expandList expands a whole list setting into its elements.
@@ -553,7 +689,9 @@ func dashCheck(t Template, out string, v *Values, allow map[string]bool) *Error 
 }
 
 // ExpandScalar substitutes the placeholders of a template that must give one value: a working
-// directory, an environment value, a confirmation text or a URL. The dash rule does not apply.
+// directory, an environment value, a confirmation text or a URL. The dash rule does not apply. A
+// line feed is refused here like any control character, even in the value of a multiline field:
+// such a value reaches the program through the argv of the run only.
 //
 // Parameters:
 //   - t: parsed template
@@ -600,6 +738,7 @@ func ExpandScalar(t Template, v *Values, limit int) (string, bool, *Error) {
 
 // ExpandLoose substitutes a template for display or for a default: an unresolved placeholder, a
 // list or a text that is not acceptable gives the empty text for that placeholder, never an error.
+// The value of a multiline field that holds a line feed is not acceptable here.
 //
 // Parameters:
 //   - t: parsed template

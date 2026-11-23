@@ -12,7 +12,6 @@ import (
 	"unicode/utf8"
 
 	"github.com/totecli/tote/internal/config"
-	"github.com/totecli/tote/internal/shell"
 	"github.com/totecli/tote/internal/store"
 )
 
@@ -567,8 +566,8 @@ func compilePattern(src string) (*regexp.Regexp, error) {
 }
 
 // checkField validates one submitted value against its field: first the required rule, then
-// max_len, then the pattern, for a text; membership for a choice; a boolean for a bool. The dash
-// rule is applied later, at substitution.
+// max_len, then the pattern, for a text; membership for a choice; a boolean for a bool; and for a
+// multiline text, the rules of checkLines. The dash rule is applied later, at substitution.
 //
 // Parameters:
 //   - f: field
@@ -579,6 +578,12 @@ func checkField(f *Field, raw string) (FieldValue, *Error) {
 	}
 
 	if len(raw) > maxValueBytes {
+		// A multiline value has its own byte limit, so a value far over it says "length" like
+		// one a little over it, and not "max_len".
+		if f.Multiline {
+			return bad(RejectLength)
+		}
+
 		return bad(RejectMaxLen)
 	}
 
@@ -597,6 +602,10 @@ func checkField(f *Field, raw string) (FieldValue, *Error) {
 		return FieldValue{Text: raw, Type: f.Type}, nil
 	}
 
+	if f.Multiline {
+		return checkLines(f, raw)
+	}
+
 	if rule := ProducedIssue(raw, maxValueBytes); rule != "" {
 		return bad(rule)
 	}
@@ -611,6 +620,38 @@ func checkField(f *Field, raw string) (FieldValue, *Error) {
 	}
 
 	return FieldValue{Text: raw, Type: f.Type}, nil
+}
+
+// checkLines validates the value of a multiline text field. Line breaks are first turned into line
+// feeds (NormalizeLines); then the value must pass ProducedIssueLines within MaxMultilineBytes
+// (length, utf8, control: the line feed is the only control character it keeps), hold at most
+// MaxMultilineLines lines (lines), and satisfy the required rule and max_len, counted in runes. A
+// multiline field has no pattern.
+//
+// Parameters:
+//   - f: multiline text field
+//   - raw: submitted text
+func checkLines(f *Field, raw string) (FieldValue, *Error) {
+	bad := func(rule string) (FieldValue, *Error) {
+		return FieldValue{}, newError(CodeInputInvalid, f.ID, rule)
+	}
+
+	raw = NormalizeLines(raw)
+
+	if rule := ProducedIssueLines(raw, MaxMultilineBytes); rule != "" {
+		return bad(rule)
+	}
+
+	switch {
+	case LineCount(raw) > MaxMultilineLines:
+		return bad(RejectLines)
+	case raw == "" && f.Required:
+		return bad(RejectRequired)
+	case utf8.RuneCountInString(raw) > f.MaxLen:
+		return bad(RejectMaxLen)
+	}
+
+	return FieldValue{Text: raw, Type: f.Type, Multiline: true}, nil
 }
 
 // matchPattern tests a value against a field pattern. A pattern that does not compile matches
@@ -779,7 +820,7 @@ func (pc *prep) program(out *Prepared) *Error {
 		return lerr
 	}
 
-	out.Name, out.Dir, out.Display = name, dir, shell.PrettyCommand(argv)
+	out.Name, out.Dir, out.Display = name, dir, DisplayArgv(argv)
 	out.Argv = append([]string{abs}, argv[1:]...)
 	out.program = id
 	out.Output = e.Output
@@ -845,7 +886,7 @@ func (pc *prep) isSelfFile(info fs.FileInfo) bool {
 //
 // Returns the argv with the program name first.
 func (pc *prep) expand(name string) ([]string, *Error) {
-	return pc.expandArgv(name, pc.e.Run, pc.allow)
+	return pc.expandArgv(name, pc.e.Run, pc.allow, true)
 }
 
 // expandArgv is expand for any argv template: the run of the contribution, or the choices_from of
@@ -855,11 +896,20 @@ func (pc *prep) expand(name string) ([]string, *Error) {
 //   - name: program at element 0
 //   - run: the argv template, element 0 included
 //   - allow: names of the placeholders that allow_dash lists, none for suggestions
-func (pc *prep) expandArgv(name string, run []string, allow map[string]bool) ([]string, *Error) {
+//   - lines: true for the run, where the value of a multiline field keeps its line feeds; false
+//     for the suggestions, where a line feed is refused
+func (pc *prep) expandArgv(name string, run []string, allow map[string]bool,
+	lines bool,
+) ([]string, *Error) {
 	argv := []string{name}
 
+	expand := ExpandArgvStrict
+	if lines {
+		expand = ExpandArgv
+	}
+
 	for i, raw := range run[1:] {
-		elems, err := ExpandArgv(pc.tmpl[raw], pc.vals, allow)
+		elems, err := expand(pc.tmpl[raw], pc.vals, allow)
 		if err != nil {
 			return nil, err
 		}

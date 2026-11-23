@@ -44,6 +44,18 @@ const (
 	MaxItemDataKey   = 32
 )
 
+// Limits of a multiline text field (feature field.multiline). A value holds at most
+// MaxMultilineBytes bytes, which leaves room for a template such as "--body={body}" within
+// MaxArgvElemBytes, and at most MaxMultilineLines lines. Lines is the number of visible rows of the
+// box, from MinMultilineRows to MaxMultilineRows, DefaultMultilineRows when the key is absent.
+const (
+	MaxMultilineBytes    = 1000
+	MaxMultilineLines    = 16
+	MinMultilineRows     = 2
+	MaxMultilineRows     = 8
+	DefaultMultilineRows = 4
+)
+
 // Structure limits, checked on the raw text before the TOML library decodes it, because the
 // library recurses on nested values and allocates a map per part of a dotted key: a table header
 // of 10000 parts costs 1.2 GB and the same text 65000 parts long once took the machine down. The
@@ -230,7 +242,10 @@ type Entry struct {
 // of a text field, Choices the static values of a choice, Flag the literal flag of a bool.
 // ChoicesFrom is the argv of a text field that tote starts on request to list suggested values,
 // nil when the key is absent and empty only when the manifest wrote an empty array, which the
-// validator refuses. A field whose reading already recorded an issue is marked broken.
+// validator refuses. Multiline marks a text field whose value may hold line feeds (feature
+// field.multiline) and Lines is the number of rows its box shows, 0 for a field that is not
+// multiline; Lines only changes the look of the form and is not part of the surface. A field whose
+// reading already recorded an issue is marked broken.
 type Field struct {
 	Path        string
 	ID          string
@@ -245,6 +260,8 @@ type Field struct {
 	Choices     []string
 	Flag        string
 	ChoicesFrom []string
+	Multiline   bool
+	Lines       int
 	broken      bool
 }
 

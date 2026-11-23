@@ -49,6 +49,7 @@ const (
 	RejectUTF8     = "utf8"
 	RejectControl  = "control"
 	RejectUnknown  = "unknown"
+	RejectLines    = "lines"
 )
 
 // Limits of a settings file and of a path value.

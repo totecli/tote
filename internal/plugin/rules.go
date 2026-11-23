@@ -9,14 +9,16 @@ import (
 //
 // The rules are the ones that Prepare applies, in the same order: the size, the characters, the
 // required rule, max_len and the pattern for a text, membership for a choice and a boolean word
-// for a bool. The dash rule is not applied here, it belongs to the substitution of a command.
+// for a bool. A multiline text is first given NormalizeLines, may hold line feeds, and has the caps
+// of a multiline value (MaxMultilineBytes, MaxMultilineLines). The dash rule is not applied here, it
+// belongs to the substitution of a command.
 //
 // Parameters:
 //   - f: field of a validated manifest
 //   - raw: text of the form: the value, "true" or "false" for a bool
 //
-// Returns the rule: "required", "max_len", "pattern", "choice", "bool", "length", "utf8" or
-// "control", or an empty string when the value is accepted.
+// Returns the rule: "required", "max_len", "pattern", "choice", "bool", "length", "utf8",
+// "control" or "lines", or an empty string when the value is accepted.
 func FieldRule(f Field, raw string) string {
 	if _, err := checkField(&f, raw); err != nil && len(err.Args) > 1 {
 		return err.Args[1]

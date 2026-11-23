@@ -3,6 +3,7 @@ package plugin
 import (
 	"path/filepath"
 	"slices"
+	"strings"
 
 	"github.com/totecli/tote/internal/shell"
 )
@@ -16,8 +17,8 @@ import (
 // holds the elements after substitution with the program name first, as the confirmation shows
 // them, Dir the working directory and URL the address an open contribution would show; for a
 // contribution that the plugin's own program answers, Argv is that program and its fixed
-// arguments. Display is Argv written with shell.PrettyCommand, or the template when Argv could not
-// be built. Program is the absolute path found on PATH, empty when the program is not installed.
+// arguments. Display is Argv written with DisplayArgv, or the template when Argv could not be
+// built. Program is the absolute path found on PATH, empty when the program is not installed.
 // Available is false when the contribution cannot be built; Why then holds the reason, and it also
 // holds dependency_missing for one whose program is not installed, because its argv is still
 // exact. Confirm is the question the confirmation would ask, empty for the generic one.
@@ -42,6 +43,37 @@ type Contribution struct {
 	Confirm         string       `json:"confirm,omitempty"`
 	Available       bool         `json:"available"`
 	Why             *Reason      `json:"why,omitempty"`
+}
+
+// DisplayArgv writes an argv for a person to read, as shell.PrettyCommand does, with the line
+// feeds of the value of a multiline field shown as a visible \n: an element that holds a line feed
+// first has each backslash doubled, then each line feed written as a backslash and an n, so the
+// text stays on one line and cannot be mistaken for the same element without line feeds. An argv
+// without line feeds gives exactly what shell.PrettyCommand gives. The result is for display only:
+// the program receives the argv itself.
+//
+// Parameters:
+//   - argv: elements after substitution, the program first
+func DisplayArgv(argv []string) string {
+	var shown []string
+
+	for i, a := range argv {
+		if !strings.Contains(a, "\n") {
+			continue
+		}
+
+		if shown == nil {
+			shown = slices.Clone(argv)
+		}
+
+		shown[i] = strings.ReplaceAll(strings.ReplaceAll(a, `\`, `\\`), "\n", `\n`)
+	}
+
+	if shown == nil {
+		return shell.PrettyCommand(argv)
+	}
+
+	return shell.PrettyCommand(shown)
 }
 
 // slot is a contribution of a manifest with the list it belongs to.
@@ -212,7 +244,7 @@ func (r *Registry) resolve(c Contribution, pc *prep) Contribution {
 		return c.unavailable(perr)
 	}
 
-	c.Argv, c.Display = argv, shell.PrettyCommand(argv)
+	c.Argv, c.Display = argv, DisplayArgv(argv)
 
 	dir, perr := pc.directory()
 	if perr != nil {
