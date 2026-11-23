@@ -6,8 +6,10 @@ import (
 	"go/token"
 	"io/fs"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"testing"
@@ -23,7 +25,141 @@ import (
 func convSources(t *testing.T, tests bool) []string {
 	t.Helper()
 
+	var out []string
+
+	for _, rel := range repoGoFiles(t, "plans", "bin", "vendor") {
+		if !tests && strings.HasSuffix(rel, "_test.go") {
+			continue
+		}
+
+		out = append(out, rel)
+	}
+
+	return out
+}
+
+// repoGoFiles returns the Go files of the repository: the ones git tracks or would track when
+// the root is the top of a git work tree, so that an ignored or excluded folder (the build output
+// of ppa-build/, the working copies of .claude/worktrees/, the notes of plans/) is never read,
+// and every Go file below the root otherwise, as in a source tarball that has no .git.
+//
+// Parameters:
+//   - t: test to report to
+//   - skip: names of the directories to leave out, at any depth
+//
+// Returns the slash separated paths, relative to the root of the repository, sorted.
+func repoGoFiles(t *testing.T, skip ...string) []string {
+	t.Helper()
+
 	root := filepath.Join("..", "..")
+
+	files, ok := repoGitFiles(root)
+	if !ok {
+		files = repoWalkFiles(t, root)
+	}
+
+	var out []string
+
+	for _, rel := range files {
+		if !strings.HasSuffix(rel, ".go") {
+			continue
+		}
+
+		dirs := strings.Split(rel, "/")
+		dirs = dirs[:len(dirs)-1]
+
+		if slices.ContainsFunc(dirs, func(d string) bool { return slices.Contains(skip, d) }) {
+			continue
+		}
+
+		out = append(out, rel)
+	}
+
+	slices.Sort(out)
+
+	return out
+}
+
+// repoGitFiles lists the files git tracks or would track below the root: the index, plus the
+// untracked files that no .gitignore, info/exclude or global exclude file leaves out. A tracked
+// file deleted from the work tree is left out.
+//
+// Parameters:
+//   - root: root of the repository
+//
+// Returns the slash separated paths relative to the root, and false when git is not installed,
+// fails, or the root is not the top of a work tree (a tarball unpacked inside another clone).
+func repoGitFiles(root string) ([]string, bool) {
+	if _, err := exec.LookPath("git"); err != nil {
+		return nil, false
+	}
+
+	run := func(args ...string) (string, bool) {
+		cmd := exec.Command("git", append([]string{"-C", root}, args...)...)
+
+		// A GIT_DIR or GIT_WORK_TREE inherited from a hook would point git elsewhere.
+		cmd.Env = slices.DeleteFunc(os.Environ(), func(kv string) bool {
+			return strings.HasPrefix(kv, "GIT_")
+		})
+
+		out, err := cmd.Output()
+
+		return string(out), err == nil
+	}
+
+	top, ok := run("rev-parse", "--show-toplevel")
+	if !ok {
+		return nil, false
+	}
+
+	want, err := filepath.Abs(root)
+	if err != nil {
+		return nil, false
+	}
+
+	a, errA := filepath.EvalSymlinks(strings.TrimRight(top, "\r\n"))
+	b, errB := filepath.EvalSymlinks(want)
+
+	if errA != nil || errB != nil || a != b {
+		return nil, false
+	}
+
+	list, ok := run("ls-files", "-z", "--cached", "--others", "--exclude-standard")
+	if !ok {
+		return nil, false
+	}
+
+	var out []string
+
+	seen := map[string]bool{}
+
+	for _, rel := range strings.Split(list, "\x00") {
+		if rel == "" || seen[rel] {
+			continue
+		}
+
+		seen[rel] = true
+
+		if fi, err := os.Lstat(filepath.Join(root, filepath.FromSlash(rel))); err != nil ||
+			!fi.Mode().IsRegular() {
+			continue
+		}
+
+		out = append(out, rel)
+	}
+
+	return out, true
+}
+
+// repoWalkFiles lists every regular file below the root, .git left out.
+//
+// Parameters:
+//   - t: test to report to
+//   - root: root of the repository
+//
+// Returns the slash separated paths relative to the root.
+func repoWalkFiles(t *testing.T, root string) []string {
+	t.Helper()
 
 	var out []string
 
@@ -32,20 +168,14 @@ func convSources(t *testing.T, tests bool) []string {
 			return err
 		}
 
-		if d.IsDir() && (d.Name() == "plans" || d.Name() == ".git" || d.Name() == "bin") {
+		if d.IsDir() && d.Name() == ".git" {
 			return filepath.SkipDir
 		}
 
-		if d.IsDir() || !strings.HasSuffix(path, ".go") {
-			return nil
+		if d.Type().IsRegular() {
+			rel, _ := filepath.Rel(root, path)
+			out = append(out, filepath.ToSlash(rel))
 		}
-
-		if !tests && strings.HasSuffix(path, "_test.go") {
-			return nil
-		}
-
-		rel, _ := filepath.Rel(root, path)
-		out = append(out, filepath.ToSlash(rel))
 
 		return nil
 	})

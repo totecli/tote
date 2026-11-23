@@ -3,7 +3,6 @@ package main
 import (
 	"go/parser"
 	"go/token"
-	"io/fs"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -18,28 +17,20 @@ import (
 // Parameters:
 //   - t: test to report to
 func TestReviewImportRules(t *testing.T) {
-	root := filepath.Join("..", "..")
 	fset := token.NewFileSet()
 
-	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
+	for _, rel := range repoGoFiles(t, "plans", "testdata", "vendor") {
+		if strings.HasSuffix(rel, "_test.go") {
+			continue
+		}
+
+		// The rules match "/<dir>/" in the path, so it keeps the leading "../../".
+		slash := "../../" + rel
+
+		f, err := parser.ParseFile(fset, filepath.FromSlash(slash), nil, parser.ImportsOnly)
 		if err != nil {
-			return err
+			t.Fatal(err)
 		}
-
-		if d.IsDir() && (d.Name() == "plans" || d.Name() == ".git" || d.Name() == "testdata") {
-			return filepath.SkipDir
-		}
-
-		if d.IsDir() || !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {
-			return nil
-		}
-
-		f, err := parser.ParseFile(fset, path, nil, parser.ImportsOnly)
-		if err != nil {
-			return err
-		}
-
-		slash := filepath.ToSlash(path)
 
 		for _, imp := range f.Imports {
 			p, _ := strconv.Unquote(imp.Path.Value)
@@ -48,11 +39,6 @@ func TestReviewImportRules(t *testing.T) {
 				t.Errorf("%s imports %s: %s", slash, p, reason)
 			}
 		}
-
-		return nil
-	})
-	if err != nil {
-		t.Fatal(err)
 	}
 }
 
