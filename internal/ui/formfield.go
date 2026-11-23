@@ -5,6 +5,7 @@ import (
 	"unicode/utf8"
 
 	"charm.land/bubbles/v2/key"
+	"charm.land/bubbles/v2/textarea"
 	"charm.land/bubbles/v2/textinput"
 	tea "charm.land/bubbletea/v2"
 	"github.com/charmbracelet/x/ansi"
@@ -25,6 +26,10 @@ const (
 
 	// fieldList is a list of texts, edited in a box of its own.
 	fieldList
+
+	// fieldMulti is a text of several lines, edited in a box of a few rows (feature
+	// field.multiline of the plugins).
+	fieldMulti
 )
 
 // formField is one line of a form.
@@ -45,6 +50,11 @@ const (
 // translated remark about the value, shown in the warning color while the field has the keys.
 // Suggest is true for a text field of a plugin that has a choices_from: Ctrl-L lists the values
 // that its program suggests, and the field stays free text.
+//
+// A multiline field keeps its text in Area, the editing engine of its lines, and draws it itself
+// on Rows rows, wrapped at the words; Top is the first of the wrapped rows that is shown, Wrap the
+// width the rows were last wrapped at, which the up and down keys follow, and Limit the most
+// characters it accepts. See formmulti.go.
 type formField struct {
 	ID      string
 	Label   string
@@ -65,6 +75,11 @@ type formField struct {
 	Locked  string
 	Note    string
 	Suggest bool
+	Area    textarea.Model
+	Rows    int
+	Top     int
+	Wrap    int
+	Limit   int
 }
 
 // newTextField returns an empty text field.
@@ -120,9 +135,11 @@ func (fd *formField) words(e *env, s string) string {
 }
 
 // text returns the text of a field, or the chosen value of a choice. A toggle gives "true" or
-// "false" and a list its items, one per line.
+// "false", a list its items, one per line, and a multiline field its lines, see trimLines.
 func (fd *formField) text() string {
 	switch fd.Type {
+	case fieldMulti:
+		return trimLines(fd.Area.Value())
 	case fieldList:
 		return strings.Join(fd.Items, "\n")
 	case fieldChoice:
@@ -143,6 +160,14 @@ func (fd *formField) text() string {
 // Parameters:
 //   - s: new content
 func (fd *formField) setText(s string) {
+	if fd.Type == fieldMulti {
+		fd.Area.SetValue(s)
+		fd.Area.MoveToEnd()
+		fd.Top = 0
+
+		return
+	}
+
 	fd.Input.SetValue(s)
 	fd.Input.CursorEnd()
 	fd.Off = 0
@@ -159,15 +184,21 @@ func (fd *formField) hintKey() string {
 
 // focus gives the field the keys.
 func (fd *formField) focus() {
-	if fd.Type == fieldText {
+	switch fd.Type {
+	case fieldText:
 		fd.Input.Focus()
+	case fieldMulti:
+		fd.Area.Focus()
 	}
 }
 
 // blur takes the keys from the field and marks it as visited.
 func (fd *formField) blur() {
-	if fd.Type == fieldText {
+	switch fd.Type {
+	case fieldText:
 		fd.Input.Blur()
+	case fieldMulti:
+		fd.Area.Blur()
 	}
 
 	fd.Touched = true
@@ -181,6 +212,19 @@ func (fd *formField) blur() {
 // Returns s where a line break or a tab became a space and every other control character, escape
 // or invalid byte was dropped.
 func cleanTyped(s string) string {
+	return cleanText(s, false)
+}
+
+// cleanText makes text typed or pasted safe for a field.
+//
+// Parameters:
+//   - s: text received from the terminal
+//   - lines: true for a multiline field, which keeps its line feeds; it must already have its line
+//     breaks turned into line feeds (plugin.NormalizeLines)
+//
+// Returns s where a tab, and a line break unless lines is true, became a space and every other
+// control character, escape or invalid byte was dropped.
+func cleanText(s string, lines bool) string {
 	var b strings.Builder
 
 	for len(s) > 0 {
@@ -188,6 +232,8 @@ func cleanTyped(s string) string {
 		s = s[size:]
 
 		switch {
+		case r == '\n' && lines:
+			b.WriteByte('\n')
 		case r == '\n' || r == '\t':
 			b.WriteByte(' ')
 		case r == '\r' || (r == utf8.RuneError && size == 1) || unsafeRune(r):
@@ -222,6 +268,10 @@ func editBindings(km textinput.KeyMap) []key.Binding {
 // that no stray character gets in. Typed and pasted text goes through cleanTyped. The cursor
 // is moved to the edge of a grapheme when an edit left it inside one.
 func (fd *formField) edit(msg tea.Msg) bool {
+	if fd.Type == fieldMulti {
+		return fd.editArea(msg)
+	}
+
 	if fd.Type != fieldText || fd.Locked != "" {
 		return false
 	}
@@ -330,9 +380,21 @@ type textCell struct {
 // Returns the graphemes after sanitize. A grapheme that would take no cell is drawn as a question
 // mark so that the cursor can stand on it.
 func (fd *formField) cells(e *env) []textCell {
+	return textCells(e, fd.Input.Value())
+}
+
+// textCells cuts a text into the graphemes that are drawn.
+//
+// Parameters:
+//   - e: shared environment, for the width rule
+//   - s: text of a field, or one line of a multiline field
+//
+// Returns the graphemes after sanitize, each with the index in runes where it starts in s. A
+// grapheme that would take no cell is drawn as a question mark so that the cursor can stand on it.
+func textCells(e *env, s string) []textCell {
 	var out []textCell
 
-	s, n := fd.Input.Value(), 0
+	n := 0
 
 	for len(s) > 0 {
 		cluster, _ := ansi.FirstGraphemeCluster(s, ansi.GraphemeWidth)
@@ -445,6 +507,8 @@ func (fd *formField) view(e *env, w int, focused bool) string {
 		s = fd.viewToggle(e, focused)
 	case fieldList:
 		s = fd.viewList(e, w)
+	case fieldMulti:
+		return fd.viewArea(e, w, focused, 1)[0]
 	default:
 		s = fd.viewText(e, w, focused)
 	}

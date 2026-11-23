@@ -4,6 +4,8 @@ import (
 	"slices"
 
 	tea "charm.land/bubbletea/v2"
+
+	"github.com/totecli/tote/internal/plugin"
 )
 
 // fieldSet is what every form shares: the fields, the one that has the keys, the keys that move
@@ -71,7 +73,8 @@ func (f *fieldSet) enter(e *env) {
 // navigate handles the keys every form has: Esc cancels, Ctrl-S saves, Tab and the arrows move
 // between the fields, and Enter goes to the next field, saves on the last one, or opens the editor
 // of a list. Ctrl-L on a field that has suggestions asks for them, and is dropped on any other
-// field. Any other key goes to the field that has the keys.
+// field. Any other key goes to the field that has the keys. In a multiline field, Enter starts a
+// new line and the arrows move along its rows, leaving it only from the first or the last one.
 //
 // Parameters:
 //   - e: shared environment
@@ -86,14 +89,26 @@ func (f *fieldSet) navigate(e *env, k tea.KeyPressMsg) formKey {
 		if fd := f.fields[f.cur]; fd.Suggest && fd.Locked == "" {
 			return fkSuggest
 		}
-	case "tab", "down":
+	case "tab":
 		f.move(e, 1)
-	case "shift+tab", "up":
+	case "shift+tab":
 		f.move(e, -1)
+	case "down":
+		if !f.fields[f.cur].areaStep(e, true) {
+			f.move(e, 1)
+		}
+	case "up":
+		if !f.fields[f.cur].areaStep(e, false) {
+			f.move(e, -1)
+		}
 	case "enter":
-		switch {
-		case f.fields[f.cur].Type == fieldList:
+		switch fd := f.fields[f.cur]; {
+		case fd.Type == fieldList:
 			return fkOpen
+		case fd.Type == fieldMulti && fd.Locked == "":
+			f.typed(e, k)
+
+			return fkNone
 		case f.cur == len(f.fields)-1:
 			return fkSubmit
 		}
@@ -324,15 +339,33 @@ func (f *fieldSet) messages(e *env, inner, most int) []string {
 func (f *fieldSet) scrolled(e *env, rows []string, firsts []int, cur, focusEnd,
 	h int,
 ) ([]string, int, int) {
+	out, start, lift, _ := f.scrolledSpan(e, rows, firsts, cur, focusEnd, h)
+
+	return out, start, lift
+}
+
+// scrolledSpan is scrolled, and also gives the number of the rows of the block that are drawn,
+// the "N more" lines left out.
+//
+// Parameters:
+//   - e: shared environment
+//   - rows: all the rows
+//   - firsts: index in rows of the first row of each field
+//   - cur: index of the focused field
+//   - focusEnd: index after the last row of the focused field
+//   - h: rows to keep
+func (f *fieldSet) scrolledSpan(e *env, rows []string, firsts []int, cur, focusEnd,
+	h int,
+) ([]string, int, int, int) {
 	n := len(rows)
 	if n <= h {
-		return rows, 0, 0
+		return rows, 0, 0, n
 	}
 
 	if h < minMoreRows {
 		s := min(windowStart(n, focusEnd, h), firsts[cur])
 
-		return rows[s : s+h], s, 0
+		return rows[s : s+h], s, 0, h
 	}
 
 	inner := h - 2
@@ -380,7 +413,7 @@ func (f *fieldSet) scrolled(e *env, rows []string, firsts []int, cur, focusEnd,
 		out = append(out, lead+e.moreLine(e.Glyphs.below, max(1, below)))
 	}
 
-	return out, s, lift
+	return out, s, lift, inner
 }
 
 // Typing reports that the form reads text, so that "?" and the other keys of the screens belong
@@ -433,12 +466,77 @@ func (f *fieldSet) layout(e *env, title string, maxW, maxH int) ([]string, []zon
 		labelW = min(labelW, formLabelMax, max(1, inner/3))
 	}
 	valW := max(1, inner-3-labelW-2)
+
+	msgs := f.messages(e, inner, max(0, maxH-2-formMinRows))
+	h := max(1, maxH-2-len(msgs))
+
+	rows, firsts, spans, focusEnd := f.fieldRows(e, labels, labelW, valW, plugin.MaxMultilineRows)
+
+	if len(rows) > h && f.multi() {
+		// A multiline field gives up rows until the box fits, keeping the rows of the "N more"
+		// lines, so that the rows of the focused one are all in view.
+		most := h
+		if h >= minMoreRows {
+			most = h - 2
+		}
+
+		rows, firsts, spans, focusEnd = f.fieldRows(e, labels, labelW, valW, max(1, most))
+	}
+
+	rows, start, lift, shown := f.scrolledSpan(e, rows, firsts, f.cur, focusEnd, h)
+
+	var zs []zone
+
+	for i, first := range firsts {
+		if y := first - start + lift; y >= lift && y < len(rows) {
+			zs = append(zs, zone{y: 1 + y, x: 1, w: inner, id: i})
+		}
+
+		for j := first + 1; j < first+spans[i]; j++ {
+			if j >= start && j < start+shown {
+				zs = append(zs, zone{y: 1 + j - start + lift, x: 1, w: inner, id: i})
+			}
+		}
+	}
+
+	rows = append(rows, msgs...)
+
+	return floating(e, e.Theme.Bold.Render(title), rows, w), zs
+}
+
+// multi reports whether the form has a multiline field.
+func (f *fieldSet) multi() bool {
+	for _, fd := range f.fields {
+		if fd.Type == fieldMulti {
+			return true
+		}
+	}
+
+	return false
+}
+
+// fieldRows draws the rows of the fields of a form: the label and the value of each field, its
+// other rows for a multiline field, then its notes.
+//
+// Parameters:
+//   - e: shared environment
+//   - labels: the label of each field, in the language of the interface
+//   - labelW: cells of the column of the labels
+//   - valW: cells of the values
+//   - most: most rows a multiline field draws
+//
+// Returns the rows, the index of the first row of each field, the number of rows of the value of
+// each field (1 but for a multiline field) and the index after the last row of the focused field.
+func (f *fieldSet) fieldRows(e *env, labels []string, labelW, valW, most int) ([]string, []int,
+	[]int, int,
+) {
 	note := spaces(3 + labelW + 1)
 
 	var rows []string
 
 	focusEnd := 0
 	firsts := make([]int, len(f.fields))
+	spans := make([]int, len(f.fields))
 
 	for i, fd := range f.fields {
 		firsts[i] = len(rows)
@@ -447,8 +545,21 @@ func (f *fieldSet) layout(e *env, title string, maxW, maxH int) ([]string, []zon
 			marker, label = e.Theme.Title.Render(e.Glyphs.marker)+" ", e.Theme.Key
 		}
 
-		rows = append(rows, " "+marker+label.Render(e.Metric.pad(labels[i], labelW,
-			e.Glyphs.ellipsis))+" "+fd.view(e, valW, i == f.cur))
+		head := " " + marker + label.Render(e.Metric.pad(labels[i], labelW, e.Glyphs.ellipsis)) + " "
+
+		if fd.Type == fieldMulti {
+			vals := fd.viewArea(e, valW, i == f.cur, most)
+			rows = append(rows, head+vals[0])
+
+			for _, v := range vals[1:] {
+				rows = append(rows, note+v)
+			}
+
+			spans[i] = len(vals)
+		} else {
+			rows = append(rows, head+fd.view(e, valW, i == f.cur))
+			spans[i] = 1
+		}
 
 		rows = append(rows, f.notes(e, fd, i == f.cur, note, valW)...)
 
@@ -457,19 +568,5 @@ func (f *fieldSet) layout(e *env, title string, maxW, maxH int) ([]string, []zon
 		}
 	}
 
-	msgs := f.messages(e, inner, max(0, maxH-2-formMinRows))
-	h := max(1, maxH-2-len(msgs))
-	rows, start, lift := f.scrolled(e, rows, firsts, f.cur, focusEnd, h)
-
-	var zs []zone
-
-	for i, first := range firsts {
-		if y := first - start + lift; y >= lift && y < len(rows) {
-			zs = append(zs, zone{y: 1 + y, x: 1, w: inner, id: i})
-		}
-	}
-
-	rows = append(rows, msgs...)
-
-	return floating(e, e.Theme.Bold.Render(title), rows, w), zs
+	return rows, firsts, spans, focusEnd
 }

@@ -16,14 +16,15 @@ const fieldLimit = 1000
 // fieldSpec describes one field of a generic form. The texts are literal, already translated and
 // clean: a plugin brings its own words.
 //
-// Type is fieldText, fieldChoice, fieldToggle or fieldList. Value is the starting text, the
-// chosen value, or "true" or "false" for a toggle; Items the starting items of a list. Choices
-// are the stored values of a choice and Names what is shown for each, the value itself when Names
-// is shorter. Placeholder is the grey text of an empty text field and Max the most characters it
-// takes. A field that is Required refuses the empty text. Check gives the translated reason a text
-// is refused and CheckList the one for a list, both "" to accept. Locked is the translated reason
-// the field cannot be changed and Note a remark shown under it while it has the keys. Suggest is
-// true for a text field whose plugin lists suggestions with Ctrl-L.
+// Type is fieldText, fieldMulti, fieldChoice, fieldToggle or fieldList. Value is the starting
+// text, the chosen value, or "true" or "false" for a toggle; Items the starting items of a list.
+// Choices are the stored values of a choice and Names what is shown for each, the value itself
+// when Names is shorter. Placeholder is the grey text of an empty text field and Max the most
+// characters it takes. A field that is Required refuses the empty text. Check gives the translated
+// reason a text is refused and CheckList the one for a list, both "" to accept. Locked is the
+// translated reason the field cannot be changed and Note a remark shown under it while it has the
+// keys. Suggest is true for a text field whose plugin lists suggestions with Ctrl-L. Rows is the
+// number of rows a multiline field shows, plugin.DefaultMultilineRows when it is 0.
 type fieldSpec struct {
 	ID          string
 	Label       string
@@ -41,6 +42,7 @@ type fieldSpec struct {
 	Locked      string
 	Note        string
 	Suggest     bool
+	Rows        int
 }
 
 // build makes the field a spec describes.
@@ -60,6 +62,10 @@ func (s fieldSpec) build() *formField {
 			ID: s.ID, Label: s.Label, Hint: s.Hint, Type: fieldList,
 			Items: slices.Clone(s.Items),
 		}
+	case s.Type == fieldMulti:
+		fd = newMultiField(s.ID, s.Label, s.Hint, s.Rows, limitOf(s.Max))
+		fd.setText(s.Value)
+		fd.Default = s.Placeholder
 	default:
 		fd = newTextField(s.ID, s.Label, s.Hint, limitOf(s.Max))
 		fd.setText(s.Value)
@@ -214,7 +220,7 @@ func (f *fieldsForm) refresh(e *env) {
 			if s.CheckList != nil {
 				fd.Err = s.CheckList(e, fd.Items)
 			}
-		case fd.Type == fieldText:
+		case fd.Type == fieldText || fd.Type == fieldMulti:
 			raw := fd.text()
 
 			switch {
@@ -245,6 +251,8 @@ func (e *env) ruleText(rule string) string {
 		return e.pword("plugin_reject_", plugin.RejectChoice)
 	case "bool":
 		return e.pword("plugin_reject_", plugin.RejectType)
+	case "lines":
+		return e.pword("plugin_reject_", plugin.RejectLines)
 	}
 
 	return e.pword("plugin_reject_", plugin.RejectText)
@@ -472,16 +480,30 @@ func (f *fieldsForm) Keys(e *env) []key.Binding {
 
 	bs := formBindings(e)
 
-	if fd := f.fields[f.cur]; fd.Type == fieldList && fd.Locked == "" {
+	switch fd := f.fields[f.cur]; {
+	case fd.Locked != "":
+	case fd.Type == fieldList:
 		bs = slices.Insert(bs, 1, key.NewBinding(key.WithKeys("enter"),
 			key.WithHelp(e.Glyphs.enter, e.t("ui_help_edit"))))
+	case fd.Type == fieldMulti:
+		bs = slices.Insert(bs, 1, newlineBinding(e))
 	}
 
 	return bs
 }
 
+// newlineBinding is the key that starts a new line in a multiline field.
+//
+// Parameters:
+//   - e: shared environment
+func newlineBinding(e *env) key.Binding {
+	return key.NewBinding(key.WithKeys("enter"), key.WithHelp(e.Glyphs.enter,
+		e.t("ui_help_newline")))
+}
+
 // runBindings lists the keys of a form that asks the arguments of a run: Enter goes to the next
-// field and runs on the last one, Ctrl-S runs from anywhere, and nothing is saved.
+// field and runs on the last one, Ctrl-S runs from anywhere, and nothing is saved. In a multiline
+// field Enter starts a new line, so Ctrl-S is shown even when the form has no other field.
 //
 // Parameters:
 //   - e: shared environment
@@ -495,15 +517,20 @@ func (f *fieldsForm) runBindings(e *env) []key.Binding {
 
 	var bs []key.Binding
 
-	switch fd := f.fields[f.cur]; {
+	fd := f.fields[f.cur]
+	multi := fd.Type == fieldMulti && fd.Locked == ""
+
+	switch {
 	case fd.Type == fieldList && fd.Locked == "":
 		bs = append(bs, key.NewBinding(key.WithKeys("enter"),
 			key.WithHelp(e.Glyphs.enter, e.t("ui_help_edit"))))
+	case multi:
+		bs = append(bs, newlineBinding(e))
 	default:
 		bs = append(bs, key.NewBinding(key.WithKeys("enter"), key.WithHelp(e.Glyphs.enter, word)))
 	}
 
-	if len(f.fields) > 1 {
+	if len(f.fields) > 1 || multi {
 		bs = append(bs, key.NewBinding(key.WithKeys("ctrl+s"),
 			key.WithHelp("ctrl+s", e.t("ui_help_run"))))
 	}
@@ -552,6 +579,10 @@ func commandSpecs(e *env, fields []plugin.Field, cat plugin.Catalog, base string
 		switch pf.Type {
 		case "text":
 			s.Suggest = len(pf.ChoicesFrom) > 0
+
+			if pf.Multiline {
+				s.Type, s.Rows = fieldMulti, pf.Lines
+			}
 		case "bool":
 			s.Type = fieldToggle
 		case "choice":
