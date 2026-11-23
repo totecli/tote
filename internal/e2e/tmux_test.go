@@ -311,14 +311,15 @@ func (m *term) key(names ...string) {
 	}
 }
 
-// typeText types a literal text.
+// typeText types a literal text. The text is put after "--", so that one that starts with a dash
+// is typed and not read as an option of tmux.
 //
 // Parameters:
 //   - text: characters to type
 func (m *term) typeText(text string) {
 	m.t.Helper()
 
-	if err := m.tmux("send-keys", "-t", m.Sess, "-l", text); err != nil {
+	if err := m.tmux("send-keys", "-t", m.Sess, "-l", "--", text); err != nil {
 		m.t.Fatalf("send-keys -l: %v", err)
 	}
 }

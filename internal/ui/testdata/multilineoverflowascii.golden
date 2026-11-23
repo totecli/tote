@@ -1,0 +1,104 @@
+== 60x12
+
+  +- remind: Add a reminder -----------------------------+
+  |   When    30m                                        |
+  | > Message ^ Line 6                                   |
+  |           | Line 7                                   |
+  |           | and a last line long enough to be        |
+  |           | wrapped at the words                     |
+  |           One item per line.                         |
+  |   Urgent  [ ] Non                                    |
+  +------------------------------------------------------+
+   enter - ctrl+s - esc
+
+== 80x24
+
+
+
+
+
+
+
+    +- remind: Add a reminder ---------------------------------------------+
+    |   When    30m                                                        |
+    | > Message ^ Line 5                                                   |
+    |           | Line 6                                                   |
+    |           | Line 7                                                   |
+    |           | and a last line long enough to be wrapped at the words   |
+    |           One item per line.                                         |
+    |   Urgent  [ ] Non                                                    |
+    +----------------------------------------------------------------------+
+      enter nouvelle ligne - ctrl+s lancer - esc annuler
+
+
+
+
+
+
+
+== 100x40
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              +- remind: Add a reminder ---------------------------------------------+
+              |   When    30m                                                        |
+              | > Message ^ Line 5                                                   |
+              |           | Line 6                                                   |
+              |           | Line 7                                                   |
+              |           | and a last line long enough to be wrapped at the words   |
+              |           One item per line.                                         |
+              |   Urgent  [ ] Non                                                    |
+              +----------------------------------------------------------------------+
+                enter nouvelle ligne - ctrl+s lancer - esc annuler
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+== 120x24
+
+
+
+
+
+
+
+                        +- remind: Add a reminder ---------------------------------------------+
+                        |   When    30m                                                        |
+                        | > Message ^ Line 5                                                   |
+                        |           | Line 6                                                   |
+                        |           | Line 7                                                   |
+                        |           | and a last line long enough to be wrapped at the words   |
+                        |           One item per line.                                         |
+                        |   Urgent  [ ] Non                                                    |
+                        +----------------------------------------------------------------------+
+                          enter nouvelle ligne - ctrl+s lancer - esc annuler
+
+
+
+
+
+
+

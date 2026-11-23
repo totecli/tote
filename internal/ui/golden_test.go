@@ -510,6 +510,7 @@ func frameCases() []frameCase {
 	cases = append(cases, pluginFrames()...)
 
 	cases = append(append(cases, pluginRunFrames()...), pluginSuggestFrames()...)
+	cases = append(cases, multilineFrames()...)
 
 	return append(cases, wideBoxFrames()...)
 }
@@ -596,8 +597,9 @@ func frameSandbox(t *testing.T, d dataSet) *sandbox {
 //   - g: rig to drive
 //   - keys: key names, "type:text" for typed text, "writing" for a write in progress, "toast"
 //     for an error message, "pager:kind" for a canned run, "suggest:kind" for a canned form with
-//     suggestions, "menu:long" for a canned menu of actions with long labels and "bg:dark" or
-//     "bg:light" for the answer of the terminal to the query for its background
+//     suggestions, "menu:long" for a canned menu of actions with long labels, "multi:form" for a
+//     canned form with a multiline field and "bg:dark" or "bg:light" for the answer of the
+//     terminal to the query for its background
 func playFrame(g *rig, keys []string) {
 	g.t.Helper()
 
@@ -613,6 +615,8 @@ func playFrame(g *rig, keys []string) {
 			playSuggest(g, k)
 		case k == "menu:long":
 			g.r.push(cannedMenu(g.r.e))
+		case k == "multi:form":
+			g.r.push(cannedMulti())
 		case strings.HasPrefix(k, "bg:"):
 			g.send(backgroundMsg(k == "bg:dark"))
 		case k == "toast":
