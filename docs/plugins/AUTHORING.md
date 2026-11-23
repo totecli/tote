@@ -67,7 +67,7 @@ export TOTE_CONFIG_DIR=$SANDBOX/.config/tote
 export TOTE_DATA_DIR=$SANDBOX/.local/share/tote
 export TOTE_STATE_DIR=$SANDBOX/.local/state/tote
 export TOTE_CACHE_DIR=$SANDBOX/.cache/tote
-tote plugin
+tote plugin list
 ```
 
 ```
@@ -1050,7 +1050,7 @@ installed plugin demo 0.1.0 (enabled)
 ### Look at it
 
 ```sh
-tote plugin
+tote plugin list
 ```
 
 ```
@@ -1208,7 +1208,7 @@ exist in 1.0.
 
 ```sh
 tote plugin disable demo
-tote plugin
+tote plugin list
 tote plugin enable demo
 ```
 

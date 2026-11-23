@@ -1308,9 +1308,10 @@ tote plugin remove <id> [--yes] [--purge] [--json]
 tote plugin check [<id|dir|archive>] [--strict] [--official] [--argv [--set <field=value>] [--repo <name>]] [--json]
 ```
 
-`plugins` is another name for `plugin`, and `ls` for `list`. `tote plugin` alone lists.
-`tote help plugin` prints the usage. A bare word for `check` is an installed or shipped id. A
-directory or an archive is written as a path (`./demo`).
+`plugins` is another name for `plugin`, and `ls` for `list`. `tote plugin` alone lists when it is
+not on a terminal, and opens the plugins screen on one. `tote help plugin` prints the usage. A bare
+word for `check` is an installed or shipped id. A directory or an archive is written as a path
+(`./demo`).
 
 | Flag                    | Verbs                         | Meaning                                                                             |
 | ----------------------- | ----------------------------- | ----------------------------------------------------------------------------------- |

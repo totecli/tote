@@ -38,9 +38,9 @@ How it differs from mn:
 
 `tote` with no argument, run in a terminal, opens the full-screen interface; in a pipe or a script
 it prints the help. With no argument, `tote co`, `tote repos`, `tote alias`, `tote funcs`,
-`tote plugin` and `tote config` open it on their own list or screen when run in a terminal, and
-print the list when they are not (`tote co -l`, `tote repos list`, `--json` and `--format` always
-print).
+`tote plugin` and `tote config` open it on their own list or screen when run in a terminal. Outside
+a terminal the first five print their list (`tote co -l`, `tote repos list`, `--json` and
+`--format` always print), and `tote config` asks for the name of a setting, or `path`.
 
 The welcome page is a boxed greeting with the number of records of each kind and a menu:
 Connections, Repos, Aliases, Functions, Plugins, Settings. A list shows one kind in columns that
@@ -406,7 +406,7 @@ open its page, download an asset, install a release binary.
 Look first, nothing changes:
 
 ```sh
-tote plugin                           # list: gft is "available"
+tote plugin list                      # gft is "available"
 tote plugin install gft --dry-run     # read what it asks for
 tote plugin check gft                 # the commands it would run, and any problem
 ```
