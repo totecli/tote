@@ -230,11 +230,11 @@ flag = "-i"
 
 Each `[[command.field]]` is one question, asked in file order. The field types are:
 
-| Type     | Value                                          | Keys                                                                                               |
-| -------- | ---------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `text`   | A string.                                      | `max_len` (256 by default, at most 1024), `pattern`, `default`, `required`, `hint`, `choices_from` |
-| `choice` | One of a fixed list, the empty string allowed. | `choices` (1 to 64 strings)                                                                        |
-| `bool`   | On or off.                                     | `flag`: a literal starting with `-`, required                                                      |
+| Type     | Value                                          | Keys                                                                                                                     |
+| -------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `text`   | A string.                                      | `max_len` (256 by default, at most 1024), `pattern`, `default`, `required`, `hint`, `choices_from`, `multiline`, `lines` |
+| `choice` | One of a fixed list, the empty string allowed. | `choices` (1 to 64 strings)                                                                                              |
+| `bool`   | On or off.                                     | `flag`: a literal starting with `-`, required                                                                            |
 
 `default` is a template: it may use the fields above it, `{repo.*}`, `{setting.*}`, `{cwd}` and
 `{home}`, and a value that cannot be resolved gives an empty default, never an error. `hint` is a
@@ -323,6 +323,157 @@ fail: it tells you what the form would answer.
 
 Validation order for a field is `required`, `max_len`, `pattern`, then the dash rule when the
 command is built.
+
+### A text of several lines
+
+Since tote 1.2, a `text` field can ask for a text of several lines: the body of a reminder, a note,
+a message. Write `multiline = true` on the field. The form then shows a box instead of a line, Enter
+starts a new line in it, and Ctrl+S submits the form. `lines` sets how many rows the box shows, 2 to
+8, 4 when you leave it out.
+
+The example is a plugin of its own, `remind`, so that the hashes of `demo` do not move. It shows a
+note on the desktop with `notify-send`:
+
+```toml
+api = 1
+id = "remind"
+version = "0.1.0"
+tote = ">=1.2.0, <2"
+requires_features = ["field.multiline"]
+title = "Remind"
+description = "Show a note on the desktop."
+license = "MIT"
+tier = "declarative"
+permissions = ["exec:notify-send"]
+
+[[command]]
+id = "note"
+label = "Show a note"
+run = ["notify-send", "--app-name=tote", "--", "{title}", "{body}"]
+allow_dash = ["body"]
+output = "silent"
+
+[[command.field]]
+id = "title"
+type = "text"
+label = "Title"
+required = true
+max_len = 60
+
+[[command.field]]
+id = "body"
+type = "text"
+label = "Message"
+required = true
+hint = "Enter starts a new line, Ctrl+S shows the note."
+multiline = true
+lines = 6
+max_len = 500
+```
+
+The two lines at the top matter, as for `choices_from`. `requires_features = ["field.multiline"]`
+and `tote = ">=1.2.0, <2"` make tote 1.0 and 1.1 report the plugin as `incompatible`, which is what
+you want, and not as invalid. This is what `check` of tote 1.1 says:
+
+```
+  error: tote, line 4: this plugin needs tote >=1.2.0, <2.0.0, you have 1.1.0
+  error: requires_features[0], line 5: this plugin needs the feature field.multiline, which this tote does not have
+```
+
+With `tote = ">=1.0.0, <2"` and no `requires_features`, tote 1.1 does not know the keys and calls
+the plugin invalid:
+
+```
+  error: command[0].field[1].multiline, line 31: unknown key
+  error: command[0].field[1].lines, line 32: unknown key
+```
+
+`check --argv` takes the value with its line feeds, between quotes. It shows each line feed as `\n`,
+so that the command stays on one line:
+
+```sh
+tote plugin check ./remind --argv --set title=Shopping --set 'body=- milk
+- eggs
+- bread'
+```
+
+```
+checking directory: ./remind
+remind 0.1.0 (declarative)
+what it runs:
+  - command note: notify-send --app-name=tote -- Shopping '- milk\n- eggs\n- bread'
+    in /home/u/work
+access it asks for:
+  - exec:notify-send
+hashes:
+  tree sha256: ed147fb249c1ff1dc6b58ee6f9f71524d2319e57454153ed358b984c4c12dded
+  surface sha256: 80efc98af51e3f18e9089fb7774f93d7605590a1718ea1b852a972db0c2b2ceb
+grant token: exec:notify-send@80efc98af51e
+./remind: no problem found
+```
+
+**What your program receives.** One argument, the last one here, with the three lines joined by line
+feeds and no line feed at the end: `- milk`, LF, `- eggs`, LF, `- bread`. Not a carriage return:
+tote turns CR LF and a lone CR into LF when the text is typed or pasted, and again at submit. There
+is no standard input, environment variable or file for the value, so write a program, or pick one,
+that takes the text as an argument.
+
+**Only in `run`.** Line feeds reach an argument of `run`, and nowhere else. A multiline value that
+holds one is refused in `env`, `cwd` and `open`, and in the argv of a `choices_from`
+(`produced_invalid`); in the text of `confirm` it is left out. The rest of the argument stays on one
+line: in `--body={body}`, `--body=` and every other placeholder may not hold a line feed.
+
+**The dash rule.** A list starts with `-`, and a multiline field is a `text` field, so without
+`allow_dash` the value above is refused:
+
+```
+  - command note: notify-send --app-name=tote -- '{title}' '{body}'
+    cannot be built: the value of body starts with a dash and the command does not allow it
+```
+
+Two ways out. Here `--` comes before the values, so `notify-send` reads them as text, and listing
+`body` in `allow_dash` is safe. Or, when the program takes an option such as `--body=TEXT`, write
+the argument as `"--body={body}"`: its template starts with `-`, so the dash rule does not apply,
+and you need no `allow_dash`.
+
+**The limits.** tote checks the value at submit, in this order, and `tote plugin check --argv`
+prints these messages. The form cuts what the user types or pastes to the same limits, so it rarely
+has to show them; it also drops the spaces at the end of each line and the blank lines before the
+first and after the last line, so a field of Enter presses only is empty for it, and a required one
+is refused:
+
+| Limit                                                                  | Message                        |
+| ---------------------------------------------------------------------- | ------------------------------ |
+| At most 1000 bytes, so that `--body=` and the value fit in 1024 bytes  | `too long`                     |
+| Valid UTF-8                                                            | `not valid UTF-8`              |
+| No tab, no escape, no other control character but the line feed        | `contains a control character` |
+| At most 16 lines (a line feed at the end opens a last, empty line)     | `too many lines`               |
+| `required`                                                             | `a value is required`          |
+| `max_len`, in characters (runes): 1000 when you leave it out, 500 here | `longer than the field allows` |
+
+```sh
+tote plugin check ./remind --argv --set title=Shopping --set "body=$(seq 1 17)"
+```
+
+```
+  - command note: notify-send --app-name=tote -- '{title}' '{body}'
+    cannot be built: the value of body is not valid (too many lines)
+```
+
+A multiline field has no `pattern` (its anchors would apply to each line), no `default` and no
+`choices_from`: each is an error next to `multiline = true`, and so is `lines` without it:
+
+```
+  error: command[0].field[0].pattern, line 21: pattern and multiline cannot be used together
+  error: command[0].field[1].multiline, line 23: this key is required
+  error: command[0].field[2].lines, line 34: limit exceeded: range 2 8
+  error: command[0].field[3].multiline, line 41: multiline and choice cannot be used together
+```
+
+**Consent.** A field that becomes `multiline` in an update, or a new command with such a field,
+asks for consent again: the update view says `! command note now passes line feeds to its
+program`. Changing `lines` asks nothing. [API1.md](API1.md) section 3.8.2 has the exact rules, and
+[SECURITY.md](SECURITY.md) section 6.6 what they protect.
 
 ## 5. Step 3: settings and a list
 
@@ -1336,9 +1487,9 @@ An update asks again, and a script must pass a new `--grant`, in two cases:
 2. **It runs something it could not before.** A `confirm` removed or turned off on an entry that
    kept its id, an `allow_dash` entry added (a new entry that carries one asks too), an `env` name
    or value added or changed (a new entry that carries an `env` table asks too), a field that gains
-   a `choices_from` or whose `choices_from` argv changes (a new entry that has one asks too). Any
-   other change to a command, even to its program or arguments, is shown in the diff and is **not**
-   asked. This is a
+   a `choices_from` or whose `choices_from` argv changes (a new entry that has one asks too), a
+   field that becomes `multiline` (a new entry that has one asks too). Any other change to a
+   command, even to its program or arguments, is shown in the diff and is **not** asked. This is a
    choice, and a limit: the user reads the diff but is not stopped by it.
 
 Try the first case. Raise the version to `0.2.0`, add `"exec:wc"` to `permissions` and add:
@@ -1556,7 +1707,9 @@ A checklist:
 6. If the manifest uses a key or a feature that only a later tote has, `tote` says so
    (`tote = ">=1.1.0"`, or a name in `requires_features`): tote 1.0 then reports the plugin as
    `incompatible`, which is what you want, and not as invalid. A manifest with a `choices_from`
-   declares `requires_features = ["field.choices_from"]` and `tote = ">=1.1.0, <2"`.
+   declares `requires_features = ["field.choices_from"]` and `tote = ">=1.1.0, <2"`, and one with a
+   `multiline` field `requires_features = ["field.multiline"]` and `tote = ">=1.2.0, <2"` (both
+   names, and `>=1.2.0`, when it has both).
 
 ## 14. Remove it
 
@@ -1785,6 +1938,10 @@ becoming `_`. Here is what each of these looked like.
 | `choices_from` on a `choice` field                            | `command[0].field[2].choices_from, line 35: choices_from and choice cannot be used together`         | `key_conflict`                                        |
 | `{name}` in the `choices_from` of the field `name`            | `command[0].field[0].choices_from[3], line 23: {name} is not a known placeholder`                    | `placeholder_unknown`                                 |
 | a `choices_from` that runs the program of a `confirm` command | `the suggestions of a field run git stash, which starts before the confirmation is asked`            | `argv.choices_confirmed` (warning)                    |
+| `pattern` on a `multiline` field                              | `command[0].field[0].pattern, line 21: pattern and multiline cannot be used together`                | `key_conflict`                                        |
+| `lines` without `multiline = true`                            | `command[0].field[1].multiline, line 23: this key is required`                                       | `key_missing`                                         |
+| `lines = 12`                                                  | `command[0].field[2].lines, line 34: limit exceeded: range 2 8`                                      | `limit_exceeded`                                      |
+| `multiline` on tote 1.1, without the feature and the range    | `command[0].field[1].multiline, line 31: unknown key`                                                | `unknown_key`                                         |
 
 Two notes. A `dev` build of tote satisfies every range, so `tote_range` only shows on a release
 build. And when several things are wrong, `check` lists them all; the install commands report the

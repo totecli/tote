@@ -1,8 +1,9 @@
 # Security of tote plugins
 
 This document is the security statement for tote 1.0 and plugin API 1, with the suggestions of a
-text field that tote 1.1 adds (section 6.5). It is written for the people who install plugins and
-for the people who write them. It says what tote protects, how, and where the protection stops.
+text field that tote 1.1 adds (section 6.5) and the text field of several lines that tote 1.2 adds
+(section 6.6). It is written for the people who install plugins and for the people who write them.
+It says what tote protects, how, and where the protection stops.
 
 Only the declarative tier is available in 1.0. A declarative plugin has no code of its own: it is a
 `plugin.toml` that tells tote which programs to run. Section 10 lists what is reserved and not
@@ -70,6 +71,9 @@ tote: error: run.sh: a declarative plugin may not ship the file run.sh
 - Since tote 1.1, ask tote to start a program to list suggestions for a text field, when you press
   Ctrl+L on that field. There is no confirmation, no `env:` variable is passed to it, and its argv
   is shown at consent (section 6.5).
+- Since tote 1.2, receive a text of several lines that you typed in a `multiline` field, as one
+  argument of its command, line feeds included. The line feed is the only control character that
+  tote lets into an argument, and only there (section 6.6).
 
 ### 3.3 What it cannot do
 
@@ -283,7 +287,7 @@ If you decline, nothing changes: the old version stays installed and keeps runni
 
 ### 4.5 Changed commands, and what is not asked
 
-A changed command asks again only in five cases. This is a trade-off that was made on purpose, and
+A changed command asks again only in six cases. This is a trade-off that was made on purpose, and
 it leaves a residual risk.
 
 Asked again, for an entry that keeps its id:
@@ -296,6 +300,9 @@ Asked again, for an entry that keeps its id:
   its id or on a new entry (the escalation `choices`, since tote 1.1): the program of the
   suggestions starts without a confirmation, and one `exec:` permission covers every word of it.
   Removing a `choices_from` asks nothing;
+- a field becomes `multiline`, on an entry that keeps its id, or a new entry has a `multiline`
+  field (the escalation `multiline`, since tote 1.2): line feeds then reach the argv of a program
+  that never received them (section 6.6). Removing `multiline`, or changing `lines`, asks nothing;
 - a `[[platform]]` hash changes while the version stays the same (exec tier, not in 1.0).
 
 ```
@@ -399,7 +406,11 @@ hash of a manifest that uses every key (`TestSurfaceHashPinned`) and fail when a
 written (`TestSurfaceZeroValuesAbsent`). A second test pins the hash of a manifest that sets
 `choices_from` (`TestSurfaceChoicesPinned`): in the object of its field the key is
 `choices_from`, an array of the templates as written, unexpanded, and nothing else about it is
-hashed. The hash of a plugin that does not set the key is the one it had before tote 1.1.
+hashed. The hash of a plugin that does not set the key is the one it had before tote 1.1. A third
+pins the hash of a manifest with a `multiline` field (`TestSurfaceMultiline`): the key `multiline`,
+`true`, is in the object of its field only when it is set, and `lines`, which only sets the height
+of the box, is never hashed. The hash of a plugin that does not set `multiline` is the one it had
+before tote 1.2.
 
 An author can compute all of them before publishing:
 
@@ -667,7 +678,9 @@ $ tote plugin check ./dash --argv --set rev=--output=/tmp/x
 ```
 
 - Text that substitution produces must be valid UTF-8, with no control, bidirectional or zero-width
-  character, no tab, and within the limit (4096 bytes for a value).
+  character, no tab, and within the limit (4096 bytes for a value). There is exactly one exception,
+  since tote 1.2: the line feed of a `multiline` field, in an argument of `run`, and nowhere else
+  (section 6.6).
 - A `pattern` must be anchored (`^` and `$` on every alternative), because it is matched against the
   whole value. An unanchored pattern is an error when the manifest is read.
 - A command that starts `ssh`, `scp`, `rsync` or `sftp` must put a literal `--` before any
@@ -809,6 +822,71 @@ capability.
   compared at the submit but the typed-text rules.
 - Cancelling is best effort in the way of section 8.2: a descendant that called `setsid` again
   survives, and so does a program after a SIGKILL of tote.
+
+### 6.6 Text of several lines
+
+Since tote 1.2 a `text` field can carry `multiline = true` (feature `field.multiline`): the user
+types a text of several lines, such as the body of a note, in a box where Enter starts a new line.
+This is the one exception to the rule of section 6.3 that no control character reaches a program.
+The rules of the manifest are in API1.md, section 3.8.2. The exception is exactly this:
+
+- **The line feed, and nothing else.** A carriage return, alone or before a line feed, is turned
+  into a line feed when the text is typed or pasted, and again when the form is submitted. A tab, a
+  NUL, an escape, every other control character, the bidirectional and zero-width characters and
+  the line and paragraph separators (U+2028, U+2029) stay refused in the value.
+- **In a `multiline` field only.** A one-line field, a setting, a value of a repository and every
+  literal of the manifest stay on one line. In the argument that holds the multiline value, the
+  literal text of the template and each other placeholder are checked on their own, so every line
+  feed of the argument comes from that value.
+- **In the argv of `run` only.** `env`, `cwd` and the address of `open` refuse a value that holds a
+  line feed (`produced_invalid`), and so does the argv of a `choices_from`. The text of a `confirm`
+  leaves such a value out rather than print it over several lines. Nothing else changes in how a
+  program starts: the standard input of a captured run is still `/dev/null`, and there is no
+  standard input, environment variable or file for the value, and no new permission.
+- **Shown escaped.** The question of a `confirm`, the other screens of the terminal interface that
+  show the command, and `plugin check --argv` show it on one line. In an argument that holds a line
+  feed, each backslash is doubled and then each line feed is written `\n`, so that no line can hide
+  below the first one, and within that argument a typed backslash followed by `n` (shown `\\n`)
+  cannot pass for a line feed. An argument without a line feed is shown as it was before tote 1.2,
+  so there `\n` is a typed backslash and `n`: an argument of one line that the user typed as
+  `a\nb` and an argument of two lines look the same on screen.
+
+```
+$ tote plugin check ./remind --argv --set title=Shopping --set "body=$(printf -- '- milk\n- eggs')"
+...
+  - command note: notify-send --app-name=tote -- Shopping '- milk\n- eggs'
+```
+
+The other rules stay. The value holds at most 1000 bytes and 16 lines, and the argument that holds
+it at most 1024 bytes. The dash rule applies to it as to any `text` field: here `- milk` passes only
+because the plugin lists `body` in `allow_dash`, which the consent screen shows, after a literal
+`--`.
+
+**What a line feed can and cannot do.** It cannot start a command or split an argument: there is no
+shell, and the value is one element of the argv. What it can do is what the program does with a
+text of several lines. A program that writes the value into a file read line by line (a
+configuration file, a list of tasks, the headers of a message) may take the second line for a
+second record. The program and its arguments are what you read at consent: tote does not know what
+the program does with the text, and does not try to.
+
+**Consent.** The consent screen shows the templates of the commands, and a `multiline` field changes
+none of them: read the manifest to see which field is one. An update that makes a field `multiline`,
+or that adds an entry with such a field, asks again (the escalation `multiline`, section 4.5). The
+diff of commands does not show it, since the templates are the same, so the line of the escalation
+is the place to look:
+
+```
+$ tote plugin update remind ./remind --dry-run      # 0.2.0 makes the field "body" multiline
+remind 0.2.0 asks for more access
+...
+  ! command note now passes line feeds to its program
+Commands: 0 added, 0 removed, 0 changed
+...
+consent is asked because:
+  - what it runs changed in a way that asks again
+```
+
+Removing `multiline`, or changing `lines` (the height of the box), asks nothing.
 
 ## 7. Strings that come from a plugin
 
@@ -1003,6 +1081,10 @@ subtests (`-run 'TestName/case'`).
 | A plugin that starts its suggestions without a user key press, or from `check`                      | only `Registry.RunChoices` starts it, and it needs a prepared run; `check` prints a template                                                                                                               | `TestChoicesStartsNothing`, `TestCheckShowsSuggestionsAndStartsNothing`, `TestRunChoicesRefusesOtherRuns`                                                                     |
 | A suggestions run of a disabled or changed plugin                                                   | state checked before the start and after the process is recorded; `disable` stops the group                                                                                                                | `TestChoicesNeedsAnEnabledPlugin`, `TestRunChoicesGuard`, `TestRunChoicesStoppedByDisable`                                                                                    |
 | An update that adds a program to start on a key press                                               | escalation `choices`; the argv is in the consent view                                                                                                                                                      | `TestSurfaceChoicesEscalation`, `TestConsentShowsSuggestions`, `TestSurfaceChoicesPinned`                                                                                     |
+| A line feed from a one-line field, a setting or a literal; a tab or an escape in a multiline value  | LF only, from the value of a `multiline` field, in an argument of `run`; every other piece of the argument is checked alone; CR becomes LF                                                                 | `TestCheckFieldMultiline`, `TestProducedIssueLines`, `TestExpandMultiline`, `FuzzExpandMultiline`                                                                             |
+| A multiline value sent to `env`, `cwd`, an `open` address or a `choices_from`                       | refused (`produced_invalid`); the `confirm` text leaves it out                                                                                                                                             | `TestPrepareMultiline`                                                                                                                                                        |
+| A line of a command hidden below the first one on the screen                                        | each line feed shown `\n`, after the backslashes of that argument are doubled                                                                                                                              | `TestDisplayArgv`, `TestPrepareMultiline`                                                                                                                                     |
+| An update that makes a field multiline                                                              | escalation `multiline`; `lines` is not hashed, and a plugin without the key keeps its hash                                                                                                                 | `TestSurfaceMultilineEscalation`, `TestSurfaceMultiline`                                                                                                                      |
 | Update from another source, older, same version, pre-release                                        | refused; with `--force` consent is still asked                                                                                                                                                             | `TestUpdateRules`, `TestUpdateSourceChanged`, `TestUpdateReleaseRules`, `TestForcedUpdateAsksForConsent`                                                                      |
 | The same plugin installed again                                                                     | nothing is asked and nothing is written; any difference (version, source, files) keeps the update rules                                                                                                    | `TestInstallIdempotent`, `TestPluginInstallIdempotent` (`cmd/tote`)                                                                                                           |
 | A plugin of the exec tier, new or already in the store                                              | refused as incompatible (`reserved_not_available`), never enabled or run                                                                                                                                   | `TestExecTierRefused`, `TestExecTierRefusedEverywhere`, `TestPluginExecTierRefused` (`cmd/tote`)                                                                              |

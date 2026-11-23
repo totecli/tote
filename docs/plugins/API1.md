@@ -1,9 +1,10 @@
 # tote plugin API 1: reference
 
-This is the reference for plugin API 1, as tote 1.0 implements it, plus one optional key that tote
-1.1 adds: the suggestions of a text field, `choices_from` (sections 3.8.1 and 4.4, marked "since
-tote 1.1"). It lists every key of `plugin.toml`, every limit, every verb of `tote plugin`, every
-exit code and every JSON shape.
+This is the reference for plugin API 1, as tote 1.0 implements it, plus the optional keys that later
+1.x releases add: the suggestions of a text field, `choices_from` (tote 1.1, sections 3.8.1 and
+4.4), and the text field of several lines, `multiline` (tote 1.2, section 3.8.2). Each is marked
+with the release that adds it ("since tote 1.1"). It lists every key of `plugin.toml`, every limit,
+every verb of `tote plugin`, every exit code and every JSON shape.
 
 It is a reference, not a tutorial. To write a plugin step by step, read
 [AUTHORING.md](AUTHORING.md). For what a plugin can and cannot do to you, and how tote defends
@@ -82,11 +83,11 @@ root, with no folder around it. tote enforces these limits on a directory and on
 
 tote computes three hashes. They are written in lower case hexadecimal.
 
-| Hash             | What it covers                                                                                                                                                                                                                                                                                                     |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `tree_sha256`    | The files of the package. For each regular file in byte order of its path: path, size, content hash and whether it has the execute bit. Folders, times and owners do not count.                                                                                                                                    |
-| `surface_sha256` | What the plugin runs: for each contribution, its table, id, target, `run`, `open`, `env`, `cwd`, `allow_dash`, `output`, `pause`, `timeout`, `confirm` and the id, type, flag, pattern, choices, `choices_from` and `required` of its fields. Labels, descriptions, keywords, hints and translations do not count. |
-| `archive_sha256` | The bytes of a release or archive file. It is the value of `--sha256`.                                                                                                                                                                                                                                             |
+| Hash             | What it covers                                                                                                                                                                                                                                                                                                                                          |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tree_sha256`    | The files of the package. For each regular file in byte order of its path: path, size, content hash and whether it has the execute bit. Folders, times and owners do not count.                                                                                                                                                                         |
+| `surface_sha256` | What the plugin runs: for each contribution, its table, id, target, `run`, `open`, `env`, `cwd`, `allow_dash`, `output`, `pause`, `timeout`, `confirm` and the id, type, flag, pattern, choices, `choices_from`, `multiline` and `required` of its fields. Labels, descriptions, keywords, hints, translations and the `lines` of a field do not count. |
+| `archive_sha256` | The bytes of a release or archive file. It is the value of `--sha256`.                                                                                                                                                                                                                                                                                  |
 
 **A key of the surface counts only when it is set.** Each contribution is hashed as an object with
 its `table` and `id`, and every other key is left out of it at its zero value (an empty string, an
@@ -295,6 +296,9 @@ any name. `tote plugin check --official` lets a check accept an official id.
   another feature with its own name, `field.choices_closed`, which is reserved: it is not
   announced, and a manifest written for it can never be taken for this one.
 
+  tote 1.2 announces one more, `field.multiline`: a `text` field whose value may hold line feeds,
+  which reach the program in an argument of `run` and nowhere else (section 3.8.2).
+
   Any other name makes the plugin incompatible (`feature_missing`). A feature name is
   `^[a-z][a-z0-9_.]{0,63}$`, and a later tote announces more of them: that is how a manifest uses a
   key that tote 1.0 does not have, and 1.0 then reports the plugin as incompatible and not as
@@ -422,7 +426,21 @@ boundary).
 
 **Substitution** is per argument, in one pass, and never through a shell. The produced text must be
 valid UTF-8, hold no control character (a tab included) and no bidirectional or zero-width
-character, and stay within 1024 bytes. The rules for an empty value:
+character, and stay within 1024 bytes.
+
+**The one exception: a line feed.** Since tote 1.2, the value of a `multiline` field (section
+3.8.2) keeps its line feeds (LF, U+000A) in an argument of `run`, and nowhere else. The line feed is
+the only control character it may hold: a carriage return is turned into a line feed when the value
+is checked, and a tab, a NUL, every other control character and the bidirectional and zero-width
+characters are refused as above. In that argument, the literal text of the template and every other
+placeholder still follow the rule above on their own, so a line feed can only come from the value
+of the multiline field, and the whole argument stays within 1024 bytes. Everywhere else the rule is
+strict, the value of a multiline field included: in `env`, `cwd` and `open` a line feed is
+`produced_invalid` (`control`), in the argv of a `choices_from` too, and in the text of `confirm` or
+the `default` of another field the value that holds one gives the empty text, as a value that cannot
+be resolved does. Where tote shows the command, a line feed is written `\n` (section 3.8.2).
+
+The rules for an empty value:
 
 - `{x}` that is empty or unresolved makes the contribution **unavailable**. It is shown greyed, with
   the reason.
@@ -435,7 +453,9 @@ is refused (`dash_refused`). Three things are exempt: a placeholder named in the
 `allow_dash`, the value of a `choice` field with static `choices`, and the `flag` of a `bool` field.
 A `text` field is never exempt, whatever fills it: a value that the user typed, or picked from the
 suggestions of a `choices_from` (section 3.8.1), is refused when it starts with `-` and the
-template does not. The argv of a `choices_from` has no `allow_dash` at all.
+template does not. The argv of a `choices_from` has no `allow_dash` at all. A `multiline` field is a
+`text` field: a list such as `- milk` in a whole argument `{body}` is refused, and an argument whose
+template starts with `-`, such as `--body={body}`, is not subject to the rule.
 
 The first word of a `run` is a literal program name. A placeholder there, or a `/`, is an error,
 `argv0_invalid`.
@@ -453,17 +473,20 @@ grammar and are asked in file order. Cancelling the form cancels the whole call.
 | `hint`         | string            | no       | Up to 200 runes.                                                                                                                                                                                   |
 | `required`     | boolean           | no       | `false`.                                                                                                                                                                                           |
 | `default`      | string or boolean | no       | A template for `text` and `choice`, using earlier fields, `{repo.*}`, `{setting.*}`, `{cwd}` and `{home}`. A boolean for `bool`. An unresolved placeholder gives an empty default, never an error. |
-| `pattern`      | string            | no       | `text` only. An RE2 expression of at most 256 bytes.                                                                                                                                               |
-| `max_len`      | integer           | no       | `text` only. 1 to 1024. Default 256.                                                                                                                                                               |
+| `pattern`      | string            | no       | `text` only. An RE2 expression of at most 256 bytes. Not on a `multiline` field.                                                                                                                   |
+| `max_len`      | integer           | no       | `text` only. 1 to 1024. Default 256, and 1000 on a `multiline` field.                                                                                                                              |
 | `choices_from` | array of strings  | no       | `text` only, since tote 1.1. The program that lists suggestions for the field, and its arguments: section 3.8.1. On a `choice` or a `bool` field it is `key_conflict`.                             |
+| `multiline`    | boolean           | no       | `text` only, since tote 1.2. `true` lets the value hold line feeds: section 3.8.2. It excludes `pattern`, `default` and `choices_from`. On a `choice` or a `bool` it is `key_conflict`.            |
+| `lines`        | integer           | no       | `text` only, since tote 1.2, and only with `multiline = true`. The rows that the form shows, 2 to 8. Default 4.                                                                                    |
 | `choices`      | array of strings  | `choice` | `choice` only. 1 to 64 values of at most 64 runes, no duplicate. An empty value is allowed.                                                                                                        |
 | `flag`         | string            | `bool`   | `bool` only. A literal that starts with `-`, 1 to 64 bytes, without space or tab.                                                                                                                  |
 
 A submitted value is checked in this order: `required`, `max_len` (in runes), `pattern`, then the
 dash rule at substitution. A value over 4096 bytes is refused. A failure is `input_invalid` with the
 field id and the rule (`required`, `max_len`, `pattern`, `choice`, `bool`, and for the text itself
-`length`, `utf8` or `control`). Each rule has a message in both languages, the catalog key
-`plugin_reject_<rule>`, which `tote plugin check --argv` and the form print.
+`length`, `utf8` or `control`, and `lines` for a `multiline` field). Each rule has a message in both
+languages, the catalog key `plugin_reject_<rule>`, which `tote plugin check --argv` and the form
+print. A `multiline` field has its own order and limits, in section 3.8.2.
 
 - A `choice` value must be one of the `choices`. An empty value passes only when the field is not
   required and `choices` holds an empty string.
@@ -553,6 +576,146 @@ changing its argv, asks for consent again (section 6), and the consent screen li
 | `placeholder_unknown`, `placeholder_scope`                                   | Its own field, a later field, an unknown name; `{item.*}`.                |
 | `argv.choices_confirmed`                                                     | Warning, section above.                                                   |
 | `reserved_not_available`                                                     | On tote 1.0, the key without the feature and the range.                   |
+
+#### 3.8.2 A text of several lines: `multiline`
+
+Since tote 1.2, feature `field.multiline`. A `text` field with `multiline = true` asks for a text of
+several lines, such as the body of a note or of a message. The form shows a box of `lines` rows in
+which Enter starts a new line. The value reaches the program in **one argument of `run`**, with its
+line feeds, and in no other way: there is no standard input, environment variable or file for it.
+The standard input of a `pager` or `silent` run stays `/dev/null` (section 3.9).
+
+| Key         | Type    | Required | Rule                                                                                                                                                    |
+| ----------- | ------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `multiline` | boolean | no       | `text` only. `true` makes the field a text of several lines. `false` is the same as no key.                                                             |
+| `lines`     | integer | no       | Only with `multiline = true`. The rows that the box shows, 2 to 8. Default 4. It changes the look of the form and nothing else.                         |
+| `max_len`   | integer | no       | As on any `text` field, 1 to 1024, counted in runes. On a `multiline` field the default is 1000, and the limit of 1000 bytes below applies in any case. |
+
+`pattern`, `default` and `choices_from` are `key_conflict` on a `multiline` field, an empty
+`default` included: the anchors of a pattern would apply to each line, and a default or a suggestion
+that holds line feeds is not worth freezing in API 1. `required`, `hint` and `label` work as on any
+field.
+
+**The value.** At submit, a multiline value is checked in this order:
+
+1. Line breaks are normalised: a carriage return followed by a line feed, and a lone carriage
+   return, each become one line feed. The form does it as text is typed or pasted, and tote does it
+   again at submit, so the program never receives a carriage return.
+2. The text: at most **1000 bytes** (`length`), valid UTF-8 (`utf8`), and no control character but
+   the line feed (`control`). A tab, a NUL, every other control character, the bidirectional and
+   zero-width characters and the line and paragraph separators (U+2028, U+2029) stay refused.
+3. At most **16 lines** (`lines`). The empty value has no line; any other has one line more than it
+   has line feeds, so a line feed at the end opens a last, empty line.
+4. `required`: the empty value is refused when the field is required. A value of line feeds only is
+   not empty for tote; the form never submits one, see below.
+5. `max_len`, in runes.
+
+A value over 4096 bytes, the limit of any value of a call, is refused first and is also reported as
+`length`.
+
+**The form.** What the user types is cut to these limits as it is typed or pasted, and the form
+gives the program the text with the spaces at the end of each line, and the blank lines before the
+first line and after the last one, removed. Spaces at the start of a line are kept. So a field of
+Enter presses only is empty to the form, and a line feed at the end never reaches the program from
+the form. `tote plugin check --argv --set` gives the value as it is, so a value there can end with
+a line feed.
+
+The limit of 1000 bytes leaves room in the 1024 bytes of an argument for a template such as
+`--body={body}`. A failure is `input_invalid` with the field id and the rule, as in section 3.8.
+
+**In the command.** The rules of section 3.7 apply, with its one exception:
+
+- `{body}` in an argument of `run` gives the value with its line feeds. The literal text of that
+  argument and every other placeholder in it are still checked on their own and may not hold a
+  line feed. `{body?}` drops the whole argument when the value is empty, as for any field.
+- The dash rule applies: `{body}` that starts with `- milk` is `dash_refused`, unless `allow_dash`
+  names `body`. An argument whose template starts with `-`, such as `--body={body}`, is not subject
+  to it.
+- In `env`, `cwd` and `open`, and in the argv of a `choices_from`, a value that holds a line feed is
+  `produced_invalid` (`control`); a value of one line passes there as any text does. In the text of
+  `confirm`, and in the `default` of a later field, a value that holds a line feed gives the empty
+  text. Put a multiline field in `run` and nowhere else.
+
+**How it is shown.** Where tote shows the command, the question of a `confirm` (section 4.1) and the
+output of `tote plugin check --argv` (section 8.9), an argument that holds a line feed is written on
+one line: each backslash is doubled, then each line feed is written `\n`, then the argument is
+quoted as usual. The command is one line of text, wrapped to the width of the screen but never
+broken at a line feed, so no line of the value can sit unseen below the first one. An
+argument without a line feed is shown as before, so a `\n` there is a backslash and an `n` that were
+typed: the two cases are told apart by the `argv` of `check --json`, not by the display. The program
+receives the argv itself, with real line feeds, and so does the `argv` of `check --json`.
+
+An example, the command of a plugin that shows a note on the desktop:
+
+```toml
+tote = ">=1.2.0, <2"
+requires_features = ["field.multiline"]
+permissions = ["exec:notify-send"]
+
+[[command]]
+id = "note"
+label = "Show a note"
+run = ["notify-send", "--app-name=tote", "--", "{title}", "{body}"]
+allow_dash = ["body"]
+output = "silent"
+
+[[command.field]]
+id = "title"
+type = "text"
+label = "Title"
+required = true
+max_len = 60
+
+[[command.field]]
+id = "body"
+type = "text"
+label = "Message"
+required = true
+multiline = true
+lines = 6
+max_len = 500
+```
+
+With the title `Shopping` and the three lines `- milk`, `- eggs` and `- bread`, `notify-send`
+receives five arguments after its name, and the last one is the text `- milk`, LF, `- eggs`, LF,
+`- bread`, with no line feed at the end. `check` shows it so:
+
+```text
+$ tote plugin check ./remind --argv --set title=Shopping --set 'body=- milk
+- eggs
+- bread'
+...
+what it runs:
+  - command note: notify-send --app-name=tote -- Shopping '- milk\n- eggs\n- bread'
+...
+```
+
+`allow_dash` lets the list start with `-`. It is safe here because `--` comes before the arguments
+of the user, so `notify-send` reads them as text and not as options.
+
+**Compatibility.** A manifest that uses the keys declares both
+`requires_features = ["field.multiline"]` and `tote = ">=1.2.0, <2"`. tote 1.0 and 1.1 then report
+the plugin as `incompatible` (`feature_missing`, `tote_range`) and not as invalid, because the
+probe of section 3.1 stops before the strict read. Written without either, `multiline` and `lines`
+are `unknown_key` on tote 1.0 and 1.1, and the plugin is invalid there.
+
+**Surface.** `multiline` is counted in `surface_sha256` only when it is `true`, as the key
+`multiline` in the object of its field (section 2.2). `lines` is never counted. A plugin that does
+not use the key keeps its hash, its consent and its grant token. A field that becomes `multiline`,
+and a new contribution with a `multiline` field, ask for consent again (the escalation `multiline`,
+section 6). A field that stops being `multiline`, and a change of `lines`, ask nothing.
+
+**Errors of these keys:**
+
+| Code               | When                                                                                                                   |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| `key_conflict`     | `multiline` or `lines` on a `choice` or a `bool` field; `pattern`, `default` or `choices_from` on a `multiline` field; `lines` with `multiline = false`. |
+| `key_missing`      | `lines` without a `multiline` key. The finding is on the key `multiline`.                                              |
+| `type_invalid`     | `multiline` that is not a boolean, `lines` that is not an integer.                                                     |
+| `limit_exceeded`   | `lines` outside 2 to 8.                                                                                                |
+| `unknown_key`      | On tote 1.0 and 1.1, the keys without the feature and the range.                                                       |
+| `input_invalid`    | At submit, with the rule `length`, `utf8`, `control`, `lines`, `required` or `max_len`.                                |
+| `produced_invalid` | At substitution, with the rule `control`: a value that holds a line feed in `env`, `cwd`, `open` or a `choices_from`.  |
 
 ### 3.9 Contributions: `[[command]]` and `[[item_action]]`
 
@@ -711,7 +874,8 @@ never accepts a feature that does nothing.
 - **Feature names:** `field.choices_closed`, for a closed list that a program builds at run time,
   and the other names that section 10 and tote's `reservedFeatures` hold: a manifest that requires
   one is incompatible (`feature_missing`), never invalid. `field.choices_from` is the name of the
-  suggestions of a text field and of nothing else.
+  suggestions of a text field and of nothing else, and `field.multiline` the name of a text field
+  whose line feeds reach an argument of `run` and nothing else (section 3.8.2).
 - **Setting types and ids:** `dir`, `secret_ref`; `token_env`, `token_cmd`.
 - **Permissions:** section 3.5.
 
@@ -726,6 +890,9 @@ looks once TOML is converted to JSON. Use it in an editor to catch mistakes earl
   tote stays valid; whether this tote announces it is for `plugin check` (`feature_missing`).
 - It allows `choices_from` on a `text` field only, as an array of 1 to 64 strings of at most 1024
   bytes whose first element is a program name by the grammar of `run[0]`.
+- It allows `multiline` (a boolean) and `lines` (an integer from 2 to 8) on a `text` field only. It
+  refuses `pattern`, `default` and `choices_from` next to `multiline = true`, and `lines` without
+  `multiline = true`.
 - It does not check what needs the whole manifest or the machine: that a placeholder names a field
   or setting that exists (and that a list setting is a whole argument, `placeholder_list`), that a
   `choices_from` names only fields declared before its own, that
@@ -760,7 +927,8 @@ For a command or an item action:
    that is not installed is `dependency_missing`, with the hint of `[[requires]]`.
 6. It resolves the working directory.
 7. It asks for confirmation, if `confirm` is set. The question shows the exact command and its
-   directory, with the focus on Cancel.
+   directory, with the focus on Cancel. The line feeds of a `multiline` value are written `\n`
+   (section 3.8.2).
 8. It builds the environment (section 4.2).
 9. It checks the state once more just before it starts the program, then runs it according to
    `output`.
@@ -1082,7 +1250,12 @@ copied from an older review fails (`grant_mismatch`, exit 4).
 - a field gains a `choices_from`, or the argv of its `choices_from` changes, on a contribution that
   keeps its id or on a new one (since tote 1.1). The suggestions start a program before any
   `confirm` is asked, and one `exec:` permission covers every word of that program, so a new list
-  is new code for the user. Removing a `choices_from` asks nothing.
+  is new code for the user. Removing a `choices_from` asks nothing;
+- a field becomes `multiline`, on a contribution that keeps its id, or a new contribution has a
+  `multiline` field (since tote 1.2, section 3.8.2): line feeds then reach the argv of a program
+  that never received them. Removing `multiline`, or changing `lines`, asks nothing. The screen says
+  `! command note now passes line feeds to its program`. The diff of commands does not show the
+  key itself, because it compares the templates.
 
 **What never asks.** A change of label, description, keywords, hints or translations. A change of
 commands that does not escalate: it is shown in the screen as
@@ -1825,6 +1998,22 @@ what it runs:
 The value of `branch` is still checked as typed text: `--set branch=--all` says that the value of
 `branch` is not valid, and a value that is not among the branches of the repository is accepted.
 
+The value of a `multiline` field is given to `--set` with its line feeds, and an argument that
+holds one is shown with `\n` (section 3.8.2). A carriage return becomes a line feed first, and the
+value is checked by the rules of a multiline field:
+
+```text
+$ tote plugin check ./remind --argv --set title=Shopping --set "body=$(printf 'one\r\ntwo')"
+...
+  - command note: notify-send --app-name=tote -- Shopping 'one\ntwo'
+...
+$ tote plugin check ./remind --argv --set title=Shopping --set "body=$(seq 1 17)"
+...
+  - command note: notify-send --app-name=tote -- '{title}' '{body}'
+    cannot be built: the value of body is not valid (too many lines)
+...
+```
+
 A manifest with errors, with the findings in file order:
 
 ```text
@@ -1866,13 +2055,13 @@ are `locale_missing_key` and `locale_extra_key`. Every other code of the table b
 | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `manifest_too_large`, `manifest_syntax`                                                                      | `plugin.toml` is over its size limit, or is not valid TOML.                                                                                                                                                                                                                         |
 | `manifest_missing`, `manifest_nested`                                                                        | There is no `plugin.toml` at the root of the package. With `manifest_nested` the package sits in one folder, whose name is the argument.                                                                                                                                            |
-| `key_missing`                                                                                                | A required key is absent.                                                                                                                                                                                                                                                           |
+| `key_missing`                                                                                                | A required key is absent, or `multiline` is absent from a field that has `lines`.                                                                                                                                                                                                   |
 | `unknown_key`                                                                                                | A key that API 1 does not have.                                                                                                                                                                                                                                                     |
 | `type_invalid`                                                                                               | A value has the wrong TOML type.                                                                                                                                                                                                                                                    |
 | `value_invalid`                                                                                              | A value of the right type that is not allowed: an enum value, a duration, an empty text or a text of spaces where one is required (title, description, labels, choices), an enum with no choice, an empty `column` array, a default that does not fit its field, `min` above `max`. |
 | `text_invalid`                                                                                               | A text holds a control, bidirectional or zero-width character.                                                                                                                                                                                                                      |
 | `limit_exceeded`                                                                                             | A count or a length is over a limit of section 3.                                                                                                                                                                                                                                   |
-| `key_conflict`                                                                                               | Two keys that exclude each other, such as `run` and `open`, or a key on a type that cannot have it: `choices_from` on a `choice` or a `bool` field.                                                                                                                                 |
+| `key_conflict`                                                                                               | Two keys that exclude each other, such as `run` and `open`, or a key on a type that cannot have it: `choices_from`, `multiline` or `lines` on a `choice` or a `bool` field, and `pattern`, `default` or `choices_from` on a `multiline` field, and `lines` with `multiline = false`.                                     |
 | `id_invalid`, `id_duplicate`                                                                                 | An identifier that does not follow section 3.3 (an empty plugin id included), or is used twice in one table.                                                                                                                                                                        |
 | `version_invalid`                                                                                            | A version that is not a strict Semantic Version, an empty one included.                                                                                                                                                                                                             |
 | `reserved_not_available`                                                                                     | A table, a key, a type, an event or a permission that is reserved (section 3.13), or `tier = "exec"`: the exec tier is not available in tote 1.0, so the manifest is incompatible (section 10).                                                                                     |
@@ -1995,7 +2184,7 @@ A contribution of `contributions`:
 | `run`, `open`, `env`          | The templates, and the names of the `env` table.                                                                                                 |
 | `suggestions`                 | The `choices_from` of the fields, as templates: `{"field", "run"}` for each, in the order of the fields. Absent when none. Never started.        |
 | `argv`                        | The arguments after substitution. Only when they could be built.                                                                                 |
-| `display`                     | `argv` written as a shell would print it, or the template when it could not be built.                                                            |
+| `display`                     | `argv` as a shell would print it, or the template when it could not be built. A line feed of a `multiline` value is shown `\n` (section 3.8.2).  |
 | `dir`, `url`                  | The working directory. The address an `open` would show.                                                                                         |
 | `program`                     | The absolute path found on `PATH`. Empty when the program is not installed.                                                                      |
 | `confirm_required`, `confirm` | Whether a confirmation is asked, and its text.                                                                                                   |
@@ -2110,6 +2299,9 @@ described. None of them works, and nothing in this reference promises that it wi
   `key_conflict` on a `choice`. The feature name `field.choices_closed` is reserved for it, so that
   a manifest written for it is incompatible (`feature_missing`) and can never pass for a manifest of
   `field.choices_from`.
+- **A standard input for the text of a field.** The value of a `multiline` field reaches the program
+  in an argument of `run` and in no other way (section 3.8.2). There is no key that writes a value
+  to the standard input of a program, to an environment variable with its line feeds, or to a file.
 - **Reserved names:** section 3.13.
 - **Everything else that a later release adds** follows the rules of [../compat.md](../compat.md):
   new optional keys only, a key counts in `surface_sha256` only when it is set, and a manifest that

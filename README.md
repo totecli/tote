@@ -71,6 +71,7 @@ it, so that long names and commands are cut less often.
 | `a`, `s`, `i`, `d`, `c`                     | Plugins                           | Allow (consent), settings, install, remove, check.                                                                                                                                                                                            |
 | Esc                                         | Everywhere                        | Go back, close an overlay.                                                                                                                                                                                                                    |
 | `Ctrl+L`                                    | A text field with suggestions     | Plugin forms (tote 1.1): list the values that the plugin's program suggests, then pick one.                                                                                                                                                   |
+| Enter                                       | A text field of several lines     | Plugin forms (tote 1.2): start a new line. `Ctrl+S` submits the form.                                                                                                                                                                         |
 | `q`                                         | Everywhere                        | Quit (not while typing in a field).                                                                                                                                                                                                           |
 | `Ctrl+C`                                    | Everywhere                        | Go back, never quits at once (twice on the welcome page quits).                                                                                                                                                                               |
 | `Ctrl+D`, `Ctrl+Z`                          | Everywhere                        | Quit, suspend.                                                                                                                                                                                                                                |
@@ -80,7 +81,9 @@ form that offers suggestions (`choices_from`, since tote 1.1), `Ctrl+L` starts t
 lists them: nothing starts before that key press, you can always type a value instead, and Esc
 (which stops the listing and keeps the form, a second Esc closes it), submitting or closing the form
 stops the program. As soon as the program starts, a loading box opens with a spinner, the command
-that runs and the seconds it has taken; the list replaces it when it arrives.
+that runs and the seconds it has taken; the list replaces it when it arrives. A text field of
+several lines (`multiline`, since tote 1.2) is a box where Enter starts a new line; Tab still goes
+to the next field and `Ctrl+S` submits.
 
 Mouse: pointing highlights, a click selects, a double click opens, the wheel scrolls and a click on
 a key of the footer presses it. Dragging selects text and copies it when you release the button;
@@ -395,7 +398,10 @@ terminal), marking what tote enforces and what is only declared. Nothing runs be
 plugin whose files changed after you agreed is refused, and any plugin can be switched off with one
 command. The programs a plugin names still run with your rights: read the list. Since tote 1.1 a
 plugin can also suggest values for a text field with a program that you start with `Ctrl+L`; its
-argv is shown at consent and an update that adds one asks again.
+argv is shown at consent and an update that adds one asks again. Since tote 1.2 a text field can
+take several lines: the line feeds reach the program in one argument of its command and nowhere
+else, tote shows each of them as `\n` wherever it shows the command, and an update that makes a
+field multiline asks again.
 
 The plugin that ships with tote is **gft**. It is embedded in the binary, listed as `available`
 until you install it, and needs the `gft` program (GitHub releases and Git stashes). On a saved
@@ -603,8 +609,8 @@ MIT, see [LICENSE](LICENSE).
 - **Releases**: signed tag with a `v` prefix (`v1.0.0`, as `go install` requires), empty release
   title. Betas (`1.1.0-beta.1`) are GitHub pre-releases, installed with the script or, once tote is
   installed, with `tote update --beta`; never published to the PPA.
-- **Dependencies**: only Bubble Tea v2, Lip Gloss v2, a few Bubbles packages (`key` and
-  `textinput`), `x/ansi`, `charmbracelet/colorprofile` (color detection, Charm family), a TOML
+- **Dependencies**: only Bubble Tea v2, Lip Gloss v2, a few Bubbles packages (`key`, `textinput`
+  and `textarea`), `x/ansi`, `charmbracelet/colorprofile` (color detection, Charm family), a TOML
   library, `golang.org/x/crypto` (the `blake2b` package only, to verify update signatures) and
   `golang.org/x/sys/unix` (terminal size for `tote doctor`). Charm imports, `colorprofile` included,
   stay inside `internal/ui/`.

@@ -105,6 +105,18 @@ else.
   test pins the hash of a manifest that sets it, so a plugin that was consented to never asks again
   because of a later release. Adding a `choices_from` or changing its argv is a change that asks
   for consent (the escalation `choices`, API1.md section 6), like a removed `confirm`.
+- `field.multiline`, announced since tote 1.2, is a `text` field whose value may hold line feeds,
+  and nothing else. The exception it makes is frozen for 1.x: the line feed is the only control
+  character it lets through, a carriage return becomes a line feed, and the value reaches the
+  program in an argument of `run` and nowhere else (`env`, `cwd`, `open` and `choices_from` refuse
+  it); where tote shows the command, a line feed is written `\n`. The limits stay 1000 bytes and
+  16 lines for the value, with `max_len` in runes, and `lines` is the rule word of a value with too
+  many lines. `pattern`, `default` and `choices_from` next to `multiline = true` are errors and stay
+  errors. A standard input for a value, if a later release adds one, is another key with another
+  feature name. In `surface_sha256`, the key `multiline` is `true` in the object of its field when
+  it is set and absent otherwise, and `lines`, which only sets the height of the box, is never
+  counted; a test pins the hash of a manifest that sets it. A field that becomes `multiline` asks
+  for consent (the escalation `multiline`).
 - `plugin.schema.json` checks a feature name by its grammar (`^[a-z][a-z0-9_.]{0,63}$`) and not by a
   list, so a manifest of a later release stays valid for an older schema.
 
