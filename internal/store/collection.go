@@ -562,7 +562,8 @@ func (c *Collection[T]) Err() error {
 	return c.err
 }
 
-// List returns a copy of the records in file order, never sorted.
+// List returns a copy of the records in file order, never sorted. SortByName orders a copy for
+// display.
 //
 // A record type that has a Clone method is copied with it, so that changing a slice of a
 // returned record does not change the collection.
