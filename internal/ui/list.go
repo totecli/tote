@@ -11,12 +11,13 @@ import (
 
 // listScreen is the list of one kind with its filter, its selection and its detail panel.
 //
-// Items are all the records of the kind and Shown the indexes of those that match the filter,
-// best match first. Sel indexes Shown and Off is the first visible row. Natural holds the
-// preferred width of each column, measured once per load. ReadOnly is the sanitized reason the
-// file cannot be written, empty when it can. Users holds, by connection key, the login that the
-// keys "u" and "U" chose for the next connection instead of the stored one; it lives as long as
-// the list.
+// Items are all the records of the kind, in the order of ui.sort, and Shown the indexes of those
+// that match the filter, best match first. Sel indexes Shown and Off is the first visible row.
+// Natural holds the preferred width of each column, measured once per load. ReadOnly is the
+// sanitized reason the file cannot be written, empty when it can. Users holds, by connection key,
+// the login that the keys "u" and "U" chose for the next connection instead of the stored one; it
+// lives as long as the list. A position in Items or Shown is never used to find a record in the
+// file: every action goes by the Key of the item.
 type listScreen struct {
 	kind     kind
 	items    []item
@@ -329,21 +330,37 @@ func (s *listScreen) typed(e *env, k tea.KeyPressMsg) (screen, tea.Cmd) {
 
 // exact looks for the connection whose name or alias is exactly the text of the filter.
 //
+// A connection whose name is the text with the same case wins, like on the command line. Else the
+// match ignores case, and when several records claim the text the first one in the file wins,
+// whatever order ui.sort shows the rows in.
+//
 // Returns its position among the shown rows, or -1 when the text is not an exact handle or the
 // list is not the connections.
 func (s *listScreen) exact() int {
-	q := strings.ToLower(strings.TrimSpace(s.flt.String()))
+	raw := strings.TrimSpace(s.flt.String())
+	q := strings.ToLower(raw)
+
 	if s.kind != kindConn || q == "" {
 		return -1
 	}
 
+	best := -1
+
 	for i, idx := range s.shown {
-		if slices.Contains(s.items[idx].Names, q) {
+		if s.items[idx].Key == raw {
 			return i
+		}
+
+		if !slices.Contains(s.items[idx].Names, q) {
+			continue
+		}
+
+		if best < 0 || s.items[idx].Pos < s.items[s.shown[best]].Pos {
+			best = i
 		}
 	}
 
-	return -1
+	return best
 }
 
 // pressed handles a key while the list reads commands.

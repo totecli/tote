@@ -1,5 +1,5 @@
 == 60x12
-❯_ tote › Settings                                      14
+❯_ tote › Settings                                      15
    ↑ 3 more
    After a connection          exit (quit on a normal end)
    SSH keepalive                                       Yes
@@ -8,11 +8,11 @@
    Welcome page                                        box
    Compact layout                                     auto
  ❯ Page width                    ‹ auto (terminal width) ›
-   ↓ 4 more
+   ↓ 5 more
  ui.width: Auto uses the whole terminal, a number caps the …
  ⏎ · ←→ · d · esc · ctrl+k · q · ?
 == 80x24
-❯_ tote › Settings                                                          14
+❯_ tote › Settings                                                          15
 
     Language                                                         auto (en)
     Editor                                                             nano -w
@@ -24,11 +24,11 @@
     Welcome page                                                           box
     Compact layout                                                        auto
   ❯ Page width                                       ‹ auto (terminal width) ›
+    Sort lists                                                   name (A to Z)
     Mouse                                                                  Yes
     Update check at start                                                  Yes
     Colors in use                                                         none
     Check for update                                                     1.2.3
-
 ╭─ Page width ─────────────────────────────────────────────────────────────────╮
 │ ui.width · default value                                                     │
 │ Auto uses the whole terminal, a number caps the page and centers it on a wi… │
@@ -37,7 +37,7 @@
 
   ⏎ change · ←→ adjust · d reset · esc back · ctrl+k palette · q quit · ? help
 == 110x30
-❯_ tote › Settings                                                                                        14
+❯_ tote › Settings                                                                                        15
 
     Language                    Language of the interface                                          auto (en)
     Editor                      Program that opens a repository                                      nano -w
@@ -49,11 +49,11 @@
     Welcome page                The welcome page                                                         box
     Compact layout              When the one-line layout is used                                        auto
   ❯ Page width                  The whole terminal, or capped                      ‹ auto (terminal width) ›
+    Sort lists                  Order of the lists                                             name (A to Z)
     Mouse                       Hover, click, wheel, drag to copy                                        Yes
     Update check at start       Look for a new release at start                                          Yes
     Colors in use               TOTE_COLOR (read-only)                                                  none
     Check for update            Look for a new release now                                             1.2.3
-
 
 
 

@@ -39,7 +39,9 @@ func userChoices(e *env, c store.Connection) []string {
 	add("root")
 	add(e.User)
 
-	for _, it := range e.Data.items(kindConn) {
+	// The logins are offered in the order of the file whatever ui.sort says, so that the cycle of
+	// the user key does not depend on how the list is shown.
+	for _, it := range e.Data.itemsIn(kindConn, false) {
 		if other, ok := it.Rec.(store.Connection); ok {
 			add(other.User)
 		}

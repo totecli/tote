@@ -1,0 +1,104 @@
+== 60x12
+  ╭─ Palette ────────────────────────────────────────────╮
+  │ ❯ c ▏                                           conn │
+  ├──────────────────────────────────────────────────────┤
+  │ ❯ Connections › bastion          bastion.example.com │
+  │   Connections › emoji                fun.example.com │
+  │ ! Connections › hostile             evil.example.com │
+  │ ! Connections › legacy               old.example.com │
+  │   Connections › prod                prod.example.com │
+  │   Connections › staging          staging.example.com │
+  ╰──────────────────────────────────────────────────────╯
+   ↑↓ · ⏎ · esc · tab · ctrl+e
+   → mosh ops@bastion.example.com
+== 80x24
+
+
+
+  ╭─ Palette ────────────────────────────────────────────────────────────────╮
+  │ ❯ c ▏                                                               conn │
+  ├──────────────────────────────────────────────────────────────────────────┤
+  │ ❯ Connections › bastion                              bastion.example.com │
+  │   Connections › emoji                                    fun.example.com │
+  │ ! Connections › hostile                                 evil.example.com │
+  │ ! Connections › legacy                                   old.example.com │
+  │   Connections › prod                                    prod.example.com │
+  │   Connections › staging                              staging.example.com │
+  │                                                                          │
+  │                                                                          │
+  │                                                                          │
+  │                                                                          │
+  │                                                                          │
+  │                                                                          │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+    ↑↓ choose · ⏎ open · esc close · tab complete · ctrl+e edit
+    → mosh ops@bastion.example.com
+
+
+
+== 100x40
+
+
+
+
+
+
+
+
+            ╭─ Palette ────────────────────────────────────────────────────────────────╮
+            │ ❯ c ▏                                                               conn │
+            ├──────────────────────────────────────────────────────────────────────────┤
+            │ ❯ Connections › bastion                              bastion.example.com │
+            │   Connections › emoji                                    fun.example.com │
+            │ ! Connections › hostile                                 evil.example.com │
+            │ ! Connections › legacy                                   old.example.com │
+            │   Connections › prod                                    prod.example.com │
+            │   Connections › staging                              staging.example.com │
+            │                                                                          │
+            │                                                                          │
+            │                                                                          │
+            │                                                                          │
+            │                                                                          │
+            │                                                                          │
+            │                                                                          │
+            │                                                                          │
+            │                                                                          │
+            │                                                                          │
+            │                                                                          │
+            │                                                                          │
+            ╰──────────────────────────────────────────────────────────────────────────╯
+              ↑↓ choose · ⏎ open · esc close · tab complete · ctrl+e edit
+              → mosh ops@bastion.example.com
+
+
+
+
+
+
+
+
+== 120x24
+
+
+
+                      ╭─ Palette ────────────────────────────────────────────────────────────────╮
+                      │ ❯ c ▏                                                               conn │
+                      ├──────────────────────────────────────────────────────────────────────────┤
+                      │ ❯ Connections › bastion                              bastion.example.com │
+                      │   Connections › emoji                                    fun.example.com │
+                      │ ! Connections › hostile                                 evil.example.com │
+                      │ ! Connections › legacy                                   old.example.com │
+                      │   Connections › prod                                    prod.example.com │
+                      │   Connections › staging                              staging.example.com │
+                      │                                                                          │
+                      │                                                                          │
+                      │                                                                          │
+                      │                                                                          │
+                      │                                                                          │
+                      │                                                                          │
+                      ╰──────────────────────────────────────────────────────────────────────────╯
+                        ↑↓ choose · ⏎ open · esc close · tab complete · ctrl+e edit
+                        → mosh ops@bastion.example.com
+
+
+

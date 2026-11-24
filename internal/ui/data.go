@@ -24,13 +24,16 @@ var tooBigFile = regexp.MustCompile(`(?s)file too large: (.*?) would be [0-9]+ b
 
 // item is one record prepared for display.
 //
-// Key is the raw key of the record, used for every store operation. Cells hold the sanitized
+// Key is the raw key of the record, used for every store operation. Pos is its position in the
+// file, which differs from its position in the list when ui.sort orders by name; it breaks the
+// ties of a name that two records claim, which the file order decides. Cells hold the sanitized
 // text of the columns of the kind, Names the lowercase names that a prefix filter matches (the
 // name and the aliases) and Text the lowercase text that a substring filter searches. Warn is
 // the reason the record cannot be used, empty when it can. Rec is the typed record.
 type item struct {
 	Kind  kind
 	Key   string
+	Pos   int
 	Cells []string
 	Names []string
 	Text  string
@@ -60,15 +63,20 @@ func (e *userError) Unwrap() error { return e.err }
 // even be opened is nil. In both cases err gives the reason, the list is empty and every write
 // fails with a message instead of a panic. All text that reaches the screen goes through
 // sanitize first.
+//
+// byName is the display order of items: true for ui.sort = "name", false for "file", the order of
+// the files, which a dataset has until setSort says otherwise. It only changes what items
+// returns; the collections, their files, record and count never depend on it.
 type dataset struct {
-	tr    *i18n.Printer
-	paths config.Paths
-	home  string
-	conns *store.Collection[store.Connection]
-	repos *store.Collection[store.Repo]
-	alias *store.Collection[store.Alias]
-	funcs *store.Collection[store.Func]
-	errs  [4]error
+	tr     *i18n.Printer
+	paths  config.Paths
+	home   string
+	conns  *store.Collection[store.Connection]
+	repos  *store.Collection[store.Repo]
+	alias  *store.Collection[store.Alias]
+	funcs  *store.Collection[store.Func]
+	errs   [4]error
+	byName bool
 }
 
 // newDataset opens the four collections.
@@ -82,6 +90,15 @@ func newDataset(tr *i18n.Printer, paths config.Paths, home string) *dataset {
 	d.reload()
 
 	return d
+}
+
+// setSort chooses the display order of the lists.
+//
+// Parameters:
+//   - sortSetting: value of ui.sort; "file" keeps the order of the files, and any other value,
+//     "name" or an absent setting, orders by name (see store.SortByName)
+func (d *dataset) setSort(sortSetting string) {
+	d.byName = sortSetting != "file"
 }
 
 // reload reads the four files again.
@@ -173,6 +190,35 @@ func listOf[T store.Record](c *store.Collection[T]) []T {
 	return c.List()
 }
 
+// shownOf returns the records of a possibly missing collection in the order of the display.
+//
+// Parameters:
+//   - c: collection, nil when it could not be opened
+//   - byName: true to order by name, false for the order of the file
+//
+// Returns the records in display order and, for each, its position in the file.
+func shownOf[T store.Record](c *store.Collection[T], byName bool) ([]T, []int) {
+	recs := listOf(c)
+
+	pos := make([]int, len(recs))
+	for i := range pos {
+		pos[i] = i
+	}
+
+	if !byName {
+		return recs, pos
+	}
+
+	pos = store.NameOrder(recs)
+
+	out := make([]T, len(recs))
+	for i, from := range pos {
+		out[i] = recs[from]
+	}
+
+	return out, pos
+}
+
 // count returns the number of records of a kind.
 //
 // Parameters:
@@ -190,11 +236,24 @@ func (d *dataset) count(k kind) int {
 	return len(listOf(d.funcs))
 }
 
-// items returns the records of a kind prepared for display, in file order.
+// items returns the records of a kind prepared for display, in the order of ui.sort: by name, or
+// in file order.
+//
+// Every item carries the Key of its record, which is what the rest of the interface uses to find
+// the record again; a position in this slice is never a position in the file.
 //
 // Parameters:
 //   - k: kind to list
 func (d *dataset) items(k kind) []item {
+	return d.itemsIn(k, d.byName)
+}
+
+// itemsIn returns the records of a kind prepared for display in the order asked for.
+//
+// Parameters:
+//   - k: kind to list
+//   - byName: true to order by name (store.SortByName), false for the order of the file
+func (d *dataset) itemsIn(k kind, byName bool) []item {
 	var out []item
 
 	switch k {
@@ -204,20 +263,28 @@ func (d *dataset) items(k kind) []item {
 			bad = d.conns.Invalid()
 		}
 
-		for _, c := range listOf(d.conns) {
+		recs, pos := shownOf(d.conns, byName)
+		for i, c := range recs {
 			out = append(out, d.connItem(c, bad[c.Name]))
+			out[i].Pos = pos[i]
 		}
 	case kindRepo:
-		for _, r := range listOf(d.repos) {
+		recs, pos := shownOf(d.repos, byName)
+		for i, r := range recs {
 			out = append(out, d.simpleItem(k, r.Name, r, r.Name, r.Path, r.Desc))
+			out[i].Pos = pos[i]
 		}
 	case kindAlias:
-		for _, a := range listOf(d.alias) {
+		recs, pos := shownOf(d.alias, byName)
+		for i, a := range recs {
 			out = append(out, d.simpleItem(k, a.Name, a, a.Name, a.Cmd, a.Desc))
+			out[i].Pos = pos[i]
 		}
 	default:
-		for _, f := range listOf(d.funcs) {
+		recs, pos := shownOf(d.funcs, byName)
+		for i, f := range recs {
 			out = append(out, d.simpleItem(k, f.Name, f, f.Name, f.Kind, f.Desc, f.Script))
+			out[i].Pos = pos[i]
 		}
 	}
 

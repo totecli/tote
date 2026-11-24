@@ -1,5 +1,5 @@
 == 60x12
-❯_ tote › Settings                                      14
+❯_ tote › Settings                                      15
  ! config.toml has a syntax error and is read-only (line 2,…
  ❯ Language                                      auto (en)
    Editor                                              vim
@@ -8,11 +8,11 @@
    SSH keepalive                                       Yes
    After opening a repository    return (back to the list)
    Theme                                              auto
-   ↓ 7 more
+   ↓ 8 more
  config.toml has a syntax error and is read-only (line 2, c…
  esc · ctrl+k · q · ↑↓ · v · u · ?
 == 80x24
-❯_ tote › Settings                                                          14
+❯_ tote › Settings                                                          15
 
   ! config.toml has a syntax error and is read-only (line 2, column 11): string…
   ❯ Language                                                         auto (en)
@@ -25,10 +25,10 @@
     Welcome page                                                           box
     Compact layout                                                        auto
     Page width                                           auto (terminal width)
+    Sort lists                                       file (order of the files)
     Mouse                                                                  Yes
     Update check at start                                                  Yes
-    Colors in use                                                         none
-    Check for update                                                     1.2.3
+    ↓ 2 more
 ╭─ Language ───────────────────────────────────────────────────────────────────╮
 │ lang · taken from LANG                                                       │
 │ Language of the interface. Auto follows TOTE_LANG, then the locale.          │
@@ -37,7 +37,7 @@
   config.toml has a syntax error and is read-only (line 2, column 11): strings …
   esc back · ctrl+k palette · q quit · ↑↓ navigate · v details · ? help
 == 100x40
-❯_ tote › Settings                                                                              14
+❯_ tote › Settings                                                                              15
 
   ! config.toml has a syntax error and is read-only (line 2, column 11): strings cannot contain new…
   ❯ Language                    Language of the interface                                auto (en)
@@ -50,11 +50,11 @@
     Welcome page                The welcome page                                               box
     Compact layout              When the one-line layout is used                              auto
     Page width                  The whole terminal, or capped                auto (terminal width)
+    Sort lists                  Order of the lists                       file (order of the files)
     Mouse                       Hover, click, wheel, drag to copy                              Yes
     Update check at start       Look for a new release at start                                Yes
     Colors in use               TOTE_COLOR (read-only)                                        none
     Check for update            Look for a new release now                                   1.2.3
-
 
 
 
@@ -78,7 +78,7 @@
   config.toml has a syntax error and is read-only (line 2, column 11): strings cannot contain newli…
   esc back · ctrl+k palette · q quit · ↑↓ navigate · v details · u update notice · ? help
 == 120x24
-❯_ tote › Settings                                                                                                  14
+❯_ tote › Settings                                                                                                  15
 
   ! config.toml has a syntax error and is read-only (line 2, column 11): strings cannot contain newlines
   ❯ Language                    Language of the interface                                                    auto (en)
@@ -91,10 +91,10 @@
     Welcome page                The welcome page                                                                   box
     Compact layout              When the one-line layout is used                                                  auto
     Page width                  The whole terminal, or capped                                    auto (terminal width)
+    Sort lists                  Order of the lists                                           file (order of the files)
     Mouse                       Hover, click, wheel, drag to copy                                                  Yes
     Update check at start       Look for a new release at start                                                    Yes
-    Colors in use               TOTE_COLOR (read-only)                                                            none
-    Check for update            Look for a new release now                                                       1.2.3
+    ↓ 2 more
 ╭─ Language ───────────────────────────────────────────────────────────────────────────────────────────────────────────╮
 │ lang · taken from LANG                                                                                               │
 │ Language of the interface. Auto follows TOTE_LANG, then the locale.                                                  │

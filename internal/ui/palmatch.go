@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"cmp"
 	"slices"
 	"strings"
 	"unicode/utf8"
@@ -49,7 +50,9 @@ var scopeKeys = map[byte]scope{'c': scopeConn, 'r': scopeRepo, 'a': scopeAlias, 
 // only goes somewhere, which is drawn muted. Names holds the lowercase names that a query is
 // matched against, the first being Name itself, and Text the lowercase text of the whole entry,
 // category included. Low is the lowercase category. For an action, Msg is the message that runs
-// it.
+// it. Ord is what breaks a tie between two entries of the same rank: their order in the file,
+// kind by kind, which is the order of the entries unless ui.sort shows the records by name. All
+// zero means the order of the entries.
 type entry struct {
 	Scope scope
 	Kind  kind
@@ -62,6 +65,7 @@ type entry struct {
 	Text  string
 	Warn  string
 	Nav   bool
+	Ord   int
 	Item  *item
 	Msg   tea.Msg
 }
@@ -102,7 +106,8 @@ var pluginAction = act{"ui_pal_act_open_plugins", openPluginsMsg{}, "", true}
 // Parameters:
 //   - e: shared environment, which gives the records and the labels of the actions
 //
-// Returns the records of the four kinds in file order, then the actions. Every text is
+// Returns the records of the four kinds, each in the order of ui.sort (see dataset.items), then
+// the actions. Every text is
 // sanitized, and the text a query is matched against holds the category of a record, so that
 // "conn" finds every connection.
 func buildEntries(e *env) []entry {
@@ -110,6 +115,7 @@ func buildEntries(e *env) []entry {
 
 	for _, k := range allKinds {
 		items := e.Data.items(k)
+		base := len(out)
 		cat := sanitize(e.t(k.titleKey()))
 		low := strings.ToLower(cat)
 
@@ -118,7 +124,7 @@ func buildEntries(e *env) []entry {
 			out = append(out, entry{
 				Scope: scopeOfKind[k], Kind: k, Key: it.Key, Cat: cat, Low: low,
 				Name: it.Cells[0], Sub: subOf(it), Names: it.Names, Text: it.Text + " " + low,
-				Warn: it.Warn, Item: it,
+				Warn: it.Warn, Ord: base + it.Pos, Item: it,
 			})
 		}
 	}
@@ -145,11 +151,14 @@ func buildEntries(e *env) []entry {
 
 		out = append(out, entry{
 			Scope: scopeAction, Name: label, Names: names, Text: text, Nav: a.nav, Msg: a.msg,
+			Ord: len(out),
 		})
 	}
 
 	for _, o := range e.Plug.commands() {
-		out = append(out, pluginEntry(e, o))
+		en := pluginEntry(e, o)
+		en.Ord = len(out)
+		out = append(out, en)
 	}
 
 	return out
@@ -263,7 +272,7 @@ const (
 	tierPrefix
 
 	// tierCategory is a record whose category starts with the query, such as "conn" for every
-	// connection. These keep the order of the file.
+	// connection. These keep the order of the entries, which is the one of ui.sort.
 	tierCategory
 
 	// tierWord is a name that has the query at the start of one of its words.
@@ -289,14 +298,14 @@ const (
 //
 // Returns the indexes of the matches, best first. The first word of the query decides the rank:
 // an exact name, then a name that starts with it (aliases count as names), then a record whose
-// category starts with it, in the order of the file, then a name that has it at the start of a
+// category starts with it, in the order of the entries, then a name that has it at the start of a
 // word, then a name that contains it, then any other text of the entry, then a name that holds
 // its letters in order. Every further word must be found somewhere in the text of the entry.
-// Within a rank the shorter name comes first, then the original order.
+// Within a rank the shorter name comes first, then the order of the file, then the entries.
 // An empty query returns the entries of the scope in their original order.
 func rank(entries []entry, sc scope, query string) []int {
 	words := strings.Fields(strings.ToLower(sanitize(query)))
-	keys := make([]uint64, 0, len(entries))
+	hits := make([]ranked, 0, len(entries))
 
 	for i := range entries {
 		en := &entries[i]
@@ -312,24 +321,37 @@ func rank(entries []entry, sc scope, query string) []int {
 			}
 		}
 
-		size := uint64(min(len(en.Names[0]), 0xFFFFFF))
+		size := min(len(en.Names[0]), 0xFFFFFF)
+		ord := en.Ord
+
 		if tier == tierCategory {
-			size = 0
+			size, ord = 0, i
 		}
 
-		keys = append(keys, uint64(tier)<<56|size<<32|uint64(i))
+		hits = append(hits, ranked{tier: tier, size: size, ord: ord, idx: i})
 	}
 
 	if len(words) > 0 {
-		slices.Sort(keys)
+		slices.SortFunc(hits, func(a, b ranked) int {
+			return cmp.Or(
+				cmp.Compare(a.tier, b.tier), cmp.Compare(a.size, b.size),
+				cmp.Compare(a.ord, b.ord), cmp.Compare(a.idx, b.idx),
+			)
+		})
 	}
 
-	out := make([]int, len(keys))
-	for i, k := range keys {
-		out[i] = int(uint32(k))
+	out := make([]int, len(hits))
+	for i, h := range hits {
+		out[i] = h.idx
 	}
 
 	return out
+}
+
+// ranked is a matching entry with what orders it: its tier, the length of its name, its tie-break
+// position (see entry.Ord) and its index among the entries.
+type ranked struct {
+	tier, size, ord, idx int
 }
 
 // tierOf ranks one entry against the words of a query.

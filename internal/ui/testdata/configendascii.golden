@@ -1,10 +1,10 @@
 == 60x12
->_ tote > Reglages                                      14
-   ^ 6 de plus
-   Theme                                            sombre
+>_ tote > Reglages                                      15
+   ^ 7 de plus
    Page d'accueil                                    cadre
    Disposition compacte                               auto
    Largeur de la page           auto (largeur du terminal)
+   Tri des listes                           nom (de A a Z)
    Souris                                              Oui
    Recherche au demarrage                              Oui
    Couleurs utilisees                                 none
@@ -12,7 +12,7 @@
  Interroge le serveur de versions maintenant. Pour instal...
  enter - esc - ctrl+k - q - up/down - v - ?
 == 80x24
->_ tote > Reglages                                                          14
+>_ tote > Reglages                                                          15
 
     Langue                                                           auto (en)
     Editeur                                                            nano -w
@@ -24,11 +24,11 @@
     Page d'accueil                                                       cadre
     Disposition compacte                                                  auto
     Largeur de la page                              auto (largeur du terminal)
+    Tri des listes                                              nom (de A a Z)
     Souris                                                                 Oui
     Recherche au demarrage                                                 Oui
     Couleurs utilisees                                                    none
   > Chercher une mise a jour                                             1.2.3
-
 +- Chercher une mise a jour ---------------------------------------------------+
 | Chercher une mise a jour                                                     |
 | Interroge le serveur de versions maintenant. Pour installer, lancez tote ... |
@@ -37,7 +37,7 @@
 
   enter chercher une mise a jour - esc retour - ctrl+k palette - q quitter
 == 110x30
->_ tote > Reglages                                                                                        14
+>_ tote > Reglages                                                                                        15
 
     Langue                        Langue de l'interface                                            auto (en)
     Editeur                       Programme qui ouvre un depot                                       nano -w
@@ -49,11 +49,11 @@
     Page d'accueil                La page d'accueil                                                    cadre
     Disposition compacte          Quand la disposition sur une ligne s...                               auto
     Largeur de la page            Tout le terminal, ou plafonnee                  auto (largeur du terminal)
+    Tri des listes                Ordre d'affichage des listes                                nom (de A a Z)
     Souris                        Survol, clic, molette, glisser pour ...                                Oui
     Recherche au demarrage        Chercher une nouvelle version au dem...                                Oui
     Couleurs utilisees            TOTE_COLOR (lecture seule)                                            none
   > Chercher une mise a jour      Chercher une nouvelle version mainte...                              1.2.3
-
 
 
 

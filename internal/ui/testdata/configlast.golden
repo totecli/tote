@@ -1,10 +1,10 @@
 == 60x12
-❯_ tote › Settings                                      14
-   ↑ 6 more
-   Theme                                              dark
+❯_ tote › Settings                                      15
+   ↑ 7 more
    Welcome page                                        box
    Compact layout                                     auto
    Page width                        auto (terminal width)
+   Sort lists                                name (A to Z)
    Mouse                                               Yes
    Update check at start                               Yes
    Colors in use                                      none
@@ -12,7 +12,7 @@
  Ask the release server now. To install, run tote update.
  ⏎ · esc · ctrl+k · q · ↑↓ · v · ?
 == 80x24
-❯_ tote › Settings                                                          14
+❯_ tote › Settings                                                          15
 
     Language                                                         auto (en)
     Editor                                                             nano -w
@@ -24,11 +24,11 @@
     Welcome page                                                           box
     Compact layout                                                        auto
     Page width                                           auto (terminal width)
+    Sort lists                                                   name (A to Z)
     Mouse                                                                  Yes
     Update check at start                                                  Yes
     Colors in use                                                         none
   ❯ Check for update                                                     1.2.3
-
 ╭─ Check for update ───────────────────────────────────────────────────────────╮
 │ Check for update                                                             │
 │ Ask the release server now. To install, run tote update.                     │
@@ -37,7 +37,7 @@
 
   ⏎ check for update · esc back · ctrl+k palette · q quit · ↑↓ navigate · ? help
 == 100x40
-❯_ tote › Settings                                                                              14
+❯_ tote › Settings                                                                              15
 
     Language                    Language of the interface                                auto (en)
     Editor                      Program that opens a repository                            nano -w
@@ -49,11 +49,11 @@
     Welcome page                The welcome page                                               box
     Compact layout              When the one-line layout is used                              auto
     Page width                  The whole terminal, or capped                auto (terminal width)
+    Sort lists                  Order of the lists                                   name (A to Z)
     Mouse                       Hover, click, wheel, drag to copy                              Yes
     Update check at start       Look for a new release at start                                Yes
     Colors in use               TOTE_COLOR (read-only)                                        none
   ❯ Check for update            Look for a new release now                                   1.2.3
-
 
 
 
@@ -78,7 +78,7 @@
 
   ⏎ check for update · esc back · ctrl+k palette · q quit · ↑↓ navigate · v details · ? help
 == 120x24
-❯_ tote › Settings                                                                                                  14
+❯_ tote › Settings                                                                                                  15
 
     Language                    Language of the interface                                                    auto (en)
     Editor                      Program that opens a repository                                                nano -w
@@ -90,11 +90,11 @@
     Welcome page                The welcome page                                                                   box
     Compact layout              When the one-line layout is used                                                  auto
     Page width                  The whole terminal, or capped                                    auto (terminal width)
+    Sort lists                  Order of the lists                                                       name (A to Z)
     Mouse                       Hover, click, wheel, drag to copy                                                  Yes
     Update check at start       Look for a new release at start                                                    Yes
     Colors in use               TOTE_COLOR (read-only)                                                            none
   ❯ Check for update            Look for a new release now                                                       1.2.3
-
 ╭─ Check for update ───────────────────────────────────────────────────────────────────────────────────────────────────╮
 │ Check for update                                                                                                     │
 │ Ask the release server now. To install, run tote update.                                                             │

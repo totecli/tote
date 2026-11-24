@@ -1,5 +1,5 @@
 == 60x12
->_ tote > Reglages                                      14
+>_ tote > Reglages                                      15
    Langue                                        auto (en)
    Editeur                                         nano -w
    Racine des depots                             /srv/work
@@ -8,11 +8,11 @@
    Apres l'ouverture d'un ...   return (retour a la liste)
    Theme                                            sombre
    Page d'accueil                                    cadre
-   v 6 de plus
+   v 7 de plus
  connect.keepalive: Ajoute des options de keepalive ssh a...
  enter - left/right - d - esc - ctrl+k - q - ?
 == 80x24
->_ tote > Reglages                                                          14
+>_ tote > Reglages                                                          15
 
     Langue                                                           auto (en)
     Editeur                                                            nano -w
@@ -24,11 +24,11 @@
     Page d'accueil                                                       cadre
     Disposition compacte                                                  auto
     Largeur de la page                              auto (largeur du terminal)
+    Tri des listes                                              nom (de A a Z)
     Souris                                                                 Oui
     Recherche au demarrage                                                 Oui
     Couleurs utilisees                                                    none
     Chercher une mise a jour                                             1.2.3
-
 +- Keepalive SSH --------------------------------------------------------------+
 | connect.keepalive - valeur par defaut                                        |
 | Ajoute des options de keepalive ssh a une connexion dont la configuration... |
@@ -37,7 +37,7 @@
 
   enter modifier - esc retour - ctrl+k palette - q quitter - ? aide
 == 110x30
->_ tote > Reglages                                                                                        14
+>_ tote > Reglages                                                                                        15
 
     Langue                        Langue de l'interface                                            auto (en)
     Editeur                       Programme qui ouvre un depot                                       nano -w
@@ -49,11 +49,11 @@
     Page d'accueil                La page d'accueil                                                    cadre
     Disposition compacte          Quand la disposition sur une ligne s...                               auto
     Largeur de la page            Tout le terminal, ou plafonnee                  auto (largeur du terminal)
+    Tri des listes                Ordre d'affichage des listes                                nom (de A a Z)
     Souris                        Survol, clic, molette, glisser pour ...                                Oui
     Recherche au demarrage        Chercher une nouvelle version au dem...                                Oui
     Couleurs utilisees            TOTE_COLOR (lecture seule)                                            none
     Chercher une mise a jour      Chercher une nouvelle version mainte...                              1.2.3
-
 
 
 

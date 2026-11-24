@@ -116,6 +116,10 @@ var settingDefs = []settingDef{
 		id: "width", table: "ui", key: "width", kind: settingChoice,
 		choices: []string{"auto", "120", "160"}, apply: applyNow,
 	},
+	{
+		id: "sort", table: "ui", key: "sort", kind: settingChoice,
+		choices: []string{"name", "file"}, apply: applyNow, note: true,
+	},
 	{id: "mouse", table: "ui", key: "mouse", kind: settingBool, apply: applyNow, note: true},
 	{id: "check", table: "update", key: "check", kind: settingBool, apply: applyRestart},
 	{id: "colors", kind: settingInfo, envs: []string{"TOTE_COLOR", "NO_COLOR"}, note: true},
@@ -246,6 +250,8 @@ func (d settingDef) value(s config.Settings) string {
 		return s.UI.Compact
 	case "width":
 		return s.UI.Width
+	case "sort":
+		return s.UI.Sort
 	case "mouse":
 		return strconv.FormatBool(s.UI.Mouse)
 	case "check":
@@ -282,6 +288,8 @@ func (d settingDef) with(s config.Settings, v string) config.Settings {
 		s.UI.Compact = v
 	case "width":
 		s.UI.Width = v
+	case "sort":
+		s.UI.Sort = v
 	case "mouse":
 		s.UI.Mouse = v == "true"
 	case "check":

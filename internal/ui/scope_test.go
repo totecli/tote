@@ -18,8 +18,8 @@ func TestSettingScopes(t *testing.T) {
 	want := map[string]settingApply{
 		"lang": applyNow, "editor": applyNow, "repos_root": applyNow, "after_disconnect": applyNow,
 		"keepalive": applyNow, "after_open": applyNow, "theme": applyNow, "welcome": applyNow,
-		"compact": applyNow, "width": applyNow, "mouse": applyNow, "check": applyRestart,
-		"colors": applyNone, "update": applyNone,
+		"compact": applyNow, "width": applyNow, "sort": applyNow, "mouse": applyNow,
+		"check": applyRestart, "colors": applyNone, "update": applyNone,
 	}
 
 	if len(want) != len(settingDefs) {

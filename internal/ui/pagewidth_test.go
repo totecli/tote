@@ -68,7 +68,7 @@ func TestWidthRow(t *testing.T) {
 		}
 	}
 
-	if want := "theme welcome compact width mouse"; strings.Join(group, " ") != want {
+	if want := "theme welcome compact width sort mouse"; strings.Join(group, " ") != want {
 		t.Errorf("the ui group is %v, want %q", group, want)
 	}
 

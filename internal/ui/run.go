@@ -251,6 +251,8 @@ func newRoot(o Options, out io.Writer) *root {
 		Writes:   new(atomic.Int32),
 	}
 
+	r.e.Data.setSort(o.Settings.UI.Sort)
+
 	r.ctx = context.Background()
 	r.check = o.CheckUpdate
 	r.tmuxClip = o.TmuxClipboard

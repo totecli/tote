@@ -113,6 +113,14 @@ func widthSetup(value string) func(*Options) {
 	return func(o *Options) { o.Settings.UI.Width = value }
 }
 
+// sortByName is the setup of a frame or a rig that shows the lists by name, the default of ui.sort.
+// The sandbox shows them in the order of the files, which is not alphabetical, so that the frames
+// that were drawn before the setting existed stay as they are.
+//
+// Parameters:
+//   - o: options to change
+func sortByName(o *Options) { o.Settings.UI.Sort = "name" }
+
 // frameCases lists every screen and overlay of the interface.
 func frameCases() []frameCase {
 	cases := []frameCase{
@@ -151,6 +159,22 @@ func frameCases() []frameCase {
 			setup: func(o *Options) { o.Printer = newPrinter("fr") },
 		},
 		{name: "connerror", start: StartConnections, keys: []string{"toast"}},
+		{name: "sortconn", start: StartConnections, setup: sortByName},
+		{name: "sortconnlast", start: StartConnections, keys: []string{"end"}, setup: sortByName},
+		{
+			name: "sortconnfilter", start: StartConnections, keys: []string{"/", "type:e"},
+			setup: sortByName,
+		},
+		{name: "sortrepo", start: StartRepos, setup: sortByName},
+		{name: "sortalias", start: StartAliases, setup: sortByName},
+		{
+			name: "sortpalette", start: StartConnections, keys: []string{"ctrl+k"},
+			setup: sortByName,
+		},
+		{
+			name: "sortpalettescope", start: StartConnections, keys: []string{"ctrl+k", "type:c "},
+			setup: sortByName,
+		},
 		{name: "repo", start: StartRepos},
 		{name: "repofilter", start: StartRepos, keys: []string{"/", "type:do"}},
 		{name: "alias", start: StartAliases, keys: []string{"down"}},

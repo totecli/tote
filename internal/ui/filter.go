@@ -60,12 +60,12 @@ func (f *filter) clear() {
 // matchItems selects the items that match a query.
 //
 // Parameters:
-//   - items: all items of a kind, in file order
+//   - items: all items of a kind, in the order they are shown (see dataset.items)
 //   - query: text typed by the user, compared without case
 //
 // Returns the indexes of the matching items: first those whose name or one of whose aliases
 // starts with the query, then those that contain it anywhere in their searchable text, each
-// group in file order. An empty query returns every index.
+// group in the order of items. An empty query returns every index.
 func matchItems(items []item, query string) []int {
 	q := strings.ToLower(sanitize(query))
 	out := make([]int, 0, len(items))

@@ -182,6 +182,7 @@ func (r *root) applySettings(s config.Settings) tea.Cmd {
 	e := r.e
 	old := e.Settings
 	e.Settings = s
+	e.Data.setSort(s.UI.Sort)
 
 	if lang := config.EffectiveLang(s, envLookup(e.Environ)); lang != e.Tr.Lang() {
 		e.Tr = printerFor(i18n.New(lang), e.Glyphs.ascii)

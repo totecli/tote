@@ -1,0 +1,104 @@
+== 60x12
+❯_ tote › Connections                                  6/6
+ / e▏
+ ❯ emoji    fun.example.com              rocket 🚀 heart …
+   bastion  bastion.example.com  ops
+ ! hostile  evil.example.com             a?[31mb?c?d
+ ! legacy   old.example.com
+   prod     prod.example.com     deploy  Production web
+   staging  staging.example.com  deploy
+
+
+ → ssh -- fun.example.com
+ ⏎ · esc · ↑↓
+== 80x24
+❯_ tote › Connections                                                      6/6
+
+  / e▏
+
+    NAME      TARGET                USER    DESCRIPTION
+  ❯ emoji     fun.example.com               rocket 🚀 heart ❤ dev 👨💻 日本語
+    bastion   bastion.example.com   ops
+  ! hostile   evil.example.com              a?[31mb?c?d
+  ! legacy    old.example.com
+    prod      prod.example.com      deploy  Production web
+    staging   staging.example.com   deploy
+
+
+
+
+
+
+╭─ emoji ──────────────────────────────────────────────────────────────────────╮
+│ → ssh -- fun.example.com                                                     │
+│                                                                              │
+│ rocket 🚀 heart ❤ dev 👨💻 日本語                                            │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ apply · esc clear · ↑↓ navigate
+== 100x40
+❯_ tote › Connections                                                                          6/6
+
+  / e▏
+
+    NAME        TARGET                      USER      DESCRIPTION
+  ❯ emoji       fun.example.com                       rocket 🚀 heart ❤ dev 👨💻 日本語
+    bastion     bastion.example.com         ops
+  ! hostile     evil.example.com                      a?[31mb?c?d
+  ! legacy      old.example.com
+    prod        prod.example.com            deploy    Production web
+    staging     staging.example.com         deploy
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+╭─ emoji ──────────────────────────────────────────────────────────────────────────────────────────╮
+│ → ssh -- fun.example.com                                                                         │
+│                                                                                                  │
+│ rocket 🚀 heart ❤ dev 👨💻 日本語                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ apply · esc clear · ↑↓ navigate
+== 120x24
+❯_ tote › Connections                                                                                              6/6
+
+  / e▏
+
+    NAME          TARGET                            USER        DESCRIPTION
+  ❯ emoji         fun.example.com                               rocket 🚀 heart ❤ dev 👨💻 日本語
+    bastion       bastion.example.com               ops
+  ! hostile       evil.example.com                              a?[31mb?c?d
+  ! legacy        old.example.com
+    prod          prod.example.com                  deploy      Production web
+    staging       staging.example.com               deploy
+
+
+
+
+
+
+╭─ emoji ──────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ → ssh -- fun.example.com                                                                                             │
+│                                                                                                                      │
+│ rocket 🚀 heart ❤ dev 👨💻 日本語                                                                                    │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+  ⏎ apply · esc clear · ↑↓ navigate

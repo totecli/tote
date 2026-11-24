@@ -253,6 +253,11 @@ func newSandbox(t *testing.T) *sandbox {
 
 	clk := &clock{t: time.Date(2026, 11, 3, 10, 0, 0, 0, time.UTC)}
 
+	// The fixtures are not in alphabetical order, so the sandbox shows the lists in the order of
+	// the files, as before ui.sort existed. The tests of the sorted display say ui.sort = "name".
+	settings := config.DefaultSettings()
+	settings.UI.Sort = "file"
+
 	return &sandbox{Dir: dir, Repo: repo, Opts: Options{
 		Paths: config.Paths{
 			Config:  cfg,
@@ -261,7 +266,7 @@ func newSandbox(t *testing.T) *sandbox {
 			Cache:   filepath.Join(dir, "cache"),
 			Runtime: filepath.Join(dir, "run"),
 		},
-		Settings: config.DefaultSettings(),
+		Settings: settings,
 		Printer:  i18n.New("en"),
 		Version:  "1.2.3",
 		Home:     filepath.Join(dir, "home"),
