@@ -146,6 +146,12 @@ else.
 
   `needs_review` of a connection is in the JSON only.
 
+- **Order.** The records of a JSON or a TSV list of `co`, `alias`, `repos` and `funcs` come in the
+  order of the file, and that does not depend on any setting. The table of a terminal is human
+  output (section 8) and follows `ui.sort` (since tote 1.2): by name unless it is `"file"`. A name
+  that two records claim resolves in the order of the file, whatever the display order. The
+  `plugin` list is always ordered by id, in every format.
+
 - **Exit codes.** 0 done, 1 failure, 2 usage, 3 authentication required (a download answered 401), 4
   refused by state or policy, 5 integrity, 10 `update --check` found a release, 127 a program could
   not be started, 130 interrupted (Ctrl-C or SIGTERM, also during a download; the error code is
@@ -167,7 +173,8 @@ else.
   `[plugins.<id>]` tables. An unknown key or an invalid value is a warning (stderr and
   `tote doctor`), the setting keeps its default and the rest of the file applies. Only a syntax
   error, a schema other than 1, a file too deep, too big (64 KiB) or not regular is refused as a
-  whole.
+  whole. `ui.sort` (since tote 1.2) is `"name"` or `"file"`, an absent key counts as `"name"`, and
+  it changes the display only: no file is ever reordered.
 - **The install receipt** `install.json` of the state directory stays `"schema": 1`; a later release
   only adds optional fields and tote keeps the ones it does not know when it rewrites it.
   `plugin-procs` lines are `<id> <session> <start>` and a reader ignores any further field.

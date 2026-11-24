@@ -94,8 +94,11 @@ Looks: the theme is `auto` (follows the terminal background), `dark` (for a dark
 terminal can be unreadable, and the Settings screen warns about it when the terminal has said what
 its background is (`d` goes back to `auto`); the welcome page is `box`, `compact` or `off`; below 70
 columns or 20 rows the welcome box is replaced by a one-line header; the page width can be capped at
-120 or 160 columns. Languages: English and French, from `TOTE_LANG`, then the `lang` setting, then
-`LC_ALL`, `LC_MESSAGES` and `LANG`.
+120 or 160 columns. The lists of connections, repositories, aliases and functions are shown by name,
+ignoring case (`ui.sort = "name"`, the default; accents are not folded), or in the order of their
+file with `ui.sort = "file"`. Only the display changes: tote never reorders a file, and a new record
+is still written at its end. Languages: English and French, from `TOTE_LANG`, then the `lang`
+setting, then `LC_ALL`, `LC_MESSAGES` and `LANG`.
 
 ## Install
 
@@ -180,10 +183,12 @@ consulted.
 
 `tote help` lists them and `tote help <command>` prints the usage. Commands that list records print
 a table on a terminal and tab separated lines in a pipe; `--format table|tsv|json` chooses and
-`--json` means `--format json`. The tab separated columns are positional and a later release only
-appends columns; every JSON document starts with `"schema": 1` and only gains fields (see
-[docs/compat.md](docs/compat.md)). A name must be unique across aliases, repositories and functions,
-because each becomes a word of your shell.
+`--json` means `--format json`. For connections, aliases, repositories and functions, the table
+follows `ui.sort` (by name unless it is `"file"`), while `--format tsv` and `--format json` always
+keep the order of the file; the plugin list is always ordered by id. The tab separated columns are
+positional and a later release only appends columns; every JSON document starts with `"schema": 1`
+and only gains fields (see [docs/compat.md](docs/compat.md)). A name must be unique across aliases,
+repositories and functions, because each becomes a word of your shell.
 
 The commands are `co` (also `connections`), `alias` (`a`), `repos` (`repo`, `r`), `funcs` (`f`),
 `plugin` (`plugins`), `config`, `doctor`, `update`, `uninstall`, `init`, `version` and `help`. With
@@ -368,6 +373,7 @@ theme = "auto"              # "auto", "dark", "light" or "mono"
 welcome = "box"             # "box", "compact" or "off"
 compact = "auto"            # "auto", "always" or "never"
 width = "auto"              # "auto", "120" or "160": caps the page at that many columns
+sort = "name"               # "name" (by name, ignoring case) or "file": how lists are shown
 mouse = true
 ```
 
