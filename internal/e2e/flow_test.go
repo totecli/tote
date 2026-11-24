@@ -308,7 +308,7 @@ func TestEditor(t *testing.T) {
 
 	// The title of the detail panel changes with the row, the list already shows both names.
 	tm.key("Down")
-	tm.waitText("\u256d\u2500 docs")
+	tm.waitText("\u256d\u2500 site")
 	tm.quit()
 }
 

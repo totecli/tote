@@ -74,9 +74,9 @@ func TestConnList(t *testing.T) {
 	h.run("co", "--list")
 
 	wantTable := "NAME  VIA   TARGET           USER    ALIASES  IP  DESCRIPTION\n" +
-		"web1        10.0.0.1         deploy  w,web        Web front\n" +
 		"db1   mosh  db1.example.org          db\n" +
-		"v6          [2001:db8::1]\n"
+		"v6          [2001:db8::1]\n" +
+		"web1        10.0.0.1         deploy  w,web        Web front\n"
 	if h.out.String() != wantTable {
 		t.Errorf("terminal list = %q, want %q", h.out.String(), wantTable)
 	}

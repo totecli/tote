@@ -137,11 +137,14 @@ func newSandbox(t *testing.T) *sandbox {
 
 	cfg := filepath.Join(dir, "config")
 
+	// Every list of the sandbox is in alphabetical order (the second repository is called site and
+	// not docs for that), so that the order of the file and the order of ui.sort = "name", the
+	// default, are the same and no test depends on which one the interface uses.
 	sb.write(t, filepath.Join(cfg, "connections.toml"), connections)
 	sb.write(t, filepath.Join(cfg, "aliases.toml"), aliases)
 	sb.write(t, filepath.Join(cfg, "repos.toml"), "schema = 1\n\n[[repo]]\nname = \"proj\"\n"+
 		"path = \""+filepath.Join(sb.Home, "code", "proj")+"\"\ndesc = \"The project\"\n\n"+
-		"[[repo]]\nname = \"docs\"\npath = \""+filepath.Join(sb.Home, "code", "docs")+"\"\n")
+		"[[repo]]\nname = \"site\"\npath = \""+filepath.Join(sb.Home, "code", "docs")+"\"\n")
 	sb.write(t, filepath.Join(cfg, "funcs.toml"), "schema = 1\n")
 
 	for name, body := range map[string]string{"ssh": fakeSSH, "editor": fakeEditor} {

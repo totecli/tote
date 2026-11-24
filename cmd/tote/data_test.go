@@ -25,7 +25,7 @@ func TestDataList(t *testing.T) {
 			"alias table",
 			[]string{"a", "list"},
 			true,
-			"NAME  COMMAND     DESCRIPTION\nll    ls -la      Long list\ngs    git status\n",
+			"NAME  COMMAND     DESCRIPTION\ngs    git status\nll    ls -la      Long list\n",
 		},
 		{
 			"repos tsv",
@@ -37,7 +37,7 @@ func TestDataList(t *testing.T) {
 			"repo table",
 			[]string{"repo", "--format", "table"},
 			false,
-			"NAME  PATH         DESCRIPTION\nproj  ~/code/proj  Main project\ndocs  /srv/docs\n",
+			"NAME  PATH         DESCRIPTION\ndocs  /srv/docs\nproj  ~/code/proj  Main project\n",
 		},
 		{
 			"funcs tsv",

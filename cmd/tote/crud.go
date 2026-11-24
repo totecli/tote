@@ -177,6 +177,9 @@ func (s spec[T]) format(a *app, o options) (string, error) {
 
 // list implements the list verb of a kind.
 //
+// The table follows the setting ui.sort: by name unless it is "file". The JSON and the tab
+// separated forms always keep the order of the file.
+//
 // Parameters:
 //   - a: running app
 //   - args: arguments after list
@@ -210,14 +213,22 @@ func (s spec[T]) list(a *app, args []string) int {
 		return rc
 	}
 
-	return s.render(a, c.List(), format)
+	recs := c.List()
+
+	// Only the table for people follows ui.sort. The JSON and tab separated forms are read by
+	// scripts, so they stay in the order of the file, as the file itself does.
+	if format == formatTable && a.cfg().UI.Sort != "file" {
+		recs = store.SortByName(recs)
+	}
+
+	return s.render(a, recs, format)
 }
 
 // render prints records in a format.
 //
 // Parameters:
 //   - a: running app
-//   - recs: records to print
+//   - recs: records to print, in the order they must appear
 //   - format: one of the format constants
 //
 // Returns the exit code of the verb.

@@ -806,6 +806,14 @@ func fileScenarios() []scenario {
 			"file.config", levelWarn, "cli_doctor_config_ignored", "",
 			[]string{"cli_doctor_config_at_line 2", "ui.width must be a string, found an integer"},
 		},
+		{"valid sort", func(f *fixture) {
+			f.conf("config.toml", "schema = 1\n[ui]\nsort = \"file\"\n")
+		}, "file.config", levelOK, "cli_doctor_config_ok", "", []string{"config.toml 1"}},
+		{
+			"bad sort", func(f *fixture) { f.conf("config.toml", "[ui]\nsort = \"size\"\n") },
+			"file.config", levelWarn, "cli_doctor_config_ignored", "",
+			[]string{"cli_doctor_config_at_line 2", "ui.sort", "allowed values: name, file"},
+		},
 		{
 			"unsupported config schema", func(f *fixture) { f.conf("config.toml", "schema = 2\n") },
 			"file.config", levelFail, "cli_doctor_config_syntax", "cli_doctor_fix_config",
