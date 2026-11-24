@@ -125,13 +125,19 @@ type UpdateConfig struct {
 // "160" to cap the page at that many cells; on a wider terminal a capped page is centered. It is a
 // string so that it reads and writes like the other choices; an absent key counts as "auto". Mouse
 // turns the mouse support of the interface on (the default) or off; with it off the interface
-// never asks the terminal for mouse events, so that the terminal selects text as usual.
+// never asks the terminal for mouse events, so that the terminal selects text as usual. Sort is
+// how the lists of connections, repositories, aliases and functions are shown: "name" (the
+// default) orders them by name without regard to case, "file" keeps the order of the file. It is
+// a matter of display only: the files are never reordered, and the JSON and tab separated output
+// of the command line, the resolution of a name and the shell completion stay in file order. An
+// absent key counts as "name".
 type UIConfig struct {
 	Theme   string `toml:"theme"`
 	Welcome string `toml:"welcome"`
 	Compact string `toml:"compact"`
 	Width   string `toml:"width"`
 	Mouse   bool   `toml:"mouse"`
+	Sort    string `toml:"sort"`
 }
 
 // DefaultSettings returns the settings used when config.toml is missing or incomplete.
@@ -143,7 +149,7 @@ func DefaultSettings() Settings {
 		Update:  UpdateConfig{Check: true},
 		UI: UIConfig{
 			Theme: "auto", Welcome: "box", Compact: "auto", Width: "auto",
-			Mouse: true,
+			Mouse: true, Sort: "name",
 		},
 	}
 }
@@ -608,6 +614,7 @@ func (s Settings) fieldErrors() []fieldError {
 		{"ui.welcome", s.UI.Welcome, []string{"box", "compact", "off"}},
 		{"ui.compact", s.UI.Compact, []string{"auto", "always", "never"}},
 		{"ui.width", s.UI.Width, []string{"auto", "120", "160"}},
+		{"ui.sort", s.UI.Sort, []string{"name", "file"}},
 	}
 	for _, e := range enums {
 		if !slices.Contains(e.allowed, e.value) {

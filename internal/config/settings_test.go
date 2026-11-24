@@ -42,7 +42,7 @@ func TestDefaultSettings(t *testing.T) {
 		Update:  UpdateConfig{Check: true},
 		UI: UIConfig{
 			Theme: "auto", Welcome: "box", Compact: "auto", Width: "auto",
-			Mouse: true,
+			Mouse: true, Sort: "name",
 		},
 	}
 
@@ -109,6 +109,7 @@ welcome = "off"
 compact = "never"
 width = "160"
 mouse = false
+sort = "file"
 `)
 	got, err := LoadSettings(full)
 	if err != nil {
@@ -120,7 +121,9 @@ mouse = false
 		Repos:   ReposConfig{AfterOpen: "cd"},
 		Shell:   ShellConfig{CompatMN: true, ExtraNames: []string{"mn", "t"}},
 		Update:  UpdateConfig{Check: false},
-		UI:      UIConfig{Theme: "mono", Welcome: "off", Compact: "never", Width: "160"},
+		UI: UIConfig{
+			Theme: "mono", Welcome: "off", Compact: "never", Width: "160", Sort: "file",
+		},
 	}
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("LoadSettings() = %+v, want %+v", got, want)
@@ -183,6 +186,77 @@ func TestWidthSetting(t *testing.T) {
 			t.Errorf("width %q: Validate() error = %v, want ui.width and its allowed values", v,
 				err)
 		}
+	}
+}
+
+// TestSortSetting checks ui.sort: the default, an absent key, both values, the warning and the
+// default for an invalid one, and that a value written by the store reads back.
+//
+// Parameters:
+//   - t: test to report to
+func TestSortSetting(t *testing.T) {
+	if got := DefaultSettings().UI.Sort; got != "name" {
+		t.Errorf("default ui.sort = %q, want \"name\"", got)
+	}
+
+	absent := []string{"", "[ui]\ntheme = \"dark\"\n", "lang = \"en\"\n"}
+	for _, content := range absent {
+		got, err := LoadSettings(writeConfig(t, content))
+		if err != nil || got.UI.Sort != "name" {
+			t.Errorf("file %q: ui.sort = %q, error %v, want \"name\"", content, got.UI.Sort, err)
+		}
+	}
+
+	for _, v := range []string{"name", "file"} {
+		got, err := LoadSettings(writeConfig(t, "[ui]\nsort = \""+v+"\"\n"))
+		if err != nil || got.UI.Sort != v {
+			t.Errorf("sort %q: read %q, error %v", v, got.UI.Sort, err)
+		}
+
+		path := filepath.Join(t.TempDir(), "config.toml")
+		if err := store.PatchTable(path, "ui", map[string]any{"sort": v}, nil); err != nil {
+			t.Fatalf("sort %q: PatchTable() error = %v", v, err)
+		}
+
+		got, warns, err := LoadSettingsWarn(path)
+		if err != nil || got.UI.Sort != v || len(warns) != 0 {
+			t.Errorf("sort %q: round trip read %q, warnings %v, error %v", v, got.UI.Sort, warns,
+				err)
+		}
+	}
+
+	for _, v := range []string{"", "size", "NAME", "File", "name ", "date"} {
+		s := DefaultSettings()
+		s.UI.Sort = v
+
+		err := s.Validate()
+		if err == nil || !strings.Contains(err.Error(), "ui.sort") ||
+			!strings.Contains(err.Error(), "name, file") {
+			t.Errorf("sort %q: Validate() error = %v, want ui.sort and its allowed values", v,
+				err)
+		}
+	}
+
+	got, warns, err := LoadSettingsWarn(writeConfig(t, "[ui]\nsort = \"size\"\nmouse = false\n"))
+	if err != nil {
+		t.Fatalf("invalid sort: error = %v", err)
+	}
+
+	if got.UI.Sort != "name" || got.UI.Mouse {
+		t.Errorf("invalid sort: ui.sort = %q, mouse = %v, want the default and the other key kept",
+			got.UI.Sort, got.UI.Mouse)
+	}
+
+	if len(warns) != 1 || warns[0].Key != "ui.sort" || warns[0].Kind != WarnInvalidValue ||
+		warns[0].Line != 2 || !strings.Contains(warns[0].Msg, `"size"`) ||
+		!strings.Contains(warns[0].Msg, "name, file") {
+		t.Errorf("invalid sort: warnings = %+v, want one for ui.sort at line 2 with the values",
+			warns)
+	}
+
+	wrong, warns, err := LoadSettingsWarn(writeConfig(t, "[ui]\nsort = true\n"))
+	if err != nil || wrong.UI.Sort != "name" || len(warns) != 1 || warns[0].Key != "ui.sort" {
+		t.Errorf("sort = true: ui.sort = %q, warnings %v, error %v", wrong.UI.Sort, warns, err)
 	}
 }
 
@@ -300,13 +374,14 @@ func TestLoadSettingsWarnings(t *testing.T) {
 		{
 			name: "every enum",
 			content: "[connect]\nafter_disconnect = \"stay\"\n[repos]\nafter_open = \"kill\"\n" +
-				"[ui]\ncompact = \"x\"\nwidth = \"200\"\nwelcome = \"big\"\n",
+				"[ui]\ncompact = \"x\"\nwidth = \"200\"\nwelcome = \"big\"\nsort = \"size\"\n",
 			want: []warn{
 				{"connect.after_disconnect", 2, invalid},
 				{"repos.after_open", 4, invalid},
 				{"ui.compact", 6, invalid},
 				{"ui.width", 7, invalid},
 				{"ui.welcome", 8, invalid},
+				{"ui.sort", 9, invalid},
 			},
 			check: func(s Settings) bool { return reflect.DeepEqual(s, DefaultSettings()) },
 		},
@@ -455,12 +530,15 @@ func TestValidateJoinsErrors(t *testing.T) {
 	s.UI.Welcome = "y"
 	s.UI.Compact = "z"
 	s.UI.Width = "w"
+	s.UI.Sort = "s"
 
 	err := s.Validate()
 	if err == nil {
 		t.Fatal("Validate() error = nil, want an error")
 	}
-	for _, w := range []string{"schema", "ui.theme", "ui.welcome", "ui.compact", "ui.width"} {
+	for _, w := range []string{
+		"schema", "ui.theme", "ui.welcome", "ui.compact", "ui.width", "ui.sort",
+	} {
 		if !strings.Contains(err.Error(), w) {
 			t.Errorf("error %q does not contain %q", err, w)
 		}
